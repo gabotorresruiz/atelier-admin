@@ -9,7 +9,7 @@
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "lint:prettier": "prettier --ignore-path .gitignore --check .",
     "preview": "vite preview",
-    "prittier": "npx prettier --write .",
+    "prettier": "npx prettier --write .",
     "prepare": "husky install"
   },
   "dependencies": {
