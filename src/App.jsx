@@ -1,6 +1,6 @@
-import React, { useState }  from 'react';
+import React, { useState } from 'react';
 import reactLogo from './assets/react.svg';
-import viteLogo from "../public/vite.svg";
+import viteLogo from '../public/vite.svg';
 import './App.css';
 
 const App = () => {
@@ -16,9 +16,9 @@ const App = () => {
           <img src={reactLogo} className='logo react' alt='React logo' />
         </a>
       </div>
-      <h1>Vite + React</h1>
+      <h1>Bienvenido a Atelier</h1>
       <div className='card'>
-        <button type="button" onClick={() => setCount(count + 1)}>
+        <button type='button' onClick={() => setCount(count + 1)}>
           count is {count}
         </button>
         <p>
@@ -30,6 +30,6 @@ const App = () => {
       </p>
     </>
   );
-}
+};
 
 export default App;
