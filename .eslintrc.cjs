@@ -8,7 +8,7 @@ module.exports = {
     'import/resolver': {
       node: {
         paths: ['src'],
-        extensions: ['.js', '.jsx', '.ts', '.tsx',],
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
       },
     },
   },
@@ -34,6 +34,7 @@ module.exports = {
     'no-case-declarations': 0,
     'consistent-return': 0,
     'no-undef': 0,
+    'eol-last': 'always',
     'react/function-component-definition': [
       2,
       {
