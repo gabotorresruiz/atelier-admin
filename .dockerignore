@@ -1,0 +1,11 @@
+.vscode/
+node_modules/
+build/
+.DS_Store
+*.tgz
+npm-debug.log*
+/.changelog
+.npm/
+.dockerignore
+Dockerfile
+Dockerfile.dev
