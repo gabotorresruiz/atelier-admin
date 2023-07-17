@@ -2,5 +2,9 @@
   "**/*.{js,jsx}": [
     "eslint --fix",
     "prettier --write"
+  ],
+  "*.json": [
+    "prettier --write",
+    "git add"
   ]
 }

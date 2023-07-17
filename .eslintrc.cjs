@@ -42,16 +42,5 @@ module.exports = {
         unnamedComponents: 'arrow-function',
       },
     ],
-    //reglas de Prettier manualmente
-    'prettier/prettier': [
-      'error',
-      {
-        singleQuote: true,
-        tabWidth: 2,
-        arrowParens: 'avoid',
-        jsxSingleQuote: true,
-        endOfLine: 'auto',
-      },
-    ],
   },
 };
