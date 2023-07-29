@@ -1,35 +1,37 @@
-import React, { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '../public/vite.svg';
-import './App.css';
+import React, { Suspense } from 'react';
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+} from 'react-router-dom';
+import { Dashboard, Login } from './pages';
+import Layout from './layout';
+import { LinearLoader } from './components';
+import { WithProtectedRoute } from './HOC';
 
-const App = () => {
-  const [count, setCount] = useState(0);
-
-  return (
-    <>
-      <div>
-        <a href='https://vitejs.dev' target='_blank' rel='noreferrer'>
-          <img src={viteLogo} className='logo' alt='Vite logo' />
-        </a>
-        <a href='https://react.dev' target='_blank' rel='noreferrer'>
-          <img src={reactLogo} className='logo react' alt='React logo' />
-        </a>
-      </div>
-      <h1>Bienvenido a Atelier</h1>
-      <div className='card'>
-        <button type='button' onClick={() => setCount(count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className='read-the-docs'>
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  );
-};
+const App = () => (
+  <BrowserRouter>
+    <Routes>
+      <Route
+        element={
+          <Suspense fallback={<LinearLoader />}>
+            <Outlet />
+          </Suspense>
+        }
+      >
+        <Route index element={<Login />} />
+        <Route path='login' element={<Navigate to='/' replace />} />
+      </Route>
+      <Route element={<WithProtectedRoute />}>
+        <Route element={<Layout />}>
+          <Route path='dashboard' element={<Dashboard />} />
+        </Route>
+      </Route>
+      <Route path='*' element={<p>404 Not Found</p>} />
+    </Routes>
+  </BrowserRouter>
+);
 
 export default App;
