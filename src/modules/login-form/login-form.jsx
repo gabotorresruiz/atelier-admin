@@ -70,10 +70,6 @@ const LoginForm = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = body => {
-    // TO DO
-  };
-
   const logginSuccess = useCallback(
     data => {
       localStorage.setItem('loggedUser', JSON.stringify(data));
@@ -81,6 +77,11 @@ const LoginForm = () => {
     },
     [navigate],
   );
+
+  const onSubmit = body => {
+    // TO DO
+    logginSuccess(body);
+  };
 
   const closeAlert = () => {
     setAlert(false);
