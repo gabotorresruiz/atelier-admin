@@ -83,7 +83,6 @@ const CSVUploader = () => {
 
   return (
     <StyledCSVUploader>
-      <h2>Cargar y enviar archivo CSV</h2>
       <Dropzone onDrop={onDrop} accept='.csv'>
         {({ getRootProps, getInputProps }) => (
           <div {...getRootProps()} className='dropzone'>
