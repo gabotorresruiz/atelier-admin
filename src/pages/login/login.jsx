@@ -6,7 +6,6 @@ import { LinearLoader } from '../../components';
 
 const Login = () => {
   const isLoggedUser = getLoggedUser();
-
   return !isLoggedUser ? (
     <Suspense fallback={<LinearLoader />}>
       <LoginForm />

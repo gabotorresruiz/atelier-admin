@@ -1,4 +1,4 @@
 import getLoggedUser from './get-logged-user';
-import isAdmin from './is-admin';
+import isSuperAdmin from './is-super-admin';
 
-export { getLoggedUser, isAdmin };
+export { getLoggedUser, isSuperAdmin };
