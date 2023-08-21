@@ -55,38 +55,6 @@ const Sidebar = React.memo(() => {
             text='Macro Categorías'
             to='/macro-categories'
           />
-          <ListItemLink
-            icon={<CategoryIcon />}
-            id='/categories'
-            onClick={handleClick}
-            selectedItem={selectedItem}
-            text='Categorías'
-            to='/categories'
-          />
-          <ListItemLink
-            icon={<CategoryIcon />}
-            id='/sub-categories'
-            onClick={handleClick}
-            selectedItem={selectedItem}
-            text='Sub Categorías'
-            to='/sub-categories'
-          />
-          {/* <ListItemLink
-            icon={<SubCategoyIcon />}
-            id='/subcategories'
-            onClick={handleClick}
-            selectedItem={selectedItem}
-            text='Sub Categorías'
-            to='/subcategories'
-          />
-          <ListItemLink
-            icon={<MacroCategoryIcon />}
-            id='/macro-categories'
-            onClick={handleClick}
-            selectedItem={selectedItem}
-            text='Macro Categorías'
-            to='/macro-categories'
-          /> */}
         </List>
       </StyledBox>
     </StyledDrawer>

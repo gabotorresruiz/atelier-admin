@@ -34,6 +34,7 @@ module.exports = {
     'no-case-declarations': 0,
     'consistent-return': 0,
     'no-undef': 0,
+    'import/no-cycle': 'off',
     'eol-last': ['error', 'always'],
     'react/function-component-definition': [
       2,
