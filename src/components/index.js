@@ -8,3 +8,4 @@ export const MultiSelect = React.lazy(() => import('./multi-select'));
 export const Select = React.lazy(() => import('./select'));
 // eslint-disable-next-line import/no-cycle
 export const Table = React.lazy(() => import('./table'));
+export const CSVUploader = React.lazy(() => import('./csv-uploader'));
