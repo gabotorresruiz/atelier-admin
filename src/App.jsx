@@ -6,14 +6,7 @@ import {
   Route,
   Routes,
 } from 'react-router-dom';
-import {
-  Dashboard,
-  Login,
-  Categories,
-  MacroCategories,
-  SubCategories,
-  UserSettings,
-} from './pages';
+import { Dashboard, Login, MacroCategories, UserSettings } from './pages';
 import Layout from './layout';
 import { LinearLoader } from './components';
 import { WithProtectedRoute } from './HOC';
@@ -42,8 +35,6 @@ const App = () => (
             path='macro-category/edit/:id'
             element={<EditMacroCategory />}
           />
-          <Route path='categories' element={<Categories />} />
-          <Route path='sub-categories' element={<SubCategories />} />
           <Route path='settings' element={<UserSettings />} />
         </Route>
         {/* <Route element={<WithProtectedSuperAdminRoute />}>

@@ -10,7 +10,5 @@ export const EditMacroCategory = React.lazy(() =>
   import('./macro-categories/edit-macro-category'),
 );
 
-export const SubCategories = React.lazy(() => import('./sub-categories'));
-export const Categories = React.lazy(() => import('./categories'));
 export const UserSettings = React.lazy(() => import('./user-settings'));
 export const InviteUser = React.lazy(() => import('./invite-user'));

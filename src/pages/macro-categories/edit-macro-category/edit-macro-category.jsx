@@ -38,7 +38,6 @@ const EditMacroCategory = () => {
         title='Editar Macro Categoría'
         id={id}
         entity='macro categoría'
-        // data={}
       />
     </>
   );
