@@ -15,7 +15,6 @@ import {
   Delete as DeleteIcon,
   Edit as EditIcon,
 } from '@mui/icons-material';
-// eslint-disable-next-line import/no-cycle
 import { Link } from '../../..';
 
 const swal = withReactContent(Swal);

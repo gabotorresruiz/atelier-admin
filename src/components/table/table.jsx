@@ -7,7 +7,7 @@ import {
   TableContainer,
   TablePagination,
 } from '@mui/material';
-// eslint-disable-next-line import/no-cycle
+
 import { Body, Head, Toolbar } from './elements';
 
 const StyledBox = styled(Box)`
