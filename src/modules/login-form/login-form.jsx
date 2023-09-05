@@ -45,13 +45,13 @@ const StyledAvatar = styled(Avatar)(
   ({ theme }) => `
   background-color: ${theme.palette.primary.dark};
   margin:${theme.spacing(0, 0, 1)};
-`,
+`
 );
 
 const StyledButton = styled(LoadingButton)(
   ({ theme }) => `
   margin:${theme.spacing(2, 0)};
-`,
+`
 );
 
 const LoginForm = () => {
@@ -75,7 +75,7 @@ const LoginForm = () => {
       localStorage.setItem('loggedUser', JSON.stringify(data));
       return navigate('/dashboard');
     },
-    [navigate],
+    [navigate]
   );
 
   const onSubmit = body => {
@@ -127,7 +127,6 @@ const LoginForm = () => {
                 <StyledErrorMessage>{message}</StyledErrorMessage>
               )}
             />
-
             <Controller
               name='password'
               control={control}
@@ -152,17 +151,16 @@ const LoginForm = () => {
                 <StyledErrorMessage>{message}</StyledErrorMessage>
               )}
             />
-
             <Grid container justifyContent='flex-end'>
               <Grid item>
                 <StyledButton
-                  component='label'
+                  component='button'
                   disabled={!isValid}
                   onClick={handleSubmit(onSubmit)}
                   type='submit'
                   variant='contained'
                 >
-                  Iniciar Sesión
+                  <span>Iniciar Sesión</span>
                 </StyledButton>
               </Grid>
             </Grid>
