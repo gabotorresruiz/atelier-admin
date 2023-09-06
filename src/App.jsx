@@ -26,7 +26,13 @@ const App = () => (
         <Route index element={<Login />} />
         <Route path='login' element={<Navigate to='/' replace />} />
       </Route>
-      <Route element={<WithProtectedRoute />}>
+      <Route
+        element={
+          <Suspense fallback={<LinearLoader />}>
+            <WithProtectedRoute />
+          </Suspense>
+        }
+      >
         <Route element={<Layout />}>
           <Route path='dashboard' element={<Dashboard />} />
           <Route path='macro-categories' element={<MacroCategories />} />
