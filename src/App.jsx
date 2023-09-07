@@ -6,12 +6,20 @@ import {
   Route,
   Routes,
 } from 'react-router-dom';
-import { Dashboard, Login, MacroCategories, UserSettings } from './pages';
+import {
+  Categories,
+  Dashboard,
+  EditCategory,
+  Login,
+  MacroCategories,
+  AddCategory,
+  AddMacroCategory,
+  EditMacroCategory,
+  UserSettings,
+} from './pages';
 import Layout from './layout';
 import { LinearLoader } from './components';
 import { WithProtectedRoute } from './HOC';
-import AddMacroCategory from './pages/macro-categories/add-macro-category/add-macro-category';
-import EditMacroCategory from './pages/macro-categories/edit-macro-category/edit-macro-category';
 
 const App = () => (
   <BrowserRouter>
@@ -41,6 +49,9 @@ const App = () => (
             path='macro-category/edit/:id'
             element={<EditMacroCategory />}
           />
+          <Route path='categories' element={<Categories />} />
+          <Route path='category/new' element={<AddCategory />} />
+          <Route path='category/edit/:id' element={<EditCategory />} />
           <Route path='settings' element={<UserSettings />} />
         </Route>
         {/* <Route element={<WithProtectedSuperAdminRoute />}>

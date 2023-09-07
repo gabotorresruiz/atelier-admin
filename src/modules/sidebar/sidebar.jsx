@@ -56,6 +56,17 @@ const Sidebar = React.memo(() => {
             to='/macro-categories'
           />
         </List>
+        <Divider />
+        <List>
+          <ListItemLink
+            icon={<CategoryIcon />}
+            id='/categories'
+            onClick={handleClick}
+            selectedItem={selectedItem}
+            text='Categorías'
+            to='/categories'
+          />
+        </List>
       </StyledBox>
     </StyledDrawer>
   );
