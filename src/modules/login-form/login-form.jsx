@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -16,6 +16,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useFetch } from '../../hooks';
 import schema from './schema';
 
 const StyledAlert = styled(Alert)`
@@ -45,18 +46,22 @@ const StyledAvatar = styled(Avatar)(
   ({ theme }) => `
   background-color: ${theme.palette.primary.dark};
   margin:${theme.spacing(0, 0, 1)};
-`
+`,
 );
 
 const StyledButton = styled(LoadingButton)(
   ({ theme }) => `
   margin:${theme.spacing(2, 0)};
-`
+`,
 );
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const [alert, setAlert] = useState(false);
+  const [{ response, error, isLoading }, doFetch] = useFetch({
+    entity: 'login-sellers',
+    fetchMethod: 'POST',
+  });
   const {
     control,
     handleSubmit,
@@ -75,17 +80,21 @@ const LoginForm = () => {
       localStorage.setItem('loggedUser', JSON.stringify(data));
       return navigate('/dashboard');
     },
-    [navigate]
+    [navigate],
   );
 
   const onSubmit = body => {
-    // TO DO
-    logginSuccess(body);
+    doFetch({ body });
   };
 
   const closeAlert = () => {
     setAlert(false);
   };
+
+  useEffect(() => {
+    if (error) setAlert(true);
+    if (response && response.token) logginSuccess(response);
+  }, [error, logginSuccess, response]);
 
   return (
     <>

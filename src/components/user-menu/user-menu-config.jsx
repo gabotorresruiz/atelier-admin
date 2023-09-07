@@ -3,8 +3,8 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 
-const userMenuConfig = isSuperAdmin =>
-  isSuperAdmin
+const userMenuConfig = isAdmin =>
+  isAdmin
     ? [
         {
           element: 'menuItem',
