@@ -1,8 +1,6 @@
 import React from 'react';
-import { EntityForm } from '../../../modules';
+import { CategoryForm } from '../../../modules';
 
-const AddCategory = () => (
-  <EntityForm title='Nueva Categoría' entity='categoría' />
-);
+const AddCategory = () => <CategoryForm title='Nueva Categoría' />;
 
 export default AddCategory;

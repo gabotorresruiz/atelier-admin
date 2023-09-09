@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { styled } from '@mui/system';
 import { useParams } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
-import { EntityForm } from '../../../modules';
+import { MacroCategoryForm } from '../../../modules';
 
 const StyledAlert = styled(Alert)(
   ({ theme }) => `
@@ -34,11 +34,7 @@ const EditMacroCategory = () => {
         </StyledAlert>
       )}
 
-      <EntityForm
-        title='Editar Macro Categoría'
-        id={id}
-        entity='macro categoría'
-      />
+      <MacroCategoryForm title='Editar Macro Categoría' id={id} />
     </>
   );
 };

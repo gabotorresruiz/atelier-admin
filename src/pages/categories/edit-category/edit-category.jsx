@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { styled } from '@mui/system';
 import { useParams } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
-import { EntityForm } from '../../../modules';
+import { CategoryForm } from '../../../modules';
 
 const StyledAlert = styled(Alert)(
   ({ theme }) => `
@@ -34,7 +34,7 @@ const EditCategory = () => {
         </StyledAlert>
       )}
 
-      <EntityForm title='Editar Categoría' id={id} entity='categoría' />
+      <CategoryForm title='Editar Categoría' id={id} />
     </>
   );
 };
