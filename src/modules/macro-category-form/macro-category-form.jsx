@@ -12,7 +12,6 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 import { Alert, Box, Button, Container, Grid, TextField } from '@mui/material';
 import schema from './schema';
-import { MultiSelect } from '../../components';
 
 const StyledBoxWrapper = styled(Box)(
   ({ theme }) => `
@@ -55,7 +54,7 @@ const fakeCategories = [
   { value: 3, label: 'Categoría 3' },
 ];
 
-const EntityForm = ({ title, id = 0, entity, data = {} }) => {
+const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
   const navigate = useNavigate();
   const [alert, setAlert] = useState({
     isVisible: false,
@@ -70,7 +69,7 @@ const EntityForm = ({ title, id = 0, entity, data = {} }) => {
   } = useForm({
     mode: 'all',
     defaultValues: {
-      entityName: 'Macro Categoría',
+      entityName: '',
       categories: [],
     },
     resolver: yupResolver(schema),
@@ -95,14 +94,14 @@ const EntityForm = ({ title, id = 0, entity, data = {} }) => {
           {alert.message}
         </StyledAlert>
       )}
-      <Container component='div'>
+      <Container component='div' maxWidth='sm'>
         <h1>{title}</h1>
         <StyledBox component='form' onSubmit={onSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Controller
-                name='entityName'
-                id='entityName'
+                name='macroCategoryName'
+                id='macroCategoryName'
                 control={control}
                 render={({ field: { onChange, value } }) => (
                   <TextField
@@ -112,8 +111,8 @@ const EntityForm = ({ title, id = 0, entity, data = {} }) => {
                         min: 0,
                       },
                     }}
-                    label={`Nombre ${entity}`}
-                    name='entityName'
+                    label='Nombre Macro Categoría'
+                    name='macroCategoryName'
                     onChange={onChange}
                     required
                     type='text'
@@ -123,35 +122,7 @@ const EntityForm = ({ title, id = 0, entity, data = {} }) => {
               />
               <ErrorMessage
                 errors={errors}
-                name='entityName'
-                render={({ message }) => (
-                  <StyledErrorMessage>{message}</StyledErrorMessage>
-                )}
-              />
-            </Grid>
-
-            <Grid item xs={6}>
-              {entity === 'macro categoría' && (
-                <Controller
-                  control={control}
-                  name='categories'
-                  // defaultValue={}
-                  render={({ field }) => (
-                    <MultiSelect
-                      fullWidth
-                      name='categories'
-                      inputLabel='Categorías *'
-                      label='Categorías *'
-                      onChange={field.onChange}
-                      value={Array.isArray(field.value) ? field.value : []}
-                      options={fakeCategories}
-                    />
-                  )}
-                />
-              )}
-              <ErrorMessage
-                errors={errors}
-                name='categories'
+                name='macroCategoryName'
                 render={({ message }) => (
                   <StyledErrorMessage>{message}</StyledErrorMessage>
                 )}
@@ -183,4 +154,4 @@ const EntityForm = ({ title, id = 0, entity, data = {} }) => {
   );
 };
 
-export default EntityForm;
+export default MacroCategoryForm;
