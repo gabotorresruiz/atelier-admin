@@ -97,11 +97,11 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
           {alert.message}
         </StyledAlert>
       )}
-      <Container component='div'>
+      <Container component='div' maxWidth='sm'>
         <h1>{title}</h1>
         <StyledBox component='form' onSubmit={onSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Controller
                 name='categoryName'
                 id='categoryName'
@@ -132,7 +132,7 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Controller
                 control={control}
                 name='macroCategories'
