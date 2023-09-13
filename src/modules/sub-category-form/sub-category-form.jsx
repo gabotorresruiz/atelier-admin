@@ -46,10 +46,6 @@ const StyledBox = styled(Box)(
   flex-direction: column;
   justify-content: center;
   gap: ${theme.spacing(2)};
-
-  p {
-    color: #c62828;
-  }
 `,
 );
 
@@ -115,7 +111,6 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
       <Container component='div' maxWidth='sm'>
         <h1>{title}</h1>
         <StyledBox component='form' onSubmit={onSubmit}>
-          <p>* Indica que el campo es obligatorio</p>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Controller

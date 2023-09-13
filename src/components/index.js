@@ -8,4 +8,3 @@ export const MultiSelect = React.lazy(() => import('./multi-select'));
 export const Select = React.lazy(() => import('./select'));
 export const Table = React.lazy(() => import('./table'));
 export const CSVUploader = React.lazy(() => import('./csv-uploader'));
-export const TextField = React.lazy(() => import('./text-field'));
