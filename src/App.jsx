@@ -16,6 +16,9 @@ import {
   AddMacroCategory,
   EditMacroCategory,
   UserSettings,
+  SubCategories,
+  AddSubCategory,
+  EditSubCategory,
 } from './pages';
 import Layout from './layout';
 import { LinearLoader } from './components';
@@ -52,6 +55,9 @@ const App = () => (
           <Route path='categories' element={<Categories />} />
           <Route path='category/new' element={<AddCategory />} />
           <Route path='category/edit/:id' element={<EditCategory />} />
+          <Route path='sub-categories' element={<SubCategories />} />
+          <Route path='sub-category/new' element={<AddSubCategory />} />
+          <Route path='sub-category/edit/:id' element={<EditSubCategory />} />
           <Route path='settings' element={<UserSettings />} />
         </Route>
         {/* <Route element={<WithProtectedSuperAdminRoute />}>

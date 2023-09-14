@@ -45,7 +45,6 @@ const StyledMenu = styled(Menu)`
 const UserMenu = () => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
-
   const { email } = getLoggedUser();
   const isUserSuperAdmin = isSuperAdmin();
   const open = Boolean(anchorEl);

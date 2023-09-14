@@ -49,15 +49,25 @@ const StyledBox = styled(Box)(
 `,
 );
 
-const fakeMacroCategories = [
-  { value: 1, label: 'Superficie' },
-  { value: 2, label: 'Tipo' },
-  { value: 3, label: 'Utilidad' },
-  { value: 4, label: 'Interior' },
-  { value: 5, label: 'Exterior' },
+const fakeCategories = [
+  { value: 1, label: 'Pintura Plástica' },
+  { value: 2, label: 'Pintura Esmalte' },
+  { value: 3, label: 'Pintura Decorativa' },
+  { value: 4, label: 'Pintura Brillante' },
+];
+const fakeProducts = [
+  { value: 1, label: 'Pintura Blanca Pintelux' },
+  { value: 2, label: 'Pintura Rosa Inca' },
+  { value: 3, label: 'Pincel' },
+  { value: 4, label: 'Incalux Diamente 3 en 1' },
+  { value: 5, label: 'Incamate' },
+  { value: 6, label: 'Incalex Toque Sublime Sesign Mate' },
+  { value: 7, label: 'Incasol' },
+  { value: 8, label: 'Enduido Incaplast' },
+  { value: 9, label: 'Fijador - Sellador Al Agua' },
 ];
 
-const CategoryForm = ({ title, id = 0, data = {} }) => {
+const SubCategoryForm = ({ title, id = 0, data = {} }) => {
   const navigate = useNavigate();
   const [alert, setAlert] = useState({
     isVisible: false,
@@ -72,8 +82,9 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
   } = useForm({
     mode: 'all',
     defaultValues: {
-      categoryName: '',
-      macroCategories: [],
+      subCategoryName: '',
+      categories: [],
+      products: [],
     },
     resolver: yupResolver(schema),
   });
@@ -103,8 +114,8 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Controller
-                name='categoryName'
-                id='categoryName'
+                name='subCategoryName'
+                id='subCategoryName'
                 control={control}
                 render={({ field: { onChange, value } }) => (
                   <TextField
@@ -114,18 +125,19 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
                         min: 0,
                       },
                     }}
-                    label='Nombre Categoría'
-                    name='categoryName'
+                    label='Nombre Sub Categoría'
+                    name='subCategoryName'
                     onChange={onChange}
                     required
                     type='text'
                     value={value}
+                    variant='outlined'
                   />
                 )}
               />
               <ErrorMessage
                 errors={errors}
-                name='categoryName'
+                name='subCategoryName'
                 render={({ message }) => (
                   <StyledErrorMessage>{message}</StyledErrorMessage>
                 )}
@@ -135,23 +147,50 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
             <Grid item xs={12}>
               <Controller
                 control={control}
-                name='macroCategories'
+                name='categories'
                 render={({ field }) => (
                   <MultiSelect
                     fullWidth
-                    name='macroCategories'
-                    inputLabel='Macro Categoría'
-                    label='Macro Categoría'
+                    name='categories'
+                    inputLabel='Categorías'
+                    label='Categorías'
+                    required
                     onChange={field.onChange}
                     value={Array.isArray(field.value) ? field.value : []}
-                    options={fakeMacroCategories}
+                    options={fakeCategories}
+                    variant='outlined'
                   />
                 )}
               />
 
               <ErrorMessage
                 errors={errors}
-                name='macroCategories'
+                name='categories'
+                render={({ message }) => (
+                  <StyledErrorMessage>{message}</StyledErrorMessage>
+                )}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Controller
+                control={control}
+                name='products'
+                render={({ field }) => (
+                  <MultiSelect
+                    fullWidth
+                    name='products'
+                    inputLabel='Productos'
+                    label='Productos'
+                    onChange={field.onChange}
+                    value={Array.isArray(field.value) ? field.value : []}
+                    options={fakeProducts}
+                  />
+                )}
+              />
+
+              <ErrorMessage
+                errors={errors}
+                name='products'
                 render={({ message }) => (
                   <StyledErrorMessage>{message}</StyledErrorMessage>
                 )}
@@ -183,4 +222,4 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
   );
 };
 
-export default CategoryForm;
+export default SubCategoryForm;
