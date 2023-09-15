@@ -1,8 +1,8 @@
 import React from 'react';
-import { EntityForm } from '../../../modules';
+import { MacroCategoryForm } from '../../../modules';
 
 const AddMacroCategory = () => (
-  <EntityForm title='Nueva Macro Categoría' entity='macro categoría' />
+  <MacroCategoryForm title='Nueva Macro Categoría' />
 );
 
 export default AddMacroCategory;

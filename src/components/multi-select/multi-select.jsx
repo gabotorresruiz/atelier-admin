@@ -16,10 +16,18 @@ const MultiSelect = ({
   onChange,
   value,
   options,
+  required,
 }) => (
   <div>
-    <FormControl margin={margin} fullWidth={fullWidth} disabled={disabled}>
-      <InputLabel id='multiple-chip-label'>{inputLabel}</InputLabel>
+    <FormControl
+      margin={margin}
+      fullWidth={fullWidth}
+      disabled={disabled}
+      required={required}
+    >
+      <InputLabel id='multiple-chip-label' required={required}>
+        {inputLabel}
+      </InputLabel>
       <Select
         labelId='multiple-chip-label'
         id='multiple-chip'
@@ -27,6 +35,7 @@ const MultiSelect = ({
         value={value}
         onChange={onChange}
         label={label}
+        required={required}
         input={<OutlinedInput id='select-multiple-chip' label={label} />}
         renderValue={selected => (
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>

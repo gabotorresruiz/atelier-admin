@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { styled } from '@mui/system';
 import { useParams } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
-import { MacroCategoryForm } from '../../../modules';
+import { SubCategoryForm } from '../../../modules';
 
 const StyledAlert = styled(Alert)(
   ({ theme }) => `
@@ -13,7 +13,7 @@ const StyledAlert = styled(Alert)(
 `,
 );
 
-const EditMacroCategory = () => {
+const EditSubCategory = () => {
   const { id } = useParams();
 
   const [alert, setAlert] = useState({
@@ -34,9 +34,9 @@ const EditMacroCategory = () => {
         </StyledAlert>
       )}
 
-      <MacroCategoryForm title='Editar Macro Categoría' id={id} />
+      <SubCategoryForm title='Editar Sub Categoría' id={id} />
     </>
   );
 };
 
-export default EditMacroCategory;
+export default EditSubCategory;

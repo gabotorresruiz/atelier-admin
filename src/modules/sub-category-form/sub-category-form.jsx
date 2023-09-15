@@ -50,12 +50,24 @@ const StyledBox = styled(Box)(
 );
 
 const fakeCategories = [
-  { value: 1, label: 'Categoría 1' },
-  { value: 2, label: 'Categoría 2' },
-  { value: 3, label: 'Categoría 3' },
+  { value: 1, label: 'Pintura Plástica' },
+  { value: 2, label: 'Pintura Esmalte' },
+  { value: 3, label: 'Pintura Decorativa' },
+  { value: 4, label: 'Pintura Brillante' },
+];
+const fakeProducts = [
+  { value: 1, label: 'Pintura Blanca Pintelux' },
+  { value: 2, label: 'Pintura Rosa Inca' },
+  { value: 3, label: 'Pincel' },
+  { value: 4, label: 'Incalux Diamente 3 en 1' },
+  { value: 5, label: 'Incamate' },
+  { value: 6, label: 'Incalex Toque Sublime Sesign Mate' },
+  { value: 7, label: 'Incasol' },
+  { value: 8, label: 'Enduido Incaplast' },
+  { value: 9, label: 'Fijador - Sellador Al Agua' },
 ];
 
-const EntityForm = ({ title, id = 0, entity, data = {} }) => {
+const SubCategoryForm = ({ title, id = 0, data = {} }) => {
   const navigate = useNavigate();
   const [alert, setAlert] = useState({
     isVisible: false,
@@ -70,8 +82,9 @@ const EntityForm = ({ title, id = 0, entity, data = {} }) => {
   } = useForm({
     mode: 'all',
     defaultValues: {
-      entityName: 'Macro Categoría',
+      subCategoryName: '',
       categories: [],
+      products: [],
     },
     resolver: yupResolver(schema),
   });
@@ -95,14 +108,14 @@ const EntityForm = ({ title, id = 0, entity, data = {} }) => {
           {alert.message}
         </StyledAlert>
       )}
-      <Container component='div'>
+      <Container component='div' maxWidth='sm'>
         <h1>{title}</h1>
         <StyledBox component='form' onSubmit={onSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Controller
-                name='entityName'
-                id='entityName'
+                name='subCategoryName'
+                id='subCategoryName'
                 control={control}
                 render={({ field: { onChange, value } }) => (
                   <TextField
@@ -112,46 +125,72 @@ const EntityForm = ({ title, id = 0, entity, data = {} }) => {
                         min: 0,
                       },
                     }}
-                    label={`Nombre ${entity}`}
-                    name='entityName'
+                    label='Nombre Sub Categoría'
+                    name='subCategoryName'
                     onChange={onChange}
                     required
                     type='text'
                     value={value}
+                    variant='outlined'
                   />
                 )}
               />
               <ErrorMessage
                 errors={errors}
-                name='entityName'
+                name='subCategoryName'
                 render={({ message }) => (
                   <StyledErrorMessage>{message}</StyledErrorMessage>
                 )}
               />
             </Grid>
 
-            <Grid item xs={6}>
-              {entity === 'macro categoría' && (
-                <Controller
-                  control={control}
-                  name='categories'
-                  // defaultValue={}
-                  render={({ field }) => (
-                    <MultiSelect
-                      fullWidth
-                      name='categories'
-                      inputLabel='Categorías *'
-                      label='Categorías *'
-                      onChange={field.onChange}
-                      value={Array.isArray(field.value) ? field.value : []}
-                      options={fakeCategories}
-                    />
-                  )}
-                />
-              )}
+            <Grid item xs={12}>
+              <Controller
+                control={control}
+                name='categories'
+                render={({ field }) => (
+                  <MultiSelect
+                    fullWidth
+                    name='categories'
+                    inputLabel='Categorías'
+                    label='Categorías'
+                    required
+                    onChange={field.onChange}
+                    value={Array.isArray(field.value) ? field.value : []}
+                    options={fakeCategories}
+                    variant='outlined'
+                  />
+                )}
+              />
+
               <ErrorMessage
                 errors={errors}
                 name='categories'
+                render={({ message }) => (
+                  <StyledErrorMessage>{message}</StyledErrorMessage>
+                )}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Controller
+                control={control}
+                name='products'
+                render={({ field }) => (
+                  <MultiSelect
+                    fullWidth
+                    name='products'
+                    inputLabel='Productos'
+                    label='Productos'
+                    onChange={field.onChange}
+                    value={Array.isArray(field.value) ? field.value : []}
+                    options={fakeProducts}
+                  />
+                )}
+              />
+
+              <ErrorMessage
+                errors={errors}
+                name='products'
                 render={({ message }) => (
                   <StyledErrorMessage>{message}</StyledErrorMessage>
                 )}
@@ -183,4 +222,4 @@ const EntityForm = ({ title, id = 0, entity, data = {} }) => {
   );
 };
 
-export default EntityForm;
+export default SubCategoryForm;
