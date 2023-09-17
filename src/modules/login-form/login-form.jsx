@@ -59,8 +59,9 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const [alert, setAlert] = useState(false);
   const [{ response, error, isLoading }, doFetch] = useFetch({
-    entity: 'login-sellers',
+    entity: 'login',
     fetchMethod: 'POST',
+    headerOrigin: 'http://localhost:8081/admin',
   });
   const {
     control,
@@ -92,6 +93,7 @@ const LoginForm = () => {
   };
 
   useEffect(() => {
+    console.log('response****', response);
     if (error) setAlert(true);
     if (response && response.token) logginSuccess(response);
   }, [error, logginSuccess, response]);

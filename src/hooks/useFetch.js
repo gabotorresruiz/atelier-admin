@@ -4,7 +4,13 @@ import { getLoggedUser, getQueryParams } from '../utils';
 
 const API_BASE_URI = import.meta.env.VITE_API_BASE_URI;
 
-const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
+const useFetch = ({
+  entity,
+  fetchMethod,
+  id = 0,
+  fetchParams = null,
+  headerOrigin = undefined,
+}) => {
   const navigate = useNavigate();
   const [response, setResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -68,6 +74,7 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
           'Content-Type': 'application/json',
         }
       : {
+          'x-origin': headerOrigin,
           'Content-Type': 'application/json',
         };
 
@@ -88,7 +95,8 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
       : `${API_BASE_URI}/${entity}`;
 
     if (params) uri += getQueryParams(params);
-
+    console.log('uri**', uri);
+    console.log('options**', options);
     if (method === 'GET' && !refreshData) {
       fetchData(uri, options);
       return;
@@ -99,6 +107,7 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
     bodyFetch,
     entity,
     fetchData,
+    headerOrigin,
     id,
     isLoading,
     method,
