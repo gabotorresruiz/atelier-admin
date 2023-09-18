@@ -58,6 +58,7 @@ const StyledButton = styled(LoadingButton)(
 const LoginForm = () => {
   const navigate = useNavigate();
   const [alert, setAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
   const [{ response, error, isLoading }, doFetch] = useFetch({
     entity: 'login',
     fetchMethod: 'POST',
@@ -93,8 +94,17 @@ const LoginForm = () => {
   };
 
   useEffect(() => {
-    console.log('response****', response);
-    if (error) setAlert(true);
+    if (error) {
+      if (error.response && error.response.status === 500) {
+        setAlert(true);
+        setAlertMessage('Algo salió mal en el servidor.');
+      } else {
+        setAlert(true);
+        setAlertMessage(
+          'Email y/o contraseña incorrectos. Por favor intente nuevamente.',
+        );
+      }
+    }
     if (response && response.token) logginSuccess(response);
   }, [error, logginSuccess, response]);
 
@@ -102,9 +112,10 @@ const LoginForm = () => {
     <>
       {alert && (
         <StyledAlert onClose={closeAlert} severity='error'>
-          Email y/o contraseña incorrectos. Por favor intente nuevamente
+          {alertMessage}
         </StyledAlert>
       )}
+
       <StyledContainer component='div' maxWidth='xs'>
         <StyledBoxWrapper>
           <StyledAvatar>

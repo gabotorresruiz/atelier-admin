@@ -95,8 +95,6 @@ const useFetch = ({
       : `${API_BASE_URI}/${entity}`;
 
     if (params) uri += getQueryParams(params);
-    console.log('uri**', uri);
-    console.log('options**', options);
     if (method === 'GET' && !refreshData) {
       fetchData(uri, options);
       return;
