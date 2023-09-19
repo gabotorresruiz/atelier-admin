@@ -62,7 +62,7 @@ const LoginForm = () => {
   const [{ response, error, isLoading }, doFetch] = useFetch({
     entity: 'login',
     fetchMethod: 'POST',
-    headerOrigin: 'http://localhost:8081/admin',
+    header: 'http://localhost:8081/admin',
   });
   const {
     control,

@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { getLoggedUser, getQueryParams } from '../utils';
 
 const API_BASE_URI = import.meta.env.VITE_API_BASE_URI;
+const SCHEMA = import.meta.env.VITE_SCHEMA_NAME;
 
 const useFetch = ({
   entity,
   fetchMethod,
   id = 0,
   fetchParams = null,
-  headerOrigin = undefined,
+  header = undefined,
 }) => {
   const navigate = useNavigate();
   const [response, setResponse] = useState(null);
@@ -74,8 +75,9 @@ const useFetch = ({
           'Content-Type': 'application/json',
         }
       : {
-          'x-origin': headerOrigin,
+          'x-origin': header,
           'Content-Type': 'application/json',
+          schema: SCHEMA,
         };
 
     const options =
@@ -105,7 +107,7 @@ const useFetch = ({
     bodyFetch,
     entity,
     fetchData,
-    headerOrigin,
+    header,
     id,
     isLoading,
     method,
