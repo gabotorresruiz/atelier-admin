@@ -1,8 +1,6 @@
 import React from 'react';
 
+// eslint-disable-next-line import/prefer-default-export
 export const WithProtectedRoute = React.lazy(() =>
   import('./with-protected-route'),
-);
-export const WithProtectedAdminRoute = React.lazy(() =>
-  import('./with-protected-admin-route'),
 );

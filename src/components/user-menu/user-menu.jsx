@@ -9,7 +9,7 @@ import {
   ListItemIcon,
   IconButton,
 } from '@mui/material';
-import { getLoggedUser, isAdmin } from '../../utils';
+import { getLoggedUser } from '../../utils';
 import userMenuConfig from './user-menu-config';
 
 const StyledIconButton = styled(IconButton)`
@@ -47,7 +47,6 @@ const UserMenu = () => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const { user } = getLoggedUser();
-  const isUserAdmin = isAdmin();
   const open = Boolean(anchorEl);
 
   const handleClickUser = event => {
@@ -84,7 +83,7 @@ const UserMenu = () => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        {userMenuConfig(isUserAdmin).map(item => {
+        {userMenuConfig.map(item => {
           const { element, href = '', icon = null, label = '' } = item;
 
           switch (element) {
