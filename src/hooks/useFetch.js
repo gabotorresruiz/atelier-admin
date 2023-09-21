@@ -5,13 +5,7 @@ import { getLoggedUser, getQueryParams } from '../utils';
 const API_BASE_URI = import.meta.env.VITE_API_BASE_URI;
 const SCHEMA = import.meta.env.VITE_SCHEMA_NAME;
 
-const useFetch = ({
-  entity,
-  fetchMethod,
-  id = 0,
-  fetchParams = null,
-  header = undefined,
-}) => {
+const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
   const navigate = useNavigate();
   const [response, setResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,13 +32,15 @@ const useFetch = ({
     async (uri, options) => {
       try {
         const res = await fetch(uri, options);
-
-        if (res.status === 401 || res.status === 403) {
+        if (res.statusCode === 401 || res.statusCode === 403) {
           localStorage.clear();
           return navigate('/login');
         }
 
-        if (!res.ok) throw new Error(res.statusText);
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw errorData;
+        }
 
         if (res.status === 201 || res.status === 204) {
           setIsLoading(false);
@@ -75,7 +71,7 @@ const useFetch = ({
           'Content-Type': 'application/json',
         }
       : {
-          'x-origin': header,
+          'x-origin': 'http://localhost:8081/admin',
           'Content-Type': 'application/json',
           schema: SCHEMA,
         };
@@ -101,13 +97,11 @@ const useFetch = ({
       fetchData(uri, options);
       return;
     }
-
     if (isLoading) fetchData(uri, options);
   }, [
     bodyFetch,
     entity,
     fetchData,
-    header,
     id,
     isLoading,
     method,

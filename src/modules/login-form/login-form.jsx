@@ -62,7 +62,6 @@ const LoginForm = () => {
   const [{ response, error, isLoading }, doFetch] = useFetch({
     entity: 'login',
     fetchMethod: 'POST',
-    header: 'http://localhost:8081/admin',
   });
   const {
     control,
@@ -95,16 +94,14 @@ const LoginForm = () => {
 
   useEffect(() => {
     if (error) {
-      if (error.response && error.response.status === 500) {
-        setAlert(true);
-        setAlertMessage('Algo salió mal en el servidor.');
-      } else {
-        setAlert(true);
-        setAlertMessage(
-          'Email y/o contraseña incorrectos. Por favor intente nuevamente.',
-        );
-      }
+      setAlert(true);
+      setAlertMessage(
+        error.statusCode === 403
+          ? `${error.message}. Intente nuevamente...`
+          : 'Algo salió mal. Intente nuevamente...',
+      );
     }
+
     if (response && response.token) logginSuccess(response);
   }, [error, logginSuccess, response]);
 
