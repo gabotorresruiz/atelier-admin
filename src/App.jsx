@@ -7,19 +7,23 @@ import {
   Routes,
 } from 'react-router-dom';
 import {
+  AddCategory,
+  AddMacroCategory,
+  AddProduct,
+  AddSubCategory,
   Categories,
   Dashboard,
   EditCategory,
+  EditMacroCategory,
+  EditProduct,
+  EditSubCategory,
   Login,
   MacroCategories,
-  AddCategory,
-  AddMacroCategory,
-  EditMacroCategory,
-  UserSettings,
+  Products,
   SubCategories,
-  AddSubCategory,
-  EditSubCategory,
+  UserSettings,
 } from './pages';
+
 import Layout from './layout';
 import { LinearLoader } from './components';
 import { WithProtectedRoute } from './HOC';
@@ -58,6 +62,9 @@ const App = () => (
           <Route path='sub-categories' element={<SubCategories />} />
           <Route path='sub-category/new' element={<AddSubCategory />} />
           <Route path='sub-category/edit/:id' element={<EditSubCategory />} />
+          <Route path='products' element={<Products />} />
+          <Route path='product/new' element={<AddProduct />} />
+          <Route path='product/edit/:id' element={<EditProduct />} />
           <Route path='settings' element={<UserSettings />} />
         </Route>
       </Route>
