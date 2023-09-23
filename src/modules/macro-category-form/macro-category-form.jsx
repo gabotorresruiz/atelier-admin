@@ -1,16 +1,16 @@
 /** next line will be removed */
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { Controller, useForm } from 'react-hook-form';
-
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import { Alert, Box, Button, Container, Grid, TextField } from '@mui/material';
+import { useFetch } from '../../hooks';
 import schema from './schema';
 
 const StyledBoxWrapper = styled(Box)(
@@ -61,22 +61,41 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
     message: '',
     severity: '',
   });
+  console.log('data', data);
+  console.log('Object.keys(data).length === 0', Object.keys(data).length === 0);
+  const entity = 'macro-categories';
+
+  const isEmptyData = Object.keys(data).length === 0;
+
+  const fetchMethod = isEmptyData ? 'POST' : 'PUT';
+
+  const [
+    { error: postError, isLoading: postIsLoading, response: postResponse },
+    doFetch,
+  ] = useFetch({
+    entity,
+    fetchMethod,
+    id,
+  });
 
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
+    reset,
   } = useForm({
     mode: 'all',
     defaultValues: {
-      entityName: '',
+      macroCategoryName: data.name ?? '',
+
       categories: [],
     },
     resolver: yupResolver(schema),
   });
 
   const onSubmit = formData => {
-    // TODO
+    const body = { name: formData.macroCategoryName };
+    doFetch({ body });
   };
 
   const closeAlert = () => {
@@ -86,6 +105,44 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
   const handleBack = () => {
     navigate(-1);
   };
+  const handleError = useCallback(() => {
+    setAlert({
+      isVisible: true,
+      message: 'Algo salió mal... Por favor intente nuevamente',
+      severity: 'error',
+    });
+  }, []);
+
+  const postSuccess = useCallback(
+    fetchResponse => {
+      let message = '';
+
+      if (fetchResponse.status === 201) {
+        message = 'Macrocategoría agregada satisfactoriamente!';
+        reset();
+      }
+
+      if (fetchResponse.status === 204)
+        message = '¡Macrocategoría editado satisfactoriamente!';
+
+      setAlert({
+        isVisible: true,
+        message,
+        severity: 'success',
+      });
+    },
+    [reset],
+  );
+
+  useEffect(() => {
+    if (postError) return handleError();
+
+    if (
+      postResponse &&
+      (postResponse.status === 201 || postResponse.status === 204)
+    )
+      return postSuccess(postResponse);
+  }, [postSuccess, postError, handleError, postResponse]);
 
   return (
     <>
@@ -143,7 +200,7 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
               onClick={handleSubmit(onSubmit)}
               variant='contained'
               disabled={!isValid}
-              loading={false}
+              loading={postIsLoading}
             >
               Guardar
             </StyledButton>

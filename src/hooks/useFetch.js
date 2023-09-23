@@ -32,6 +32,7 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
     async (uri, options) => {
       try {
         const res = await fetch(uri, options);
+        console.log('res****', res);
         if (res.statusCode === 401 || res.statusCode === 403) {
           localStorage.clear();
           return navigate('/login');
@@ -67,8 +68,8 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
     const loggedUser = getLoggedUser();
     const headers = loggedUser?.token
       ? {
-          Authorization: `Bearer ${loggedUser.token}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${loggedUser?.token}`,
+          schemaToken: `${loggedUser?.tokenSchema}`,
         }
       : {
           'x-origin': 'http://localhost:8081/admin',
@@ -94,9 +95,13 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
 
     if (params) uri += getQueryParams(params);
     if (method === 'GET' && !refreshData) {
+      console.log('uri*****', uri);
+      console.log('options**', options);
       fetchData(uri, options);
       return;
     }
+    console.log('uri*****', uri);
+    console.log('options**', options);
     if (isLoading) fetchData(uri, options);
   }, [
     bodyFetch,
