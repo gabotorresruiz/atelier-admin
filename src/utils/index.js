@@ -1,4 +1,4 @@
 import getLoggedUser from './get-logged-user';
-import isSuperAdmin from './is-super-admin';
+import getQueryParams from './get-query-params';
 
-export { getLoggedUser, isSuperAdmin };
+export { getLoggedUser, getQueryParams };

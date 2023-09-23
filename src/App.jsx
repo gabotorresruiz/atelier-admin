@@ -60,9 +60,6 @@ const App = () => (
           <Route path='sub-category/edit/:id' element={<EditSubCategory />} />
           <Route path='settings' element={<UserSettings />} />
         </Route>
-        {/* <Route element={<WithProtectedSuperAdminRoute />}>
-          <Route path='invite-user' element={<InviteUser />} />
-        </Route> */}
       </Route>
       <Route path='*' element={<p>404 Not Found</p>} />
     </Routes>

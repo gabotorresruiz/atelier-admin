@@ -9,7 +9,7 @@ import {
   ListItemIcon,
   IconButton,
 } from '@mui/material';
-import { getLoggedUser, isSuperAdmin } from '../../utils';
+import { getLoggedUser } from '../../utils';
 import userMenuConfig from './user-menu-config';
 
 const StyledIconButton = styled(IconButton)`
@@ -45,8 +45,8 @@ const StyledMenu = styled(Menu)`
 const UserMenu = () => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
-  const { email } = getLoggedUser();
-  const isUserSuperAdmin = isSuperAdmin();
+
+  const { user } = getLoggedUser();
   const open = Boolean(anchorEl);
 
   const handleClickUser = event => {
@@ -71,7 +71,7 @@ const UserMenu = () => {
         aria-haspopup='true'
         aria-expanded={open ? 'true' : undefined}
       >
-        <StyledAvatar>{email.charAt(0).toUpperCase()}</StyledAvatar>
+        <StyledAvatar>{user.email.charAt(0).toUpperCase()}</StyledAvatar>
       </StyledIconButton>
       <StyledMenu
         anchorEl={anchorEl}
@@ -83,7 +83,7 @@ const UserMenu = () => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        {userMenuConfig(isUserSuperAdmin).map(item => {
+        {userMenuConfig.map(item => {
           const { element, href = '', icon = null, label = '' } = item;
 
           switch (element) {
