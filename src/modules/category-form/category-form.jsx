@@ -1,16 +1,16 @@
 /** next line will be removed */
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { Controller, useForm } from 'react-hook-form';
-
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import { Alert, Box, Button, Container, Grid, TextField } from '@mui/material';
+import { useFetch } from '../../hooks';
 import schema from './schema';
 import { MultiSelect } from '../../components';
 
@@ -65,21 +65,38 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
     severity: '',
   });
 
+  const fetchMethod = Object.keys(data).length === 0 ? 'POST' : 'PUT';
+
+  const defaultCategoryName = Object.keys(data).length === 0 ? '' : data.name;
+
+  const defaultMacroCategories =
+    Object.keys(data).length === 0 ? [] : data.macrocategories;
+
+  const [{ response, error, isLoading }, doFetch] = useFetch({
+    entity: 'categories',
+    fetchMethod,
+    id,
+  });
+
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
+    reset,
   } = useForm({
     mode: 'all',
     defaultValues: {
-      categoryName: '',
-      macroCategories: [],
+      categoryName: defaultCategoryName,
+      macroCategories: defaultMacroCategories,
     },
     resolver: yupResolver(schema),
   });
 
   const onSubmit = formData => {
-    // TODO
+    const body = {
+      name: formData.name,
+    };
+    doFetch({ body });
   };
 
   const closeAlert = () => {
@@ -89,6 +106,42 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
   const handleBack = () => {
     navigate(-1);
   };
+
+  const handleError = useCallback(() => {
+    setAlert({
+      isVisible: true,
+      message: 'Algo salió mal... Por favor intente nuevamente',
+      severity: 'error',
+    });
+  }, []);
+
+  const postSuccess = useCallback(
+    fetchResponse => {
+      let message = '';
+
+      if (fetchResponse.status === 201) {
+        message = 'Categoría agregado satisfactoriamente!';
+        reset();
+      }
+
+      if (fetchResponse.status === 204)
+        message = 'Cateogría editado satisfactoriamente!';
+
+      setAlert({
+        isVisible: true,
+        message,
+        severity: 'success',
+      });
+    },
+    [reset],
+  );
+
+  useEffect(() => {
+    if (error) return handleError();
+
+    if (response && (response.status === 201 || response.status === 204))
+      return postSuccess(response);
+  }, [postSuccess, error, response, handleError]);
 
   return (
     <>

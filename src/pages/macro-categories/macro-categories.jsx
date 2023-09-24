@@ -14,18 +14,12 @@ const StyledAlert = styled(Alert)(
 `,
 );
 
-// const encodedData = [
-//   { id: 1, name: 'Superficie', createdAt: '2023-08-15' },
-//   { id: 2, name: 'Tipo', createdAt: '2023-08-16' },
-//   { id: 3, name: 'Utilidad', createdAt: '2023-08-17' },
-// ];
-
 const MacroCategories = () => {
   const [{ error, isLoading, response }, doFetch] = useFetch({
     entity: 'macro-categories',
     fetchMethod: 'GET',
   });
-  console.log('response***', response);
+
   const [alert, setAlert] = useState({
     isVisible: false,
     message: '',
@@ -64,7 +58,7 @@ const MacroCategories = () => {
           data={response}
           refreshData={refreshData}
           tableTitle='Macro Categorías'
-          entity='macro-category'
+          entity='macro-categories'
         />
       ) : (
         <LinearLoader />

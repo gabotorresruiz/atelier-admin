@@ -61,8 +61,7 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
     message: '',
     severity: '',
   });
-  console.log('data', data);
-  console.log('Object.keys(data).length === 0', Object.keys(data).length === 0);
+
   const entity = 'macro-categories';
 
   const isEmptyData = Object.keys(data).length === 0;
@@ -87,15 +86,22 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
     mode: 'all',
     defaultValues: {
       macroCategoryName: data.name ?? '',
-
-      categories: [],
     },
     resolver: yupResolver(schema),
   });
 
   const onSubmit = formData => {
-    const body = { name: formData.macroCategoryName };
-    doFetch({ body });
+    console.log('formData***', formData);
+    console.log('macroCategoryName***', formData.macroCategoryName);
+
+    // doFetch({
+    //   body: {
+    //     name: formData.macroCategoryName,
+    //   },
+    // });
+    doFetch({
+      body: { name: 'Valid Macro Category Name' },
+    });
   };
 
   const closeAlert = () => {

@@ -6,6 +6,7 @@ const API_BASE_URI = import.meta.env.VITE_API_BASE_URI;
 const SCHEMA = import.meta.env.VITE_SCHEMA_NAME;
 
 const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
+  console.log('id****', id);
   const navigate = useNavigate();
   const [response, setResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -17,6 +18,7 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
 
   const doFetch = useCallback(
     ({ body = undefined, refresh = false, newParams = null }) => {
+      console.log('body=====', body);
       setMethod(fetchMethod);
       setError(null);
       if (body) setBodyFetch(body);
@@ -31,6 +33,7 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
   const fetchData = useCallback(
     async (uri, options) => {
       try {
+        console.log('entra a fetch data****');
         const res = await fetch(uri, options);
         console.log('res****', res);
         if (res.statusCode === 401 || res.statusCode === 403) {
@@ -70,6 +73,7 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
       ? {
           Authorization: `Bearer ${loggedUser?.token}`,
           schemaToken: `${loggedUser?.tokenSchema}`,
+          'Content-Type': 'application/json',
         }
       : {
           'x-origin': 'http://localhost:8081/admin',
