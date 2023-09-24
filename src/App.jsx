@@ -21,7 +21,6 @@ import {
   MacroCategories,
   Products,
   SubCategories,
-  UserSettings,
 } from './pages';
 
 import Layout from './layout';
@@ -65,7 +64,6 @@ const App = () => (
           <Route path='products' element={<Products />} />
           <Route path='product/new' element={<AddProduct />} />
           <Route path='product/edit/:id' element={<EditProduct />} />
-          <Route path='settings' element={<UserSettings />} />
         </Route>
       </Route>
       <Route path='*' element={<p>404 Not Found</p>} />

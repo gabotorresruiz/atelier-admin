@@ -55,17 +55,6 @@ const fakeCategories = [
   { value: 3, label: 'Pintura Decorativa' },
   { value: 4, label: 'Pintura Brillante' },
 ];
-const fakeProducts = [
-  { value: 1, label: 'Pintura Blanca Pintelux' },
-  { value: 2, label: 'Pintura Rosa Inca' },
-  { value: 3, label: 'Pincel' },
-  { value: 4, label: 'Incalux Diamente 3 en 1' },
-  { value: 5, label: 'Incamate' },
-  { value: 6, label: 'Incalex Toque Sublime Sesign Mate' },
-  { value: 7, label: 'Incasol' },
-  { value: 8, label: 'Enduido Incaplast' },
-  { value: 9, label: 'Fijador - Sellador Al Agua' },
-];
 
 const SubCategoryForm = ({ title, id = 0, data = {} }) => {
   const navigate = useNavigate();
@@ -166,31 +155,6 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
               <ErrorMessage
                 errors={errors}
                 name='categories'
-                render={({ message }) => (
-                  <StyledErrorMessage>{message}</StyledErrorMessage>
-                )}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Controller
-                control={control}
-                name='products'
-                render={({ field }) => (
-                  <MultiSelect
-                    fullWidth
-                    name='products'
-                    inputLabel='Productos'
-                    label='Productos'
-                    onChange={field.onChange}
-                    value={Array.isArray(field.value) ? field.value : []}
-                    options={fakeProducts}
-                  />
-                )}
-              />
-
-              <ErrorMessage
-                errors={errors}
-                name='products'
                 render={({ message }) => (
                   <StyledErrorMessage>{message}</StyledErrorMessage>
                 )}

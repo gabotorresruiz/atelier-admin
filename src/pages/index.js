@@ -26,5 +26,3 @@ export const EditSubCategory = React.lazy(() =>
 export const Products = React.lazy(() => import('./products'));
 export const AddProduct = React.lazy(() => import('./products/add-product'));
 export const EditProduct = React.lazy(() => import('./products/edit-product'));
-export const UserSettings = React.lazy(() => import('./user-settings'));
-export const InviteUser = React.lazy(() => import('./invite-user'));

@@ -111,7 +111,7 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
                         min: 0,
                       },
                     }}
-                    label='Nombre Macro Categoría'
+                    label='Nombre'
                     name='macroCategoryName'
                     onChange={onChange}
                     required
