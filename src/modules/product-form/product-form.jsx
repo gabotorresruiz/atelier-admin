@@ -9,10 +9,20 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import LoadingButton from '@mui/lab/LoadingButton';
-
-import { Alert, Box, Button, Container, Grid, TextField } from '@mui/material';
-import schema from './schema';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import {
+  Alert,
+  Box,
+  Button,
+  Container,
+  IconButton,
+  Grid,
+  Stack,
+  TextField,
+} from '@mui/material';
 import { MultiSelect } from '../../components';
+import schema from './schema';
+import convertToBase64 from './constants';
 
 const StyledBoxWrapper = styled(Box)(
   ({ theme }) => `
@@ -49,20 +59,60 @@ const StyledBox = styled(Box)(
 `,
 );
 
-const fakeCategories = [
+const StyledImg = styled('img')`
+  object-fit: scale-down;
+  height: 100%;
+  width: 100%;
+`;
+
+// const StyledButtonImg = styled(Button)`
+//   width: 165px;
+// `;
+const StyledButtonImg = styled(Button)`
+  width: auto;
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+`;
+
+const StyledTitle = styled('h1')`
+  text-align: center;
+  margin-bottom: 20px;
+`;
+
+const StyledStack = styled(Stack)(
+  ({ theme }) => `
+  gap: ${theme.spacing(2)};
+`,
+);
+
+const StyledImgWrapper = styled('div')`
+  width: 100%;
+  height: 250px;
+`;
+
+const fakeSubCategories = [
   { value: 1, label: 'Pintura Plástica' },
   { value: 2, label: 'Pintura Esmalte' },
   { value: 3, label: 'Pintura Decorativa' },
   { value: 4, label: 'Pintura Brillante' },
 ];
 
-const SubCategoryForm = ({ title, id = 0, data = {} }) => {
+const ProductForm = ({ title, id = 0, data = {} }) => {
   const navigate = useNavigate();
   const [alert, setAlert] = useState({
     isVisible: false,
     message: '',
     severity: '',
   });
+
+  const [selectedImg, setSelectedImg] = useState(
+    data.image ? `data:image/jpeg;base64,${data.image}` : '',
+  );
+  const [base64Img, setBase64Img] = useState(data.image ? data.image : '');
 
   const {
     control,
@@ -71,15 +121,18 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
   } = useForm({
     mode: 'all',
     defaultValues: {
-      subCategoryName: '',
-      categories: [],
-      products: [],
+      productName: '',
+      subCategories: [],
     },
     resolver: yupResolver(schema),
   });
 
   const onSubmit = formData => {
     // TODO
+    const body = {
+      ...formData,
+      image: base64Img,
+    };
   };
 
   const closeAlert = () => {
@@ -90,6 +143,19 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
     navigate(-1);
   };
 
+  const handleOnchangeImg = e => {
+    const uploadImg = e.currentTarget.files[0];
+
+    // Image to base64 to send to the backend
+    convertToBase64(uploadImg).then(dataImg => {
+      setBase64Img(dataImg);
+    });
+
+    // Image to show in the form
+    const url = URL.createObjectURL(uploadImg);
+    setSelectedImg(url);
+  };
+
   return (
     <>
       {alert.isVisible && (
@@ -98,13 +164,41 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
         </StyledAlert>
       )}
       <Container component='div' maxWidth='sm'>
-        <h1>{title}</h1>
+        <StyledTitle>{title}</StyledTitle>
         <StyledBox component='form' onSubmit={onSubmit}>
+          <StyledStack direction='column' alignItems='center' spacing={2}>
+            <StyledButtonImg component='label' variant='contained'>
+              Subir Imagen
+              <input
+                hidden
+                accept='image/*'
+                multiple
+                type='file'
+                onChange={handleOnchangeImg}
+              />
+            </StyledButtonImg>
+            <StyledStack direction='row' alignItems='center' spacing={2}>
+              <IconButton
+                aria-label='upload picture'
+                color='primary'
+                component='label'
+                disabled
+              >
+                <PhotoCamera />
+              </IconButton>
+              {selectedImg && (
+                <StyledImgWrapper>
+                  <StyledImg alt='imagen-categoria' src={selectedImg} />
+                </StyledImgWrapper>
+              )}
+            </StyledStack>
+          </StyledStack>
+
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Controller
-                name='subCategoryName'
-                id='subCategoryName'
+                name='productName'
+                id='productName'
                 control={control}
                 render={({ field: { onChange, value } }) => (
                   <TextField
@@ -114,8 +208,8 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
                         min: 0,
                       },
                     }}
-                    label='Nombre Sub Categoría'
-                    name='subCategoryName'
+                    label='Nombre Producto'
+                    name='productName'
                     onChange={onChange}
                     required
                     type='text'
@@ -126,7 +220,7 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
               />
               <ErrorMessage
                 errors={errors}
-                name='subCategoryName'
+                name='productName'
                 render={({ message }) => (
                   <StyledErrorMessage>{message}</StyledErrorMessage>
                 )}
@@ -136,17 +230,17 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
             <Grid item xs={12}>
               <Controller
                 control={control}
-                name='categories'
+                name='subCategories'
                 render={({ field }) => (
                   <MultiSelect
                     fullWidth
-                    name='categories'
-                    inputLabel='Categorías'
-                    label='Categorías'
+                    name='subCategories'
+                    inputLabel='Sub Categorías'
+                    label='Sub Categorías'
                     required
                     onChange={field.onChange}
                     value={Array.isArray(field.value) ? field.value : []}
-                    options={fakeCategories}
+                    options={fakeSubCategories}
                     variant='outlined'
                   />
                 )}
@@ -154,7 +248,7 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
 
               <ErrorMessage
                 errors={errors}
-                name='categories'
+                name='subCategories'
                 render={({ message }) => (
                   <StyledErrorMessage>{message}</StyledErrorMessage>
                 )}
@@ -186,4 +280,4 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
   );
 };
 
-export default SubCategoryForm;
+export default ProductForm;

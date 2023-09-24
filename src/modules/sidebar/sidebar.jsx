@@ -6,6 +6,7 @@ import {
   Category as CategoryIcon,
   Dashboard as DashboardIcon,
 } from '@mui/icons-material';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import { ListItemLink } from '../../components';
 
 const StyledDrawer = styled(Drawer)`
@@ -78,6 +79,18 @@ const Sidebar = React.memo(() => {
             to='/sub-categories'
           />
         </List>
+        <Divider />
+        <List>
+          <ListItemLink
+            icon={<InventoryIcon />}
+            id='/products'
+            onClick={handleClick}
+            selectedItem={selectedItem}
+            text='Productos'
+            to='/products'
+          />
+        </List>
+        <Divider />
       </StyledBox>
     </StyledDrawer>
   );
