@@ -47,13 +47,6 @@ const StyledBox = styled(Box)(
   gap: ${theme.spacing(2)};
 `,
 );
-
-const fakeCategories = [
-  { value: 1, label: 'Categoría 1' },
-  { value: 2, label: 'Categoría 2' },
-  { value: 3, label: 'Categoría 3' },
-];
-
 const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
   const navigate = useNavigate();
   const [alert, setAlert] = useState({
@@ -68,10 +61,7 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
 
   const fetchMethod = isEmptyData ? 'POST' : 'PUT';
 
-  const [
-    { error: postError, isLoading: postIsLoading, response: postResponse },
-    doFetch,
-  ] = useFetch({
+  const [{ error, isLoading, response }, doFetch] = useFetch({
     entity,
     fetchMethod,
     id,
@@ -91,16 +81,8 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
   });
 
   const onSubmit = formData => {
-    console.log('formData***', formData);
-    console.log('macroCategoryName***', formData.macroCategoryName);
-
-    // doFetch({
-    //   body: {
-    //     name: formData.macroCategoryName,
-    //   },
-    // });
     doFetch({
-      body: { name: 'Valid Macro Category Name' },
+      body: { name: formData.macroCategoryName },
     });
   };
 
@@ -119,7 +101,7 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
     });
   }, []);
 
-  const postSuccess = useCallback(
+  const responseSuccess = useCallback(
     fetchResponse => {
       let message = '';
 
@@ -128,7 +110,7 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
         reset();
       }
 
-      if (fetchResponse.status === 204)
+      if (fetchResponse.status === 200)
         message = '¡Macrocategoría editado satisfactoriamente!';
 
       setAlert({
@@ -141,14 +123,10 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
   );
 
   useEffect(() => {
-    if (postError) return handleError();
-
-    if (
-      postResponse &&
-      (postResponse.status === 201 || postResponse.status === 204)
-    )
-      return postSuccess(postResponse);
-  }, [postSuccess, postError, handleError, postResponse]);
+    if (error) return handleError();
+    if (response && (response.status === 201 || response.status === 200))
+      return responseSuccess(response);
+  }, [responseSuccess, error, handleError, response]);
 
   return (
     <>
@@ -206,7 +184,7 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
               onClick={handleSubmit(onSubmit)}
               variant='contained'
               disabled={!isValid}
-              loading={postIsLoading}
+              loading={isLoading}
             >
               Guardar
             </StyledButton>

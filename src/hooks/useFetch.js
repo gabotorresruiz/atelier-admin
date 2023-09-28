@@ -6,7 +6,6 @@ const API_BASE_URI = import.meta.env.VITE_API_BASE_URI;
 const SCHEMA = import.meta.env.VITE_SCHEMA_NAME;
 
 const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
-  console.log('id****', id);
   const navigate = useNavigate();
   const [response, setResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +17,6 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
 
   const doFetch = useCallback(
     ({ body = undefined, refresh = false, newParams = null }) => {
-      console.log('body=====', body);
       setMethod(fetchMethod);
       setError(null);
       if (body) setBodyFetch(body);
@@ -33,9 +31,7 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
   const fetchData = useCallback(
     async (uri, options) => {
       try {
-        console.log('entra a fetch data****');
         const res = await fetch(uri, options);
-        console.log('res****', res);
         if (res.statusCode === 401 || res.statusCode === 403) {
           localStorage.clear();
           return navigate('/login');
@@ -46,7 +42,11 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
           throw errorData;
         }
 
-        if (res.status === 201 || res.status === 204) {
+        if (
+          res.status === 201 ||
+          (method === 'PUT' && res.status === 200) ||
+          res.status === 204
+        ) {
           setIsLoading(false);
           setResponse({ status: res.status });
           return;
@@ -64,7 +64,7 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
 
       setIsLoading(false);
     },
-    [navigate],
+    [method, navigate],
   );
 
   useEffect(() => {
@@ -99,13 +99,9 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
 
     if (params) uri += getQueryParams(params);
     if (method === 'GET' && !refreshData) {
-      console.log('uri*****', uri);
-      console.log('options**', options);
       fetchData(uri, options);
       return;
     }
-    console.log('uri*****', uri);
-    console.log('options**', options);
     if (isLoading) fetchData(uri, options);
   }, [
     bodyFetch,

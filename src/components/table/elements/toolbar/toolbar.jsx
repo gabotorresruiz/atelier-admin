@@ -37,16 +37,13 @@ const StyledTypography = styled(Typography)`
 `;
 
 const Toolbar = ({ entity, refreshData, rowSelected, tableTitle }) => {
-  console.log('==========entity===', entity);
   const [{ error, isLoading }, doFetch] = useFetch({
     entity,
     fetchMethod: 'DELETE',
     id: rowSelected,
   });
   const doDelete = () => {
-    doFetch({
-      // body: { visibility: false },
-    });
+    doFetch({});
   };
   const handleError = useCallback(() => {
     swal.showValidationMessage(`Algo salió mal: ${error}`);
@@ -67,8 +64,6 @@ const Toolbar = ({ entity, refreshData, rowSelected, tableTitle }) => {
         allowOutsideClick: () => !isLoading,
       })
       .then(result => {
-        console.log('result**', result);
-        console.log('error***', error);
         if (result.isConfirmed && !error) {
           swal.fire({
             title: '¡Eliminado exitósamente!',
