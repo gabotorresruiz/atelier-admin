@@ -1,23 +1,70 @@
-import React from 'react';
+import React, { Suspense, useCallback, useEffect, useState } from 'react';
+import { styled } from '@mui/system';
+import Alert from '@mui/material/Alert';
+import { useFetch } from '../../hooks';
+import { LinearLoader } from '../../components';
 import { CustomizedTable } from '../../modules';
 
-const encodedData = [
-  { id: 1, name: 'Exterior', createdAt: '2023-08-15' },
-  { id: 2, name: 'Interior', createdAt: '2023-08-16' },
-  { id: 3, name: 'Piso', createdAt: '2023-08-17' },
-  { id: 4, name: 'Metal', createdAt: '2023-09-05' },
-  { id: 5, name: 'Madera', createdAt: '2023-09-06' },
-  { id: 6, name: 'Azulejos', createdAt: '2023-09-07' },
-];
-
-const MacroCategories = () => (
-  <CustomizedTable
-    data={encodedData}
-    refreshData
-    isLoading={false}
-    tableTitle='Categorías'
-    entity='category'
-  />
+const StyledAlert = styled(Alert)(
+  ({ theme }) => `
+  position: absolute;
+  right: ${theme.spacing(2)};
+  top: ${theme.spacing(14)};
+  z-index: 1;
+`,
 );
 
-export default MacroCategories;
+const Categories = () => {
+  const [{ error, isLoading, response }, doFetch] = useFetch({
+    entity: 'categories',
+    fetchMethod: 'GET',
+  });
+
+  const [alert, setAlert] = useState({
+    isVisible: false,
+    message: '',
+    severity: '',
+  });
+
+  const refreshData = useCallback(() => {
+    doFetch({ refresh: true });
+  }, [doFetch]);
+
+  const closeAlert = () => {
+    setAlert(false);
+  };
+
+  const handleError = useCallback(() => {
+    setAlert({
+      isVisible: true,
+      message: 'Algo salió mal... Por favor intente nuevamente',
+      severity: 'error',
+    });
+  }, []);
+
+  useEffect(() => {
+    if (error) return handleError();
+  }, [error, handleError]);
+
+  return (
+    <Suspense fallback={<LinearLoader />}>
+      {alert.isVisible && (
+        <StyledAlert onClose={closeAlert} severity={alert.severity}>
+          {alert.message}
+        </StyledAlert>
+      )}
+      {!isLoading && response !== null && !error ? (
+        <CustomizedTable
+          data={response}
+          refreshData={refreshData}
+          tableTitle='Categorías'
+          entity='categories'
+        />
+      ) : (
+        <LinearLoader />
+      )}
+    </Suspense>
+  );
+};
+
+export default Categories;

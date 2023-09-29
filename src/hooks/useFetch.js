@@ -42,7 +42,11 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
           throw errorData;
         }
 
-        if (res.status === 201 || res.status === 204) {
+        if (
+          res.status === 201 ||
+          (method === 'PUT' && res.status === 200) ||
+          res.status === 204
+        ) {
           setIsLoading(false);
           setResponse({ status: res.status });
           return;
@@ -60,14 +64,15 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
 
       setIsLoading(false);
     },
-    [navigate],
+    [method, navigate],
   );
 
   useEffect(() => {
     const loggedUser = getLoggedUser();
     const headers = loggedUser?.token
       ? {
-          Authorization: `Bearer ${loggedUser.token}`,
+          Authorization: `Bearer ${loggedUser?.token}`,
+          schemaToken: `${loggedUser?.tokenSchema}`,
           'Content-Type': 'application/json',
         }
       : {

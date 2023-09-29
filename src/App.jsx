@@ -50,20 +50,20 @@ const App = () => (
         <Route element={<Layout />}>
           <Route path='dashboard' element={<Dashboard />} />
           <Route path='macro-categories' element={<MacroCategories />} />
-          <Route path='macro-category/new' element={<AddMacroCategory />} />
+          <Route path='macro-categories/new' element={<AddMacroCategory />} />
           <Route
-            path='macro-category/edit/:id'
+            path='macro-categories/edit/:id'
             element={<EditMacroCategory />}
           />
           <Route path='categories' element={<Categories />} />
-          <Route path='category/new' element={<AddCategory />} />
-          <Route path='category/edit/:id' element={<EditCategory />} />
+          <Route path='categories/new' element={<AddCategory />} />
+          <Route path='categories/edit/:id' element={<EditCategory />} />
           <Route path='sub-categories' element={<SubCategories />} />
-          <Route path='sub-category/new' element={<AddSubCategory />} />
-          <Route path='sub-category/edit/:id' element={<EditSubCategory />} />
+          <Route path='sub-categories/new' element={<AddSubCategory />} />
+          <Route path='sub-categories/edit/:id' element={<EditSubCategory />} />
           <Route path='products' element={<Products />} />
-          <Route path='product/new' element={<AddProduct />} />
-          <Route path='product/edit/:id' element={<EditProduct />} />
+          <Route path='products/new' element={<AddProduct />} />
+          <Route path='products/edit/:id' element={<EditProduct />} />
         </Route>
       </Route>
       <Route path='*' element={<p>404 Not Found</p>} />

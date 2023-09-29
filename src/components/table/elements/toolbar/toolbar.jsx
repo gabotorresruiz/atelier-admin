@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { styled } from '@mui/system';
 import { alpha } from '@mui/material/styles';
 import Swal from 'sweetalert2';
@@ -15,6 +15,7 @@ import {
   Delete as DeleteIcon,
   Edit as EditIcon,
 } from '@mui/icons-material';
+import { useFetch } from '../../../../hooks';
 import { Link } from '../../..';
 
 const swal = withReactContent(Swal);
@@ -36,9 +37,17 @@ const StyledTypography = styled(Typography)`
 `;
 
 const Toolbar = ({ entity, refreshData, rowSelected, tableTitle }) => {
+  const [{ error, isLoading }, doFetch] = useFetch({
+    entity,
+    fetchMethod: 'DELETE',
+    id: rowSelected,
+  });
   const doDelete = () => {
-    // TO DO
+    doFetch({});
   };
+  const handleError = useCallback(() => {
+    swal.showValidationMessage(`Algo salió mal: ${error}`);
+  }, [error]);
 
   const handleDelete = () => {
     swal
@@ -67,6 +76,10 @@ const Toolbar = ({ entity, refreshData, rowSelected, tableTitle }) => {
         }
       });
   };
+
+  useEffect(() => {
+    if (error) return handleError();
+  }, [error, handleError]);
 
   return (
     <StyledMuiToolbar rowselected={Boolean(rowSelected).toString()}>

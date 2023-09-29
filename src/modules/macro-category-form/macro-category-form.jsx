@@ -1,16 +1,16 @@
 /** next line will be removed */
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { Controller, useForm } from 'react-hook-form';
-
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import { Alert, Box, Button, Container, Grid, TextField } from '@mui/material';
+import { useFetch } from '../../hooks';
 import schema from './schema';
 
 const StyledBoxWrapper = styled(Box)(
@@ -47,13 +47,6 @@ const StyledBox = styled(Box)(
   gap: ${theme.spacing(2)};
 `,
 );
-
-const fakeCategories = [
-  { value: 1, label: 'Categoría 1' },
-  { value: 2, label: 'Categoría 2' },
-  { value: 3, label: 'Categoría 3' },
-];
-
 const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
   const navigate = useNavigate();
   const [alert, setAlert] = useState({
@@ -62,21 +55,35 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
     severity: '',
   });
 
+  const entity = 'macro-categories';
+
+  const isEmptyData = Object.keys(data).length === 0;
+
+  const fetchMethod = isEmptyData ? 'POST' : 'PUT';
+
+  const [{ error, isLoading, response }, doFetch] = useFetch({
+    entity,
+    fetchMethod,
+    id,
+  });
+
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
+    reset,
   } = useForm({
     mode: 'all',
     defaultValues: {
-      entityName: '',
-      categories: [],
+      macroCategoryName: data.name ?? '',
     },
     resolver: yupResolver(schema),
   });
 
   const onSubmit = formData => {
-    // TODO
+    doFetch({
+      body: { name: formData.macroCategoryName },
+    });
   };
 
   const closeAlert = () => {
@@ -86,6 +93,40 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
   const handleBack = () => {
     navigate(-1);
   };
+  const handleError = useCallback(() => {
+    setAlert({
+      isVisible: true,
+      message: 'Algo salió mal... Por favor intente nuevamente',
+      severity: 'error',
+    });
+  }, []);
+
+  const responseSuccess = useCallback(
+    fetchResponse => {
+      let message = '';
+
+      if (fetchResponse.status === 201) {
+        message = 'Macrocategoría agregada satisfactoriamente!';
+        reset();
+      }
+
+      if (fetchResponse.status === 200)
+        message = '¡Macrocategoría editado satisfactoriamente!';
+
+      setAlert({
+        isVisible: true,
+        message,
+        severity: 'success',
+      });
+    },
+    [reset],
+  );
+
+  useEffect(() => {
+    if (error) return handleError();
+    if (response && (response.status === 201 || response.status === 200))
+      return responseSuccess(response);
+  }, [responseSuccess, error, handleError, response]);
 
   return (
     <>
@@ -143,7 +184,7 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
               onClick={handleSubmit(onSubmit)}
               variant='contained'
               disabled={!isValid}
-              loading={false}
+              loading={isLoading}
             >
               Guardar
             </StyledButton>
