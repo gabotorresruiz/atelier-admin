@@ -49,14 +49,6 @@ const StyledBox = styled(Box)(
 `,
 );
 
-const fakeMacroCategories = [
-  { value: 1, label: 'Superficie' },
-  { value: 2, label: 'Tipo' },
-  { value: 3, label: 'Utilidad' },
-  { value: 4, label: 'Interior' },
-  { value: 5, label: 'Exterior' },
-];
-
 const CategoryForm = ({ title, id = 0, data = {} }) => {
   const navigate = useNavigate();
   const [alert, setAlert] = useState({
@@ -65,12 +57,39 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
     severity: '',
   });
 
+  const [{ error: getError, isLoading: getIsLoading, response: getResponse }] =
+    useFetch({
+      entity: 'macro-categories',
+      fetchMethod: 'GET',
+    });
+
   const fetchMethod = Object.keys(data).length === 0 ? 'POST' : 'PUT';
 
   const defaultCategoryName = Object.keys(data).length === 0 ? '' : data.name;
 
   const defaultMacroCategories =
-    Object.keys(data).length === 0 ? [] : data.macrocategories;
+    data.macrocategories && data.macrocategories.length > 0
+      ? data.macrocategories.map(category => ({
+          value: category.id,
+          label: category.name,
+        }))
+      : [];
+
+  // const defaultMacroCategories =
+  //   data.macrocategories && data.macrocategories.length > 0
+  //     ? data.macrocategories.reduce((acc, category) => {
+  //         acc[category.id] = category.name;
+  //         return acc;
+  //       }, {})
+  //     : {};
+
+  // const defaultMacroCategories =
+  //   Object.keys(data).length === 0
+  //     ? []
+  //     : data.macrocategories.map(category => ({
+  //         value: category.id,
+  //         label: category.name,
+  //       }));
 
   const [{ response, error, isLoading }, doFetch] = useFetch({
     entity: 'categories',
@@ -87,15 +106,33 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
     mode: 'all',
     defaultValues: {
       categoryName: defaultCategoryName,
-      macroCategories: defaultMacroCategories,
+      // macroCategories: [],
+      // macroCategories: defaultMacroCategories,
     },
     resolver: yupResolver(schema),
   });
 
   const onSubmit = formData => {
+    const selectedMacroCategories = formData.macroCategories
+      .map(categoryName => {
+        const matchingOption = getResponse.find(
+          option => option.name === categoryName,
+        );
+        if (matchingOption) {
+          return {
+            id: matchingOption.id,
+            name: matchingOption.name,
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
+
     const body = {
-      name: formData.name,
+      name: formData.categoryName,
+      macrocategories: selectedMacroCategories,
     };
+
     doFetch({ body });
   };
 
@@ -124,7 +161,7 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
         reset();
       }
 
-      if (fetchResponse.status === 204)
+      if (fetchResponse.status === 200)
         message = 'Cateogría editado satisfactoriamente!';
 
       setAlert({
@@ -139,7 +176,7 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
   useEffect(() => {
     if (error) return handleError();
 
-    if (response && (response.status === 201 || response.status === 204))
+    if (response && (response.status === 201 || response.status === 200))
       return postSuccess(response);
   }, [postSuccess, error, response, handleError]);
 
@@ -189,15 +226,28 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
               <Controller
                 control={control}
                 name='macroCategories'
+                id='macroCategories'
+                // defaultValue={defaultMacroCategories}
+                defaultValue={defaultMacroCategories.map(
+                  category => category.value,
+                )}
                 render={({ field }) => (
                   <MultiSelect
                     fullWidth
                     name='macroCategories'
                     inputLabel='Macro Categoría'
                     label='Macro Categoría'
+                    id='macroCategories'
                     onChange={field.onChange}
                     value={Array.isArray(field.value) ? field.value : []}
-                    options={fakeMacroCategories}
+                    options={
+                      getResponse && !getError
+                        ? getResponse.map(option => ({
+                            value: option.id,
+                            label: option.name,
+                          }))
+                        : []
+                    }
                   />
                 )}
               />
@@ -225,7 +275,7 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
               onClick={handleSubmit(onSubmit)}
               variant='contained'
               disabled={!isValid}
-              loading={false}
+              loading={isLoading}
             >
               Guardar
             </StyledButton>

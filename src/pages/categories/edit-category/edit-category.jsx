@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/system';
 import { useParams } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
+import { useFetch } from '../../../hooks';
+import { LinearLoader } from '../../../components';
 import { CategoryForm } from '../../../modules';
 
 const StyledAlert = styled(Alert)(
@@ -16,6 +18,12 @@ const StyledAlert = styled(Alert)(
 const EditCategory = () => {
   const { id } = useParams();
 
+  const [{ error, isLoading, response }] = useFetch({
+    entity: 'categories',
+    fetchMethod: 'GET',
+    id,
+  });
+
   const [alert, setAlert] = useState({
     isVisible: false,
     message: '',
@@ -26,6 +34,18 @@ const EditCategory = () => {
     setAlert(false);
   };
 
+  const handleError = useCallback(() => {
+    setAlert({
+      isVisible: true,
+      message: 'Algo salió mal... Por favor intente nuevamente',
+      severity: 'error',
+    });
+  }, []);
+
+  useEffect(() => {
+    if (error) return handleError();
+  }, [error, handleError]);
+
   return (
     <>
       {alert.isVisible && (
@@ -33,8 +53,11 @@ const EditCategory = () => {
           {alert.message}
         </StyledAlert>
       )}
-
-      <CategoryForm title='Editar Categoría' id={id} />
+      {!isLoading && response !== null && !error ? (
+        <CategoryForm title='Editar Categoría' id={id} data={response} />
+      ) : (
+        <LinearLoader />
+      )}
     </>
   );
 };
