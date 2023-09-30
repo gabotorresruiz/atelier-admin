@@ -67,14 +67,9 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
 
   const defaultCategoryName = Object.keys(data).length === 0 ? '' : data.name;
 
-  const defaultMacroCategories =
-    data.macrocategories && data.macrocategories.length > 0
-      ? data.macrocategories.map(category => ({
-          value: category.id,
-          label: category.name,
-        }))
-      : [];
-
+  const defaultMacroCategories = data.macrocategories
+    ? data.macrocategories
+    : [];
   // const defaultMacroCategories =
   //   data.macrocategories && data.macrocategories.length > 0
   //     ? data.macrocategories.reduce((acc, category) => {
@@ -106,17 +101,15 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
     mode: 'all',
     defaultValues: {
       categoryName: defaultCategoryName,
-      // macroCategories: [],
-      // macroCategories: defaultMacroCategories,
     },
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = formData => {
-    const selectedMacroCategories = formData.macroCategories
-      .map(categoryName => {
+  const onSubmit = ({ categoryName, macroCategories }) => {
+    const selectedMacroCategories = macroCategories
+      .map(macroCategoryName => {
         const matchingOption = getResponse.find(
-          option => option.name === categoryName,
+          option => option.name === macroCategoryName,
         );
         if (matchingOption) {
           return {
@@ -129,7 +122,7 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
       .filter(Boolean);
 
     const body = {
-      name: formData.categoryName,
+      name: categoryName,
       macrocategories: selectedMacroCategories,
     };
 
@@ -161,8 +154,10 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
         reset();
       }
 
-      if (fetchResponse.status === 200)
+      if (fetchResponse.status === 200) {
         message = 'Cateogría editado satisfactoriamente!';
+        reset();
+      }
 
       setAlert({
         isVisible: true,
@@ -227,9 +222,8 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
                 control={control}
                 name='macroCategories'
                 id='macroCategories'
-                // defaultValue={defaultMacroCategories}
                 defaultValue={defaultMacroCategories.map(
-                  category => category.value,
+                  category => category.name,
                 )}
                 render={({ field }) => (
                   <MultiSelect

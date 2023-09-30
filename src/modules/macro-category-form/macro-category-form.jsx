@@ -110,8 +110,10 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
         reset();
       }
 
-      if (fetchResponse.status === 200)
+      if (fetchResponse.status === 200) {
         message = '¡Macrocategoría editado satisfactoriamente!';
+        reset();
+      }
 
       setAlert({
         isVisible: true,
