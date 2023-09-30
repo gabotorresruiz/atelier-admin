@@ -1,5 +1,3 @@
-/** next line will be removed */
-/* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
@@ -110,8 +108,9 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
         reset();
       }
 
-      if (fetchResponse.status === 200)
+      if (fetchResponse.status === 200) {
         message = '¡Macrocategoría editado satisfactoriamente!';
+      }
 
       setAlert({
         isVisible: true,

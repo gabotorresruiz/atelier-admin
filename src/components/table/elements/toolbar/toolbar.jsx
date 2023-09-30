@@ -42,12 +42,14 @@ const Toolbar = ({ entity, refreshData, rowSelected, tableTitle }) => {
     fetchMethod: 'DELETE',
     id: rowSelected,
   });
+
+  useEffect(() => {}, [error, isLoading]);
   const doDelete = () => {
     doFetch({});
   };
   const handleError = useCallback(() => {
-    swal.showValidationMessage(`Algo salió mal: ${error}`);
-  }, [error]);
+    swal.showValidationMessage(`Hubo un error al eliminar`);
+  }, []);
 
   const handleDelete = () => {
     swal
@@ -64,15 +66,17 @@ const Toolbar = ({ entity, refreshData, rowSelected, tableTitle }) => {
         allowOutsideClick: () => !isLoading,
       })
       .then(result => {
-        if (result.isConfirmed && !error) {
-          swal.fire({
-            title: '¡Eliminado exitósamente!',
-            icon: 'success',
-            confirmButtonColor: '#0288d1',
-            showLoaderOnConfirm: true,
-            preConfirm: () => refreshData(),
-            allowOutsideClick: () => !isLoading,
-          });
+        if (result.isConfirmed) {
+          if (!error) {
+            swal.fire({
+              title: '¡Eliminado exitósamente!',
+              icon: 'success',
+              confirmButtonColor: '#0288d1',
+              showLoaderOnConfirm: true,
+              preConfirm: () => refreshData(),
+              allowOutsideClick: () => !isLoading,
+            });
+          }
         }
       });
   };
