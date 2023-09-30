@@ -13,7 +13,7 @@ const Products = () => (
     refreshData
     isLoading={false}
     tableTitle='Productos'
-    entity='product'
+    entity='products'
   />
 );
 

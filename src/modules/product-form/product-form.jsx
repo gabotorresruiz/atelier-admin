@@ -65,9 +65,6 @@ const StyledImg = styled('img')`
   width: 100%;
 `;
 
-// const StyledButtonImg = styled(Button)`
-//   width: 165px;
-// `;
 const StyledButtonImg = styled(Button)`
   width: auto;
   padding: 8px 16px;
@@ -166,7 +163,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
       <Container component='div' maxWidth='sm'>
         <StyledTitle>{title}</StyledTitle>
         <StyledBox component='form' onSubmit={onSubmit}>
-          <StyledStack direction='column' alignItems='center' spacing={2}>
+          {/* <StyledStack direction='column' alignItems='center' spacing={2}>
             <StyledButtonImg component='label' variant='contained'>
               Subir Imagen
               <input
@@ -192,7 +189,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
                 </StyledImgWrapper>
               )}
             </StyledStack>
-          </StyledStack>
+          </StyledStack> */}
 
           <Grid container spacing={2}>
             <Grid item xs={12}>
