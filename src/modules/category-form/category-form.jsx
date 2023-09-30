@@ -1,5 +1,3 @@
-/** next line will be removed */
-/* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
@@ -70,21 +68,6 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
   const defaultMacroCategories = data.macrocategories
     ? data.macrocategories
     : [];
-  // const defaultMacroCategories =
-  //   data.macrocategories && data.macrocategories.length > 0
-  //     ? data.macrocategories.reduce((acc, category) => {
-  //         acc[category.id] = category.name;
-  //         return acc;
-  //       }, {})
-  //     : {};
-
-  // const defaultMacroCategories =
-  //   Object.keys(data).length === 0
-  //     ? []
-  //     : data.macrocategories.map(category => ({
-  //         value: category.id,
-  //         label: category.name,
-  //       }));
 
   const [{ response, error, isLoading }, doFetch] = useFetch({
     entity: 'categories',
@@ -156,7 +139,6 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
 
       if (fetchResponse.status === 200) {
         message = 'Cateogría editado satisfactoriamente!';
-        reset();
       }
 
       setAlert({
@@ -232,6 +214,7 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
                     inputLabel='Macro Categoría'
                     label='Macro Categoría'
                     id='macroCategories'
+                    disabled={getIsLoading}
                     onChange={field.onChange}
                     value={Array.isArray(field.value) ? field.value : []}
                     options={

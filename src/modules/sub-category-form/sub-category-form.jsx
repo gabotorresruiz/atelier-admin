@@ -1,5 +1,3 @@
-/** next line will be removed */
-/* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
@@ -137,7 +135,6 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
 
       if (fetchResponse.status === 200) {
         message = 'Sub Cateogría editado satisfactoriamente!';
-        reset();
       }
 
       setAlert({
@@ -249,7 +246,7 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
               onClick={handleSubmit(onSubmit)}
               variant='contained'
               disabled={!isValid}
-              loading={false}
+              loading={isLoading}
             >
               Guardar
             </StyledButton>
