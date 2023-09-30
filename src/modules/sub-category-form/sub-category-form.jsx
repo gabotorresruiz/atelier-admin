@@ -1,16 +1,13 @@
-/** next line will be removed */
-/* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { Controller, useForm } from 'react-hook-form';
-
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import LoadingButton from '@mui/lab/LoadingButton';
-
 import { Alert, Box, Button, Container, Grid, TextField } from '@mui/material';
+import { useFetch } from '../../hooks';
 import schema from './schema';
 import { MultiSelect } from '../../components';
 
@@ -49,13 +46,6 @@ const StyledBox = styled(Box)(
 `,
 );
 
-const fakeCategories = [
-  { value: 1, label: 'Pintura Plástica' },
-  { value: 2, label: 'Pintura Esmalte' },
-  { value: 3, label: 'Pintura Decorativa' },
-  { value: 4, label: 'Pintura Brillante' },
-];
-
 const SubCategoryForm = ({ title, id = 0, data = {} }) => {
   const navigate = useNavigate();
   const [alert, setAlert] = useState({
@@ -64,22 +54,58 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
     severity: '',
   });
 
+  const [{ error: getError, isLoading: getIsLoading, response: getResponse }] =
+    useFetch({
+      entity: 'categories',
+      fetchMethod: 'GET',
+    });
+
+  const isEmptyData = Object.keys(data).length === 0;
+
+  const fetchMethod = isEmptyData ? 'POST' : 'PUT';
+
+  const defaultSubCategory = data.name ? data.name : '';
+  const defaultCategories = data.categories ? data.categories : [];
+
+  const [{ error, isLoading, response }, doFetch] = useFetch({
+    entity: 'sub-categories',
+    fetchMethod,
+    id,
+  });
+
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
+    reset,
   } = useForm({
     mode: 'all',
     defaultValues: {
-      subCategoryName: '',
-      categories: [],
-      products: [],
+      subCategoryName: defaultSubCategory,
     },
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = formData => {
-    // TODO
+  const onSubmit = ({ subCategoryName, categories }) => {
+    const selectedCategories = categories
+      .map(categoryName => {
+        const matchingOption = getResponse.find(
+          option => option.name === categoryName,
+        );
+        if (matchingOption) {
+          return {
+            id: matchingOption.id,
+            name: matchingOption.name,
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
+    const body = {
+      name: subCategoryName,
+      categories: selectedCategories,
+    };
+    doFetch({ body });
   };
 
   const closeAlert = () => {
@@ -89,6 +115,43 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
   const handleBack = () => {
     navigate(-1);
   };
+
+  const handleError = useCallback(() => {
+    setAlert({
+      isVisible: true,
+      message: 'Algo salió mal... Por favor intente nuevamente',
+      severity: 'error',
+    });
+  }, []);
+
+  const postSuccess = useCallback(
+    fetchResponse => {
+      let message = '';
+
+      if (fetchResponse.status === 201) {
+        message = 'Sub Categoría agregado satisfactoriamente!';
+        reset();
+      }
+
+      if (fetchResponse.status === 200) {
+        message = 'Sub Cateogría editado satisfactoriamente!';
+      }
+
+      setAlert({
+        isVisible: true,
+        message,
+        severity: 'success',
+      });
+    },
+    [reset],
+  );
+
+  useEffect(() => {
+    if (error) return handleError();
+
+    if (response && (response.status === 201 || response.status === 200))
+      return postSuccess(response);
+  }, [postSuccess, error, response, handleError]);
 
   return (
     <>
@@ -137,17 +200,25 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
               <Controller
                 control={control}
                 name='categories'
+                defaultValue={defaultCategories.map(category => category.name)}
                 render={({ field }) => (
                   <MultiSelect
                     fullWidth
                     name='categories'
                     inputLabel='Categorías'
                     label='Categorías'
+                    disabled={getIsLoading}
                     required
                     onChange={field.onChange}
                     value={Array.isArray(field.value) ? field.value : []}
-                    options={fakeCategories}
-                    variant='outlined'
+                    options={
+                      getResponse && !getError
+                        ? getResponse.map(option => ({
+                            value: option.id,
+                            label: option.name,
+                          }))
+                        : []
+                    }
                   />
                 )}
               />
@@ -175,7 +246,7 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
               onClick={handleSubmit(onSubmit)}
               variant='contained'
               disabled={!isValid}
-              loading={false}
+              loading={isLoading}
             >
               Guardar
             </StyledButton>

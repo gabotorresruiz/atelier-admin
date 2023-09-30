@@ -32,6 +32,7 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
     async (uri, options) => {
       try {
         const res = await fetch(uri, options);
+        console.log('res**', res);
         if (res.statusCode === 401 || res.statusCode === 403) {
           localStorage.clear();
           return navigate('/login');
@@ -57,7 +58,6 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
         setResponse(data);
       } catch (err) {
         const data = err.response ? err.response.data : err;
-
         setResponse(null);
         setError(data);
       }
@@ -99,9 +99,12 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
 
     if (params) uri += getQueryParams(params);
     if (method === 'GET' && !refreshData) {
+      console.log('uri', uri);
+      console.log('options', options);
       fetchData(uri, options);
       return;
     }
+
     if (isLoading) fetchData(uri, options);
   }, [
     bodyFetch,
