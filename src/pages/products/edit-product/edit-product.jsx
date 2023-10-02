@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/system';
 import { useParams } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
+import { useFetch } from '../../../hooks';
+import { LinearLoader } from '../../../components';
 import { ProductForm } from '../../../modules';
 
 const StyledAlert = styled(Alert)(
@@ -15,6 +17,11 @@ const StyledAlert = styled(Alert)(
 
 const EditProduct = () => {
   const { id } = useParams();
+  const [{ error, isLoading, response }] = useFetch({
+    entity: 'products',
+    fetchMethod: 'GET',
+    id,
+  });
 
   const [alert, setAlert] = useState({
     isVisible: false,
@@ -26,6 +33,18 @@ const EditProduct = () => {
     setAlert(false);
   };
 
+  const handleError = useCallback(() => {
+    setAlert({
+      isVisible: true,
+      message: 'Algo salió mal... Por favor intente nuevamente',
+      severity: 'error',
+    });
+  }, []);
+
+  useEffect(() => {
+    if (error) return handleError();
+  }, [error, handleError]);
+
   return (
     <>
       {alert.isVisible && (
@@ -33,8 +52,11 @@ const EditProduct = () => {
           {alert.message}
         </StyledAlert>
       )}
-
-      <ProductForm title='Editar Producto' id={id} />
+      {!isLoading && response !== null && !error ? (
+        <ProductForm title='Editar Producto' id={id} data={response} />
+      ) : (
+        <LinearLoader />
+      )}
     </>
   );
 };

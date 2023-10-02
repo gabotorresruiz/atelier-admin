@@ -1,6 +1,6 @@
 /** next line will be removed */
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { Controller, useForm } from 'react-hook-form';
@@ -21,6 +21,7 @@ import {
   TextField,
 } from '@mui/material';
 import { MultiSelect } from '../../components';
+import { useFetch } from '../../hooks';
 import schema from './schema';
 import convertToBase64 from './constants';
 
@@ -65,9 +66,6 @@ const StyledImg = styled('img')`
   width: 100%;
 `;
 
-// const StyledButtonImg = styled(Button)`
-//   width: 165px;
-// `;
 const StyledButtonImg = styled(Button)`
   width: auto;
   padding: 8px 16px;
@@ -94,13 +92,6 @@ const StyledImgWrapper = styled('div')`
   height: 250px;
 `;
 
-const fakeSubCategories = [
-  { value: 1, label: 'Pintura Plástica' },
-  { value: 2, label: 'Pintura Esmalte' },
-  { value: 3, label: 'Pintura Decorativa' },
-  { value: 4, label: 'Pintura Brillante' },
-];
-
 const ProductForm = ({ title, id = 0, data = {} }) => {
   const navigate = useNavigate();
   const [alert, setAlert] = useState({
@@ -108,6 +99,25 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
     message: '',
     severity: '',
   });
+
+  const [{ error: getError, isLoading: getIsLoading, response: getResponse }] =
+    useFetch({
+      entity: 'sub-categories',
+      fetchMethod: 'GET',
+    });
+
+  const isEmptyData = Object.keys(data).length === 0;
+
+  const fetchMethod = isEmptyData ? 'POST' : 'PUT';
+
+  const [{ error, isLoading, response }, doFetch] = useFetch({
+    entity: 'products',
+    fetchMethod,
+    id,
+  });
+
+  const defaultproductName = data.name ? data.name : '';
+  const defaultSubCategories = data.subcategories ? data.subcategories : [];
 
   const [selectedImg, setSelectedImg] = useState(
     data.image ? `data:image/jpeg;base64,${data.image}` : '',
@@ -118,21 +128,36 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
     control,
     handleSubmit,
     formState: { errors, isValid },
+    reset,
   } = useForm({
     mode: 'all',
     defaultValues: {
-      productName: '',
-      subCategories: [],
+      productName: defaultproductName,
     },
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = formData => {
-    // TODO
+  const onSubmit = ({ productName, subCategories }) => {
+    const selectedSubCategories = subCategories
+      .map(subCategoryName => {
+        const matchingOption = getResponse.find(
+          option => option.name === subCategoryName,
+        );
+        if (matchingOption) {
+          return {
+            id: matchingOption.id,
+            name: matchingOption.name,
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
     const body = {
-      ...formData,
-      image: base64Img,
+      name: productName,
+      subcategories: selectedSubCategories,
+      // image: base64Img,
     };
+    doFetch({ body });
   };
 
   const closeAlert = () => {
@@ -156,6 +181,43 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
     setSelectedImg(url);
   };
 
+  const handleError = useCallback(() => {
+    setAlert({
+      isVisible: true,
+      message: 'Algo salió mal... Por favor intente nuevamente',
+      severity: 'error',
+    });
+  }, []);
+
+  const postSuccess = useCallback(
+    fetchResponse => {
+      let message = '';
+
+      if (fetchResponse.status === 201) {
+        message = 'Producto agregado satisfactoriamente!';
+        reset();
+      }
+
+      if (fetchResponse.status === 200) {
+        message = 'Producto editado satisfactoriamente!';
+      }
+
+      setAlert({
+        isVisible: true,
+        message,
+        severity: 'success',
+      });
+    },
+    [reset],
+  );
+
+  useEffect(() => {
+    if (error) return handleError();
+
+    if (response && (response.status === 201 || response.status === 200))
+      return postSuccess(response);
+  }, [postSuccess, error, response, handleError]);
+
   return (
     <>
       {alert.isVisible && (
@@ -166,7 +228,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
       <Container component='div' maxWidth='sm'>
         <StyledTitle>{title}</StyledTitle>
         <StyledBox component='form' onSubmit={onSubmit}>
-          <StyledStack direction='column' alignItems='center' spacing={2}>
+          {/* <StyledStack direction='column' alignItems='center' spacing={2}>
             <StyledButtonImg component='label' variant='contained'>
               Subir Imagen
               <input
@@ -192,7 +254,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
                 </StyledImgWrapper>
               )}
             </StyledStack>
-          </StyledStack>
+          </StyledStack> */}
 
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -231,6 +293,9 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
               <Controller
                 control={control}
                 name='subCategories'
+                defaultValue={defaultSubCategories.map(
+                  subCategory => subCategory.name,
+                )}
                 render={({ field }) => (
                   <MultiSelect
                     fullWidth
@@ -238,9 +303,17 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
                     inputLabel='Sub Categorías'
                     label='Sub Categorías'
                     required
+                    disabled={getIsLoading}
                     onChange={field.onChange}
                     value={Array.isArray(field.value) ? field.value : []}
-                    options={fakeSubCategories}
+                    options={
+                      getResponse && !getError
+                        ? getResponse.map(option => ({
+                            value: option.id,
+                            label: option.name,
+                          }))
+                        : []
+                    }
                     variant='outlined'
                   />
                 )}
@@ -269,7 +342,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
               onClick={handleSubmit(onSubmit)}
               variant='contained'
               disabled={!isValid}
-              loading={false}
+              loading={isLoading}
             >
               Guardar
             </StyledButton>
