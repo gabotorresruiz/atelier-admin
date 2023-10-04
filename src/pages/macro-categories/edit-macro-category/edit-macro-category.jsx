@@ -54,7 +54,7 @@ const EditMacroCategory = () => {
       )}
       {!isLoading && response !== null && !error ? (
         <MacroCategoryForm
-          title='Editar Macro Categoría'
+          title='Editar Macrocategoría'
           id={id}
           data={response}
         />

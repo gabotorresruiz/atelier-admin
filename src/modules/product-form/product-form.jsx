@@ -1,29 +1,33 @@
-/** next line will be removed */
-/* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { Controller, useForm } from 'react-hook-form';
+import { useDropzone } from 'react-dropzone';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import LoadingButton from '@mui/lab/LoadingButton';
-import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import {
   Alert,
   Box,
   Button,
   Container,
-  IconButton,
+  Fade,
   Grid,
-  Stack,
   TextField,
 } from '@mui/material';
-import { MultiSelect } from '../../components';
+import { LinearLoader, MultiSelect } from '../../components';
 import { useFetch } from '../../hooks';
 import schema from './schema';
-import convertToBase64 from './constants';
+
+const getColor = props => {
+  if (props.isDragAccept) return '#00e676';
+  if (props.isDragReject) return '#ff1744';
+  if (props.isFocused) return '#2196f3';
+
+  return '#eeeeee';
+};
 
 const StyledBoxWrapper = styled(Box)(
   ({ theme }) => `
@@ -60,20 +64,16 @@ const StyledBox = styled(Box)(
 `,
 );
 
+const StyledImageWrapper = styled('div')`
+  height: 300px;
+  width: 100%;
+  margin-bottom: 25px;
+`;
+
 const StyledImg = styled('img')`
   object-fit: scale-down;
   height: 100%;
   width: 100%;
-`;
-
-const StyledButtonImg = styled(Button)`
-  width: auto;
-  padding: 8px 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
 `;
 
 const StyledTitle = styled('h1')`
@@ -81,19 +81,29 @@ const StyledTitle = styled('h1')`
   margin-bottom: 20px;
 `;
 
-const StyledStack = styled(Stack)(
-  ({ theme }) => `
-  gap: ${theme.spacing(2)};
-`,
-);
+const StyledDropzoneContainer = styled('div')`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-width: 2px;
+  border-radius: 2px;
+  border-color: ${props => getColor(props)};
+  border-style: dashed;
+  background-color: #fafafa;
+  color: #bdbdbd;
+  outline: none;
+  cursor: pointer;
 
-const StyledImgWrapper = styled('div')`
-  width: 100%;
-  height: 250px;
+  &:hover {
+    border-color: #212121;
+  }
 `;
 
 const ProductForm = ({ title, id = 0, data = {} }) => {
   const navigate = useNavigate();
+
   const [alert, setAlert] = useState({
     isVisible: false,
     message: '',
@@ -110,7 +120,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
 
   const fetchMethod = isEmptyData ? 'POST' : 'PUT';
 
-  const [{ error, isLoading, response }, doFetch] = useFetch({
+  const [{ error, isLoading, response }, doFetch, resetFetch] = useFetch({
     entity: 'products',
     fetchMethod,
     id,
@@ -119,10 +129,27 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
   const defaultproductName = data.name ? data.name : '';
   const defaultSubCategories = data.subcategories ? data.subcategories : [];
 
-  const [selectedImg, setSelectedImg] = useState(
-    data.image ? `data:image/jpeg;base64,${data.image}` : '',
-  );
-  const [base64Img, setBase64Img] = useState(data.image ? data.image : '');
+  const [loadingImg, setLoadingImg] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [image, setImage] = useState(null);
+  const [selectedImg] = useState(data.imageUrl ?? '');
+
+  const onDrop = useCallback(acceptedFiles => {
+    if (typeof acceptedFiles[0] === 'undefined') return;
+    setImage(acceptedFiles[0]);
+    const file = new FileReader();
+
+    file.onloadstart = () => setLoadingImg(true);
+    file.onload = () => {
+      setPreview(file.result);
+      setLoadingImg(false);
+    };
+
+    file.readAsDataURL(acceptedFiles[0]);
+  }, []);
+
+  const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
+    useDropzone({ onDrop, accept: { 'image/*': [] } });
 
   const {
     control,
@@ -152,12 +179,14 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
         return null;
       })
       .filter(Boolean);
-    const body = {
-      name: productName,
-      subcategories: selectedSubCategories,
-      // image: base64Img,
-    };
-    doFetch({ body });
+
+    const formData = new FormData();
+
+    formData.append('name', productName);
+    formData.append('subcategories', JSON.stringify(selectedSubCategories));
+    formData.append('image', image);
+
+    doFetch({ body: formData });
   };
 
   const closeAlert = () => {
@@ -166,19 +195,6 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
 
   const handleBack = () => {
     navigate(-1);
-  };
-
-  const handleOnchangeImg = e => {
-    const uploadImg = e.currentTarget.files[0];
-
-    // Image to base64 to send to the backend
-    convertToBase64(uploadImg).then(dataImg => {
-      setBase64Img(dataImg);
-    });
-
-    // Image to show in the form
-    const url = URL.createObjectURL(uploadImg);
-    setSelectedImg(url);
   };
 
   const handleError = useCallback(() => {
@@ -196,11 +212,12 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
       if (fetchResponse.status === 201) {
         message = 'Producto agregado satisfactoriamente!';
         reset();
+        setPreview(null);
+        resetFetch();
       }
 
-      if (fetchResponse.status === 200) {
+      if (fetchResponse.status === 200)
         message = 'Producto editado satisfactoriamente!';
-      }
 
       setAlert({
         isVisible: true,
@@ -208,7 +225,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
         severity: 'success',
       });
     },
-    [reset],
+    [reset, resetFetch],
   );
 
   useEffect(() => {
@@ -216,47 +233,36 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
 
     if (response && (response.status === 201 || response.status === 200))
       return postSuccess(response);
-  }, [postSuccess, error, response, handleError]);
+  }, [postSuccess, error, response, handleError, loadingImg]);
 
   return (
     <>
+      {loadingImg ?? <LinearLoader />}
       {alert.isVisible && (
-        <StyledAlert onClose={closeAlert} severity={alert.severity}>
-          {alert.message}
-        </StyledAlert>
+        <Fade
+          in={alert.isVisible}
+          addEndListener={() => {
+            setTimeout(() => {
+              setAlert(false);
+            }, 5000);
+          }}
+        >
+          <StyledAlert onClose={closeAlert} severity={alert.severity}>
+            {alert.message}
+          </StyledAlert>
+        </Fade>
       )}
       <Container component='div' maxWidth='sm'>
         <StyledTitle>{title}</StyledTitle>
         <StyledBox component='form' onSubmit={onSubmit}>
-          {/* <StyledStack direction='column' alignItems='center' spacing={2}>
-            <StyledButtonImg component='label' variant='contained'>
-              Subir Imagen
-              <input
-                hidden
-                accept='image/*'
-                multiple
-                type='file'
-                onChange={handleOnchangeImg}
-              />
-            </StyledButtonImg>
-            <StyledStack direction='row' alignItems='center' spacing={2}>
-              <IconButton
-                aria-label='upload picture'
-                color='primary'
-                component='label'
-                disabled
-              >
-                <PhotoCamera />
-              </IconButton>
-              {selectedImg && (
-                <StyledImgWrapper>
-                  <StyledImg alt='imagen-categoria' src={selectedImg} />
-                </StyledImgWrapper>
-              )}
-            </StyledStack>
-          </StyledStack> */}
-
           <Grid container spacing={2}>
+            {selectedImg ? (
+              <Grid item xs={12}>
+                <StyledImageWrapper>
+                  <StyledImg src={selectedImg} alt='Upload preview' />
+                </StyledImageWrapper>
+              </Grid>
+            ) : null}
             <Grid item xs={12}>
               <Controller
                 name='productName'
@@ -288,7 +294,6 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
                 )}
               />
             </Grid>
-
             <Grid item xs={12}>
               <Controller
                 control={control}
@@ -300,8 +305,8 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
                   <MultiSelect
                     fullWidth
                     name='subCategories'
-                    inputLabel='Sub Categorías'
-                    label='Sub Categorías'
+                    inputLabel='Subcategorías'
+                    label='Subcategorías'
                     required
                     disabled={getIsLoading}
                     onChange={field.onChange}
@@ -318,7 +323,6 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
                   />
                 )}
               />
-
               <ErrorMessage
                 errors={errors}
                 name='subCategories'
@@ -328,7 +332,20 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
               />
             </Grid>
           </Grid>
-
+          <StyledDropzoneContainer
+            {...getRootProps({ isFocused, isDragAccept, isDragReject })}
+          >
+            <input {...getInputProps()} />
+            <p>
+              Arrastra una image, o haz click para seleccionar desde tus
+              archivos
+            </p>
+          </StyledDropzoneContainer>
+          {preview && (
+            <StyledImageWrapper>
+              <StyledImg src={preview} alt='Preview' />
+            </StyledImageWrapper>
+          )}
           <StyledBoxWrapper>
             <Button
               startIcon={<ArrowBackIosIcon />}

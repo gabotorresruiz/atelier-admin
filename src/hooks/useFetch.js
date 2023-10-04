@@ -13,13 +13,20 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
   const [method, setMethod] = useState(fetchMethod);
   const [params, setParams] = useState(fetchParams);
   const [bodyFetch, setBodyFetch] = useState(null);
+  const [contentTypeParam, setContentTypeParam] = useState(null);
   const [refreshData, setRefreshData] = useState(false);
 
   const doFetch = useCallback(
-    ({ body = undefined, refresh = false, newParams = null }) => {
+    ({
+      body = undefined,
+      contentType = null,
+      refresh = false,
+      newParams = null,
+    }) => {
       setMethod(fetchMethod);
       setError(null);
       if (body) setBodyFetch(body);
+      if (contentType) setContentTypeParam(contentType);
       if (refresh) setRefreshData(true);
       if (newParams) setParams(newParams);
 
@@ -28,11 +35,14 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
     [fetchMethod],
   );
 
+  const resetFetch = useCallback(() => {
+    setResponse(null);
+  }, []);
+
   const fetchData = useCallback(
     async (uri, options) => {
       try {
         const res = await fetch(uri, options);
-        console.log('res**', res);
         if (res.statusCode === 401 || res.statusCode === 403) {
           localStorage.clear();
           return navigate('/login');
@@ -43,11 +53,14 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
           throw errorData;
         }
 
-        if (
-          res.status === 201 ||
-          (method === 'PUT' && res.status === 200) ||
-          res.status === 204
-        ) {
+        if (method === 'PUT' && res.status === 200) {
+          setIsLoading(false);
+          setResponse({ status: res.status });
+          window.location.reload();
+          return;
+        }
+
+        if (res.status === 201 || res.status === 204) {
           setIsLoading(false);
           setResponse({ status: res.status });
           return;
@@ -69,24 +82,25 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
 
   useEffect(() => {
     const loggedUser = getLoggedUser();
-    const headers = loggedUser?.token
+    let headers = loggedUser?.token
       ? {
           Authorization: `Bearer ${loggedUser?.token}`,
           schemaToken: `${loggedUser?.tokenSchema}`,
-          'Content-Type': 'application/json',
         }
       : {
           'x-origin': 'http://localhost:8081/admin',
-          'Content-Type': 'application/json',
           schema: SCHEMA,
         };
+
+    if (contentTypeParam)
+      headers = { ...headers, 'Content-Type': contentTypeParam };
 
     const options =
       method === 'POST' || method === 'PUT'
         ? {
             method,
             headers,
-            body: JSON.stringify(bodyFetch),
+            body: bodyFetch,
           }
         : {
             method,
@@ -99,8 +113,6 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
 
     if (params) uri += getQueryParams(params);
     if (method === 'GET' && !refreshData) {
-      console.log('uri', uri);
-      console.log('options', options);
       fetchData(uri, options);
       return;
     }
@@ -108,6 +120,7 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
     if (isLoading) fetchData(uri, options);
   }, [
     bodyFetch,
+    contentTypeParam,
     entity,
     fetchData,
     id,
@@ -117,7 +130,7 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
     refreshData,
   ]);
 
-  return [{ response, error, isLoading }, doFetch];
+  return [{ response, error, isLoading }, doFetch, resetFetch];
 };
 
 export default useFetch;

@@ -53,7 +53,7 @@ const Sidebar = React.memo(() => {
             id='/macro-categories'
             onClick={handleClick}
             selectedItem={selectedItem}
-            text='Macro Categorías'
+            text='Macrocategorías'
             to='/macro-categories'
           />
         </List>
@@ -75,7 +75,7 @@ const Sidebar = React.memo(() => {
             id='/sub-categories'
             onClick={handleClick}
             selectedItem={selectedItem}
-            text='Sub Categorías'
+            text='Subcategorías'
             to='/sub-categories'
           />
         </List>

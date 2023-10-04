@@ -105,7 +105,7 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
       name: subCategoryName,
       categories: selectedCategories,
     };
-    doFetch({ body });
+    doFetch({ body: JSON.stringify(body), contentType: 'application/json' });
   };
 
   const closeAlert = () => {
@@ -129,12 +129,12 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
       let message = '';
 
       if (fetchResponse.status === 201) {
-        message = 'Sub Categoría agregado satisfactoriamente!';
+        message = 'Subcategoría agregado satisfactoriamente!';
         reset();
       }
 
       if (fetchResponse.status === 200) {
-        message = 'Sub Cateogría editado satisfactoriamente!';
+        message = 'Subcateogría editado satisfactoriamente!';
       }
 
       setAlert({
@@ -177,7 +177,7 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
                         min: 0,
                       },
                     }}
-                    label='Nombre Sub Categoría'
+                    label='Nombre Subcategoría'
                     name='subCategoryName'
                     onChange={onChange}
                     required

@@ -85,7 +85,7 @@ const LoginForm = () => {
   );
 
   const onSubmit = body => {
-    doFetch({ body });
+    doFetch({ body: JSON.stringify(body), contentType: 'application/json' });
   };
 
   const closeAlert = () => {

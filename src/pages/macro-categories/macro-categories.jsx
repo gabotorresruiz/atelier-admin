@@ -57,7 +57,7 @@ const MacroCategories = () => {
         <CustomizedTable
           data={response}
           refreshData={refreshData}
-          tableTitle='Macro Categorías'
+          tableTitle='Macrocategorías'
           entity='macro-categories'
         />
       ) : (

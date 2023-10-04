@@ -80,7 +80,8 @@ const MacroCategoryForm = ({ title, id = 0, data = {} }) => {
 
   const onSubmit = formData => {
     doFetch({
-      body: { name: formData.macroCategoryName },
+      body: JSON.stringify({ name: formData.macroCategoryName }),
+      contentType: 'application/json',
     });
   };
 

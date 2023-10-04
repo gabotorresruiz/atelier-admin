@@ -3,7 +3,7 @@ import * as yup from 'yup';
 const schema = yup.object({
   subCategoryName: yup
     .string()
-    .required('Debe ingresar el nombre de la Sub Categoría')
+    .required('Debe ingresar el nombre de la Subcategoría')
     .required(),
   categories: yup
     .array()

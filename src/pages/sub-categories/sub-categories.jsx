@@ -57,7 +57,7 @@ const SubCategories = () => {
         <CustomizedTable
           data={response}
           refreshData={refreshData}
-          tableTitle='Sub Categorías'
+          tableTitle='Subcategorías'
           entity='sub-categories'
         />
       ) : (

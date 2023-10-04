@@ -109,7 +109,7 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
       macrocategories: selectedMacroCategories,
     };
 
-    doFetch({ body });
+    doFetch({ body: JSON.stringify(body), contentType: 'application/json' });
   };
 
   const closeAlert = () => {
@@ -211,8 +211,8 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
                   <MultiSelect
                     fullWidth
                     name='macroCategories'
-                    inputLabel='Macro Categoría'
-                    label='Macro Categoría'
+                    inputLabel='Macrocategoría'
+                    label='Macrocategoría'
                     id='macroCategories'
                     disabled={getIsLoading}
                     onChange={field.onChange}
