@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  app:
+    container_name: app-prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:80'
