@@ -3,18 +3,23 @@ import { styled } from '@mui/system';
 import { alpha } from '@mui/material/styles';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+
 import {
   Grid,
   Fab,
   Toolbar as MuiToolbar,
   Tooltip,
   Typography,
+  TextField,
+  InputAdornment,
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import {
   Add as AddIcon,
   Delete as DeleteIcon,
   Edit as EditIcon,
 } from '@mui/icons-material';
+
 import { useFetch } from '../../../../hooks';
 import { Link } from '../../..';
 
@@ -35,8 +40,31 @@ const StyledTableTitle = styled('h1')`
 const StyledTypography = styled(Typography)`
   flex: 1 1 100%;
 `;
+const StyledTextField = styled(TextField)`
+  & .MuiOutlinedInput-root {
+    border-radius: 25px;
+  }
 
-const Toolbar = ({ entity, refreshData, rowSelected, tableTitle }) => {
+  & .MuiOutlinedInput-notchedOutline {
+    border-color: rgba(0, 0, 0, 0.23);
+  }
+
+  &:hover .MuiOutlinedInput-notchedOutline {
+    border-color: rgba(0, 0, 0, 0.23);
+  }
+
+  & .MuiOutlinedInput-input {
+    padding-left: 10px;
+  }
+`;
+
+const Toolbar = ({
+  entity,
+  refreshData,
+  rowSelected,
+  tableTitle,
+  onSearch,
+}) => {
   const [{ error, isLoading }, doFetch] = useFetch({
     entity,
     fetchMethod: 'DELETE',
@@ -114,18 +142,37 @@ const Toolbar = ({ entity, refreshData, rowSelected, tableTitle }) => {
         justifyContent='flex-end'
         spacing={2}
       >
-        <Grid item>
-          <Tooltip title='Agregar' placement='top'>
-            <Fab
-              color='primary'
-              component={Link}
-              size='small'
-              to={`/${entity}/new`}
-            >
-              <AddIcon />
-            </Fab>
-          </Tooltip>
-        </Grid>
+        {!rowSelected && (
+          <>
+            <Grid item>
+              <StyledTextField
+                placeholder='Buscar...'
+                variant='outlined'
+                size='small'
+                onChange={e => onSearch(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position='start'>
+                      <SearchIcon color='action' />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+            <Grid item>
+              <Tooltip title='Agregar' placement='top'>
+                <Fab
+                  color='primary'
+                  component={Link}
+                  size='small'
+                  to={`/${entity}/new`}
+                >
+                  <AddIcon />
+                </Fab>
+              </Tooltip>
+            </Grid>
+          </>
+        )}
 
         {rowSelected !== null && (
           <>
