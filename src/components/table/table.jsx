@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useRef } from 'react';
 import { styled } from '@mui/system';
 import {
@@ -7,9 +6,7 @@ import {
   Table as MuiTable,
   TableContainer,
   TablePagination,
-  IconButton,
 } from '@mui/material';
-import SearchOffIcon from '@mui/icons-material/SearchOff';
 import { Body, Head, Toolbar } from './elements';
 
 const StyledBox = styled(Box)`
@@ -54,7 +51,7 @@ const Table = ({
       refreshData(searchQuery);
     }
     prevSearchQueryRef.current = searchQuery;
-  }, [searchQuery]);
+  }, [refreshData, searchQuery]);
 
   const handleChangePage = (e, newPage) => {
     setPage(newPage);
@@ -84,40 +81,16 @@ const Table = ({
           {isLoading && <StyledLoadingBackground />}
           <MuiTable aria-labelledby='table-title' size='medium'>
             <Head headColumns={headColumns} />
-            {data.length ? (
-              <Body
-                data={data}
-                headColumns={headColumns}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                selected={selected}
-                setSelected={setSelected}
-              />
-            ) : (
-              <tbody style={{ height: 'calc(100% - 56px)' }}>
-                <tr>
-                  <td
-                    colSpan={headColumns.length}
-                    style={{
-                      textAlign: 'center',
-                      verticalAlign: 'middle',
-                      height: 300,
-                    }}
-                  >
-                    <div style={{ fontSize: '24px', marginBottom: '10px' }}>
-                      <SearchOffIcon
-                        color='info'
-                        style={{ fontSize: '50px' }}
-                      />
-                      <div>No se encontraron resultados</div>
-                      <IconButton onClick={handleResetSearch}>
-                        Volver a la lista
-                      </IconButton>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            )}
+
+            <Body
+              data={data}
+              headColumns={headColumns}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              selected={selected}
+              setSelected={setSelected}
+              onResetSearch={handleResetSearch}
+            />
           </MuiTable>
         </StyledTableContainer>
         {data.length > 0 && (
