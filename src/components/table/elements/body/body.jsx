@@ -37,13 +37,13 @@ const Body = ({
   return (
     <TableBody>
       {dataToShow.length === 0 ? (
-        <StyledEmptyRow>
+        <StyledEmptyRow emptyrows={rowsPerPage}>
           <TableCell
             colSpan={headColumns.length}
-            style={{ textAlign: 'center' }}
+            style={{ textAlign: 'center', width: '100%' }}
           >
             <StyledMessageContainer>
-              <SearchOffIcon color='info' style={{ fontSize: '50px' }} />
+              <SearchOffIcon color='info' style={{ fontSize: '40px' }} />
               <div>No se encontraron resultados</div>
               <IconButton onClick={onResetSearch}>Volver a la lista</IconButton>
             </StyledMessageContainer>
