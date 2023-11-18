@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState, useRef } from 'react';
 import { styled } from '@mui/system';
 import {
   Box,
@@ -6,6 +7,7 @@ import {
   Table as MuiTable,
   TableContainer,
   TablePagination,
+  IconButton,
 } from '@mui/material';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import { Body, Head, Toolbar } from './elements';
@@ -45,16 +47,14 @@ const Table = ({
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredData = useMemo(() => {
-    if (!searchQuery) return data;
-    return data.filter(item =>
-      headColumns.some(column =>
-        String(item[column.id])
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase()),
-      ),
-    );
-  }, [data, searchQuery, headColumns]);
+  const prevSearchQueryRef = useRef();
+
+  useEffect(() => {
+    if (searchQuery !== '' && prevSearchQueryRef.current !== searchQuery) {
+      refreshData(searchQuery);
+    }
+    prevSearchQueryRef.current = searchQuery;
+  }, [searchQuery]);
 
   const handleChangePage = (e, newPage) => {
     setPage(newPage);
@@ -63,6 +63,11 @@ const Table = ({
   const handleChangeRowsPerPage = e => {
     setRowsPerPage(parseInt(e.target.value, 10));
     setPage(0);
+  };
+
+  const handleResetSearch = () => {
+    setSearchQuery('');
+    refreshData('');
   };
 
   return (
@@ -79,9 +84,9 @@ const Table = ({
           {isLoading && <StyledLoadingBackground />}
           <MuiTable aria-labelledby='table-title' size='medium'>
             <Head headColumns={headColumns} />
-            {filteredData.length ? (
+            {data.length ? (
               <Body
-                data={filteredData}
+                data={data}
                 headColumns={headColumns}
                 page={page}
                 rowsPerPage={rowsPerPage}
@@ -96,18 +101,18 @@ const Table = ({
                     style={{
                       textAlign: 'center',
                       verticalAlign: 'middle',
-                      height: 'calc(100% - 56px)',
-                      color: '#b5b5b5',
+                      height: 300,
                     }}
                   >
-                    <div style={{ fontSize: '24px' }}>
+                    <div style={{ fontSize: '24px', marginBottom: '10px' }}>
                       <SearchOffIcon
                         color='info'
                         style={{ fontSize: '50px' }}
                       />
-                    </div>
-                    <div style={{ fontSize: '18px', marginBottom: '10px' }}>
-                      No se encontraron resultados para {searchQuery}
+                      <div>No se encontraron resultados</div>
+                      <IconButton onClick={handleResetSearch}>
+                        Volver a la lista
+                      </IconButton>
                     </div>
                   </td>
                 </tr>
@@ -115,7 +120,7 @@ const Table = ({
             )}
           </MuiTable>
         </StyledTableContainer>
-        {filteredData.length > 0 && (
+        {data.length > 0 && (
           <TablePagination
             rowsPerPageOptions={[rowsPerPage]}
             component='div'

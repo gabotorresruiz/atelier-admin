@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/system';
 import { alpha } from '@mui/material/styles';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-
 import {
   Grid,
   Fab,
@@ -12,6 +11,7 @@ import {
   Typography,
   TextField,
   InputAdornment,
+  IconButton,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import {
@@ -19,7 +19,6 @@ import {
   Delete as DeleteIcon,
   Edit as EditIcon,
 } from '@mui/icons-material';
-
 import { useFetch } from '../../../../hooks';
 import { Link } from '../../..';
 
@@ -54,7 +53,7 @@ const StyledTextField = styled(TextField)`
   }
 
   & .MuiOutlinedInput-input {
-    padding-left: 10px;
+    padding-left: 25px;
   }
 `;
 
@@ -70,6 +69,16 @@ const Toolbar = ({
     fetchMethod: 'DELETE',
     id: rowSelected,
   });
+
+  const [localSearchValue, setLocalSearchValue] = useState('');
+
+  const handleSearchChange = event => {
+    setLocalSearchValue(event.target.value);
+  };
+
+  const handleSearch = () => {
+    onSearch(localSearchValue);
+  };
 
   useEffect(() => {}, [error, isLoading]);
   const doDelete = () => {
@@ -149,11 +158,14 @@ const Toolbar = ({
                 placeholder='Buscar...'
                 variant='outlined'
                 size='small'
-                onChange={e => onSearch(e.target.value)}
+                value={localSearchValue}
+                onChange={handleSearchChange}
                 InputProps={{
-                  startAdornment: (
-                    <InputAdornment position='start'>
-                      <SearchIcon color='action' />
+                  endAdornment: (
+                    <InputAdornment position='end'>
+                      <IconButton onClick={handleSearch}>
+                        <SearchIcon />
+                      </IconButton>
                     </InputAdornment>
                   ),
                 }}
