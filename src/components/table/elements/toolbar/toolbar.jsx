@@ -110,7 +110,7 @@ const Toolbar = ({
               icon: 'success',
               confirmButtonColor: '#0288d1',
               showLoaderOnConfirm: true,
-              preConfirm: () => refreshData(),
+              preConfirm: () => refreshData(''),
               allowOutsideClick: () => !isLoading,
             });
           }
