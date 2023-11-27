@@ -36,6 +36,8 @@ const Table = ({
   refreshData,
   data = [],
   isLoading = false,
+  enableUpload = false,
+  enableOnlyUpload = false,
   tableTitle = '',
 }) => {
   const [selected, setSelected] = useState(null);
@@ -75,6 +77,8 @@ const Table = ({
           refreshData={refreshData}
           rowSelected={selected}
           tableTitle={tableTitle}
+          enableUpload={enableUpload}
+          enableOnlyUpload={enableOnlyUpload}
           onSearch={setSearchQuery}
         />
         <StyledTableContainer>

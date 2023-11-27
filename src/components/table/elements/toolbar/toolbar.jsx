@@ -14,6 +14,7 @@ import {
   IconButton,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 import {
   Add as AddIcon,
   Delete as DeleteIcon,
@@ -63,6 +64,8 @@ const Toolbar = ({
   rowSelected,
   tableTitle,
   onSearch,
+  enableUpload = false,
+  enableOnlyUpload = false,
 }) => {
   const [{ error, isLoading }, doFetch] = useFetch({
     entity,
@@ -171,18 +174,34 @@ const Toolbar = ({
                 }}
               />
             </Grid>
-            <Grid item>
-              <Tooltip title='Agregar' placement='top'>
-                <Fab
-                  color='primary'
-                  component={Link}
-                  size='small'
-                  to={`/${entity}/new`}
-                >
-                  <AddIcon />
-                </Fab>
-              </Tooltip>
-            </Grid>
+            {!enableOnlyUpload && (
+              <Grid item>
+                <Tooltip title='Agregar' placement='top'>
+                  <Fab
+                    color='primary'
+                    component={Link}
+                    size='small'
+                    to={`/${entity}/new`}
+                  >
+                    <AddIcon />
+                  </Fab>
+                </Tooltip>
+              </Grid>
+            )}
+            {enableUpload && (
+              <Grid item>
+                <Tooltip title='Subir Archivo' placement='top'>
+                  <Fab
+                    color='primary'
+                    component={Link}
+                    size='small'
+                    to={`/${entity}/upload`}
+                  >
+                    <FileUploadIcon />
+                  </Fab>
+                </Tooltip>
+              </Grid>
+            )}
           </>
         )}
 

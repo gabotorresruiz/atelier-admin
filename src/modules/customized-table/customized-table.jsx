@@ -20,6 +20,8 @@ const CustomizedTable = ({
   data = [],
   tableTitle,
   entity,
+  enableUpload = false,
+  enableOnlyUpload = false,
 }) => (
   <Table
     entity={entity}
@@ -28,6 +30,8 @@ const CustomizedTable = ({
     isLoading={isLoading}
     refreshData={refreshData}
     tableTitle={tableTitle}
+    enableUpload={enableUpload}
+    enableOnlyUpload={enableOnlyUpload}
   />
 );
 

@@ -35,9 +35,11 @@ const StyledTitle = styled('h1')`
   margin-bottom: 20px;
 `;
 
-const ColorForm = () => {
+const UploadFileForm = ({ title, entity }) => {
   const [colorantFile, setColorantFile] = useState(null);
   const [systemColorFile, setSystemColorFile] = useState(null);
+
+  const hasColorants = true; // TODO:  CHECK IF THE COLORANTS IS NOT NULL
 
   const handleColorantFileUpload = file => {
     setColorantFile(file);
@@ -77,8 +79,8 @@ const ColorForm = () => {
   };
 
   const onSubmit = async () => {
-    await uploadFile(colorantFile);
-    await uploadFile(systemColorFile);
+    if (entity === 'colorants') await uploadFile(colorantFile);
+    else await uploadFile(systemColorFile);
   };
 
   const handleBack = () => {
@@ -87,30 +89,34 @@ const ColorForm = () => {
 
   return (
     <Container component='div' maxWidth='sm'>
-      <StyledTitle>Agregar Colores</StyledTitle>
+      <StyledTitle>{title}</StyledTitle>
 
       <StyledBox component='form' onSubmit={onSubmit}>
-        <Alert severity='info'>
-          <AlertTitle>Info</AlertTitle>
-          Se debe subir primero los colorantes y luego los colores del sistema
-          tintométrico
-        </Alert>
+        {entity === 'colors' && (
+          <Alert severity='info'>
+            <AlertTitle>Info</AlertTitle>
+            Debe tener colorantes agregados antes de subir colores para el
+            sistema tintométrico
+          </Alert>
+        )}
 
-        <CSVUploader
-          onFileUpload={handleColorantFileUpload}
-          onFileRemove={handleColorantFileRemove}
-          file={colorantFile}
-          label='Colorantes'
-          disabled={false}
-        />
+        {entity === 'colorants' && (
+          <CSVUploader
+            onFileUpload={handleColorantFileUpload}
+            onFileRemove={handleColorantFileRemove}
+            file={colorantFile}
+            disabled={false}
+          />
+        )}
 
-        <CSVUploader
-          onFileUpload={handleSystemColorFileUpload}
-          onFileRemove={handleSystemColorFileRemove}
-          file={systemColorFile}
-          label='Colores del Sistema Tintométrico'
-          disabled={!colorantFile}
-        />
+        {entity === 'colors' && (
+          <CSVUploader
+            onFileUpload={handleSystemColorFileUpload}
+            onFileRemove={handleSystemColorFileRemove}
+            file={systemColorFile}
+            disabled={!hasColorants}
+          />
+        )}
 
         <StyledBoxWrapper>
           <Button
@@ -124,7 +130,7 @@ const ColorForm = () => {
             component='label'
             onClick={onSubmit()}
             variant='contained'
-            disabled={!colorantFile || !systemColorFile}
+            disabled={!systemColorFile || colorantFile}
             loading={false}
           >
             Guardar
@@ -135,4 +141,4 @@ const ColorForm = () => {
   );
 };
 
-export default ColorForm;
+export default UploadFileForm;

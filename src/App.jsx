@@ -24,6 +24,8 @@ import {
   Colors,
   AddColors,
   Colorants,
+  AddColorant,
+  UploadColorant,
 } from './pages';
 
 import Layout from './layout';
@@ -68,8 +70,10 @@ const App = () => (
           <Route path='products/new' element={<AddProduct />} />
           <Route path='products/edit/:id' element={<EditProduct />} />
           <Route path='colors' element={<Colors />} />
-          <Route path='colors/new' element={<AddColors />} />
+          <Route path='colors/upload' element={<AddColors />} />
           <Route path='colorants' element={<Colorants />} />
+          <Route path='colorants/new' element={<AddColorant />} />
+          <Route path='colorants/upload' element={<UploadColorant />} />
         </Route>
       </Route>
       <Route path='*' element={<p>404 Not Found</p>} />

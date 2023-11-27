@@ -59,6 +59,7 @@ const Colorants = () => {
         // refreshData={refreshData}
         tableTitle='Colorantes'
         entity='colorants'
+        enableUpload
       />
     </Suspense>
   );

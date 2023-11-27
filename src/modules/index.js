@@ -10,4 +10,5 @@ export const ProductForm = React.lazy(() => import('./product-form'));
 export const Sidebar = React.lazy(() => import('./sidebar'));
 export const Navbar = React.lazy(() => import('./navbar'));
 export const CustomizedTable = React.lazy(() => import('./customized-table'));
-export const ColorForm = React.lazy(() => import('./color-form'));
+export const UploadFileForm = React.lazy(() => import('./upload-file-form'));
+export const ColorantForm = React.lazy(() => import('./colorant-form'));
