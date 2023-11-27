@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
-import Dropzone from 'react-dropzone';
+import React from 'react';
+import { useDropzone } from 'react-dropzone';
 import styled from 'styled-components';
-import Papa from 'papaparse';
 
 const StyledCSVUploader = styled.div`
-  text-align: center;
-  margin: 2rem auto;
-  max-width: 400px;
-  padding: 1.5rem;
-  border: 2px dashed #cccccc;
+  text-align: left;
+  width: 100%;
   border-radius: 5px;
-  background-color: #f9f9f9;
+  box-sizing: border-box;
+`;
+const UploadLabel = styled.label`
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
 `;
 
 const UploadButton = styled.button`
@@ -29,80 +30,95 @@ const UploadButton = styled.button`
 
 const UploadText = styled.p`
   margin-top: 1rem;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 `;
 
 const SelectedFileText = styled.p`
   margin-top: 1rem;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #3498db;
 `;
 
-const ErrorMessage = styled.p`
-  color: #d63031;
-  margin-top: 1rem;
-  font-size: 1.2rem;
+const getColor = props => {
+  if (props.disabled) return '#cccccc';
+  if (props.isDragAccept) return '#00e676';
+  if (props.isDragReject) return '#ff1744';
+  if (props.isFocused) return '#2196f3';
+
+  return '#eeeeee';
+};
+
+const StyledDropzoneContainer = styled('div')`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-width: 2px;
+  border-radius: 2px;
+  border-color: ${props => getColor(props)};
+  border-style: dashed;
+  background-color: #fafafa;
+  color: ${props => (props.disabled ? '#bdbdbd' : '#bdbdbd')};
+  outline: none;
+  cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
+  transition: border-color 0.3s;
+
+  &:hover,
+  &:focus {
+    border-color: ${props => (props.disabled ? '#cccccc' : '#212121')};
+  }
+
+  width: 100%;
 `;
 
-const CSVUploader = () => {
-  const [uploadedFile, setUploadedFile] = useState(null);
-  const [errorMessage, setErrorMessage] = useState('');
+const ButtonContainer = styled.div`
+  text-align: center;
+`;
 
+const CSVUploader = ({ onFileUpload, onFileRemove, file, label, disabled }) => {
   const onDrop = acceptedFiles => {
-    const file = acceptedFiles[0];
-    if (file && file.name.endsWith('.csv')) {
-      setUploadedFile(file);
-      setErrorMessage('');
-    } else {
-      setUploadedFile(null);
-      setErrorMessage('Solo se permiten archivos CSV.');
+    const uploadedFile = acceptedFiles[0];
+    if (uploadedFile) {
+      onFileUpload(uploadedFile);
     }
   };
 
-  const uploadFile = async () => {
-    if (uploadedFile) {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const csvData = reader.result;
-        // El parámetro { header: true } indica que la primera fila del CSV contiene los encabezados de columna.
-        const parsedData = Papa.parse(csvData, { header: true }).data;
-        // parsedData es un objeto que contiene los datos del CSV en formato JSON.
-        try {
-          // TODO
-          // await axios.post('URL_DEL_BACKEND', { data: parsedData });
-          console.log('parsedData', parsedData);
-          console.log('Datos enviados exitosamente al backend.');
-        } catch (error) {
-          console.error('Error al enviar los datos al backend:', error);
-        }
-      };
+  const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
+    useDropzone({
+      onDrop,
+      accept: { 'text/csv': ['.csv'] },
+      disabled,
+    });
 
-      reader.readAsText(uploadedFile);
-    }
+  const removeFile = () => {
+    onFileRemove();
   };
 
   return (
     <StyledCSVUploader>
-      <Dropzone onDrop={onDrop} accept='.csv'>
-        {({ getRootProps, getInputProps }) => (
-          <div {...getRootProps()} className='dropzone'>
-            <input {...getInputProps()} />
-            <UploadText>
-              Arrastra y suelta un archivo CSV aquí, o haz clic para seleccionar
-              uno.
-            </UploadText>
-          </div>
-        )}
-      </Dropzone>
-      {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-      {uploadedFile && (
+      {label && <UploadLabel>{`Subir ${label}`}</UploadLabel>}
+      <StyledDropzoneContainer
+        {...getRootProps()}
+        isFocused={isFocused}
+        isDragAccept={isDragAccept}
+        isDragReject={isDragReject}
+        disabled={disabled}
+      >
+        <input {...getInputProps()} />
+        <UploadText>
+          Arrastra y suelta un archivo CSV aquí, o haz click para seleccionar
+          desde tus archivos
+        </UploadText>
+      </StyledDropzoneContainer>
+      {file && (
         <div>
-          <SelectedFileText>
-            Archivo seleccionado: {uploadedFile.name}
-          </SelectedFileText>
-          <UploadButton type='button' onClick={uploadFile}>
-            Subir archivo
-          </UploadButton>
+          <SelectedFileText>Archivo seleccionado: {file.name}</SelectedFileText>
+          <ButtonContainer>
+            <UploadButton type='button' onClick={removeFile}>
+              Quitar archivo
+            </UploadButton>
+          </ButtonContainer>
         </div>
       )}
     </StyledCSVUploader>
