@@ -23,6 +23,7 @@ import {
   SubCategories,
   Colors,
   AddColors,
+  Colorants,
 } from './pages';
 
 import Layout from './layout';
@@ -68,6 +69,7 @@ const App = () => (
           <Route path='products/edit/:id' element={<EditProduct />} />
           <Route path='colors' element={<Colors />} />
           <Route path='colors/new' element={<AddColors />} />
+          <Route path='colorants' element={<Colorants />} />
         </Route>
       </Route>
       <Route path='*' element={<p>404 Not Found</p>} />

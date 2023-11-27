@@ -28,3 +28,4 @@ export const AddProduct = React.lazy(() => import('./products/add-product'));
 export const EditProduct = React.lazy(() => import('./products/edit-product'));
 export const Colors = React.lazy(() => import('./colors'));
 export const AddColors = React.lazy(() => import('./colors/add-colors'));
+export const Colorants = React.lazy(() => import('./colorants'));
