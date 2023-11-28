@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Alert, AlertTitle, Box, Button, Container } from '@mui/material';
 import { styled } from '@mui/system';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -36,6 +37,7 @@ const StyledTitle = styled('h1')`
 `;
 
 const UploadFileForm = ({ title, entity }) => {
+  const navigate = useNavigate();
   const [colorantFile, setColorantFile] = useState(null);
   const [systemColorFile, setSystemColorFile] = useState(null);
 

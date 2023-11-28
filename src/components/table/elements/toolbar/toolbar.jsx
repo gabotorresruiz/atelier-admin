@@ -66,6 +66,7 @@ const Toolbar = ({
   onSearch,
   enableUpload = false,
   enableOnlyUpload = false,
+  setHasSearched,
 }) => {
   const [{ error, isLoading }, doFetch] = useFetch({
     entity,
@@ -81,6 +82,7 @@ const Toolbar = ({
 
   const handleSearch = () => {
     onSearch(localSearchValue);
+    setHasSearched(true); // not working
   };
 
   useEffect(() => {}, [error, isLoading]);

@@ -96,7 +96,7 @@ const Sidebar = React.memo(() => {
         <List>
           <ListItemLink
             icon={<ColorizeIcon />}
-            id='/colors'
+            id='/colorants'
             onClick={handleClick}
             selectedItem={selectedItem}
             text='Colorantes'
