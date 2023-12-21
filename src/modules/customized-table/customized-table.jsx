@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table } from '../../components';
 
-const headColumns = [
+const baseColumns = [
   {
     id: 'name',
     label: 'Nombre',
@@ -22,6 +22,7 @@ const CustomizedTable = ({
   entity,
   enableUpload = false,
   enableOnlyUpload = false,
+  headColumns = baseColumns,
 }) => (
   <Table
     entity={entity}
