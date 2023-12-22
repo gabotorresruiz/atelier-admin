@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table } from '../../components';
 
-const headColumns = [
+const baseColumns = [
   {
     id: 'name',
     label: 'Nombre',
@@ -20,6 +20,9 @@ const CustomizedTable = ({
   data = [],
   tableTitle,
   entity,
+  enableUpload = false,
+  enableOnlyUpload = false,
+  headColumns = baseColumns,
 }) => (
   <Table
     entity={entity}
@@ -28,6 +31,8 @@ const CustomizedTable = ({
     isLoading={isLoading}
     refreshData={refreshData}
     tableTitle={tableTitle}
+    enableUpload={enableUpload}
+    enableOnlyUpload={enableOnlyUpload}
   />
 );
 

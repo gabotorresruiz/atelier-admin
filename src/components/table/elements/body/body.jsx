@@ -1,19 +1,10 @@
 import React, { useMemo } from 'react';
 import { styled } from '@mui/system';
-import { TableBody, TableCell, TableRow, IconButton } from '@mui/material';
-import SearchOffIcon from '@mui/icons-material/SearchOff';
+import { TableBody, TableCell, TableRow } from '@mui/material';
 import Row from '../row';
 
 const StyledEmptyRow = styled(TableRow)`
   height: ${({ emptyrows }) => `${53 * emptyrows}px`};
-`;
-
-const StyledMessageContainer = styled('div')`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
 `;
 
 const Body = ({
@@ -23,7 +14,6 @@ const Body = ({
   rowsPerPage,
   selected,
   setSelected,
-  onResetSearch,
 }) => {
   const dataToShow = useMemo(
     () => data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
@@ -34,39 +24,23 @@ const Body = ({
     () => (page > 0 ? rowsPerPage - dataToShow.length : 0),
     [dataToShow.length, page, rowsPerPage],
   );
+
   return (
     <TableBody>
-      {dataToShow.length === 0 ? (
-        <StyledEmptyRow emptyrows={rowsPerPage}>
-          <TableCell
-            colSpan={headColumns.length}
-            style={{ textAlign: 'center', width: '100%' }}
-          >
-            <StyledMessageContainer>
-              <SearchOffIcon color='info' style={{ fontSize: '40px' }} />
-              <div>No se encontraron resultados</div>
-              <IconButton onClick={onResetSearch}>Volver a la lista</IconButton>
-            </StyledMessageContainer>
-          </TableCell>
+      {dataToShow.map((row, index) => (
+        <Row
+          data={row}
+          headColumns={headColumns}
+          index={index}
+          key={row.id}
+          selected={selected}
+          setSelected={setSelected}
+        />
+      ))}
+      {emptyRows > 0 && (
+        <StyledEmptyRow emptyrows={emptyRows}>
+          <TableCell colSpan={5} />
         </StyledEmptyRow>
-      ) : (
-        <>
-          {dataToShow.map((row, index) => (
-            <Row
-              data={row}
-              headColumns={headColumns}
-              index={index}
-              key={row.id}
-              selected={selected}
-              setSelected={setSelected}
-            />
-          ))}
-          {emptyRows > 0 && (
-            <StyledEmptyRow emptyrows={emptyRows}>
-              <TableCell colSpan={5} />
-            </StyledEmptyRow>
-          )}
-        </>
       )}
     </TableBody>
   );

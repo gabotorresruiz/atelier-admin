@@ -8,6 +8,7 @@ import {
 } from '@mui/icons-material';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import PaletteIcon from '@mui/icons-material/Palette';
+import ColorizeIcon from '@mui/icons-material/Colorize';
 import { ListItemLink } from '../../components';
 
 const StyledDrawer = styled(Drawer)`
@@ -94,12 +95,23 @@ const Sidebar = React.memo(() => {
         <Divider />
         <List>
           <ListItemLink
+            icon={<ColorizeIcon />}
+            id='/colorants'
+            onClick={handleClick}
+            selectedItem={selectedItem}
+            text='Colorantes'
+            to='/colorants'
+          />
+        </List>
+        <Divider />
+        <List>
+          <ListItemLink
             icon={<PaletteIcon />}
             id='/colors'
             onClick={handleClick}
             selectedItem={selectedItem}
             text='Colores'
-            to='/colors/new'
+            to='/colors'
           />
         </List>
         <Divider />
