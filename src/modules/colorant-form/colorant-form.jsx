@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { Controller, useForm } from 'react-hook-form';
@@ -16,6 +16,7 @@ import {
   Grid,
   TextField,
 } from '@mui/material';
+import { useFetch } from '../../hooks';
 import schema from './schema';
 
 const StyledBoxWrapper = styled(Box)(
@@ -70,6 +71,15 @@ const ColorantForm = ({ title, id = 0, data = {} }) => {
     severity: '',
   });
 
+  const isEmptyData = Object.keys(data).length === 0;
+  const fetchMethod = isEmptyData ? 'POST' : 'PUT';
+
+  const [{ error, isLoading, response }, doFetch] = useFetch({
+    entity: 'colorants',
+    fetchMethod,
+    id,
+  });
+
   const {
     control,
     handleSubmit,
@@ -88,10 +98,52 @@ const ColorantForm = ({ title, id = 0, data = {} }) => {
   };
 
   const onSubmit = ({ colorantName, price }) => {
-    // TODO
-    console.log('colorantName', colorantName);
-    console.log('price', price);
+    doFetch({
+      body: JSON.stringify({ name: colorantName, price }),
+      contentType: 'application/json',
+    });
   };
+
+  const handleError = useCallback(() => {
+    setAlert({
+      isVisible: true,
+      message: 'Algo salió mal... Por favor intente nuevamente',
+      severity: 'error',
+    });
+  }, []);
+
+  const responseSuccess = useCallback(
+    fetchResponse => {
+      let message = '';
+
+      if (fetchResponse.status === 201) {
+        message = 'Colorante agregado satisfactoriamente!';
+        reset();
+      }
+
+      if (fetchResponse.status === 200) {
+        message = 'Colorante editado satisfactoriamente!';
+      }
+
+      setAlert({
+        isVisible: true,
+        message,
+        severity: 'success',
+      });
+    },
+    [reset],
+  );
+
+  useEffect(() => {
+    if (error) return handleError();
+    if (response && (response.status === 201 || response.status === 200))
+      return responseSuccess(response);
+  }, [responseSuccess, error, handleError, response]);
+
+  const closeAlert = () => {
+    setAlert(false);
+  };
+
   return (
     <>
       {alert.isVisible && (
@@ -189,7 +241,7 @@ const ColorantForm = ({ title, id = 0, data = {} }) => {
               onClick={handleSubmit(onSubmit)}
               variant='contained'
               disabled={!isValid}
-              loading={false}
+              loading={isLoading}
             >
               Guardar
             </StyledButton>
