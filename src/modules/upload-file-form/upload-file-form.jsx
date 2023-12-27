@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Alert, AlertTitle, Box, Button, Container } from '@mui/material';
+import { Alert, AlertTitle, Box, Button, Container, Fade } from '@mui/material';
 import { styled } from '@mui/system';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import LoadingButton from '@mui/lab/LoadingButton';
-import Papa from 'papaparse';
+import { useFetch } from '../../hooks';
 import { CSVUploader } from '../../components';
 
 const StyledBoxWrapper = styled(Box)(
@@ -36,12 +36,58 @@ const StyledTitle = styled('h1')`
   margin-bottom: 20px;
 `;
 
+const StyledAlert = styled(Alert)(
+  ({ theme }) => `
+  position: absolute;
+  right: ${theme.spacing(3)};
+`,
+);
+
 const UploadFileForm = ({ title, entity }) => {
   const navigate = useNavigate();
   const [colorantFile, setColorantFile] = useState(null);
   const [systemColorFile, setSystemColorFile] = useState(null);
+  const [hasColorants, setHasColorants] = useState(false);
 
-  const hasColorants = true; // TODO:  CHECK IF THE COLORANTS IS NOT NULL
+  const [alert, setAlert] = useState({
+    isVisible: false,
+    message: '',
+    severity: '',
+  });
+
+  const closeAlert = () => {
+    setAlert(false);
+  };
+
+  const handleError = useCallback(() => {
+    setAlert({
+      isVisible: true,
+      message: 'Algo salió mal... Por favor intente nuevamente',
+      severity: 'error',
+    });
+  }, []);
+
+  const [{ error: getError, isLoading: getIsLoading, response: getResponse }] =
+    useFetch({
+      entity: 'colorants',
+      fetchMethod: 'GET',
+    });
+
+  useEffect(() => {
+    if (getError) return handleError();
+
+    if (getResponse !== null && getResponse.length > 0) {
+      setHasColorants(true);
+    }
+  }, [getError, getResponse, handleError]);
+
+  const [{ error, isLoading, response }, doFetch] = useFetch({
+    entity: entity === 'colorants' ? 'colorants' : 'tintometric-colors',
+    fetchMethod: 'POST',
+    fetchParams: {
+      csv: true,
+    },
+  });
 
   const handleColorantFileUpload = file => {
     setColorantFile(file);
@@ -58,31 +104,37 @@ const UploadFileForm = ({ title, entity }) => {
   const handleSystemColorFileRemove = () => {
     setSystemColorFile(null);
   };
+  const postSuccess = useCallback(fetchResponse => {
+    let message = '';
 
-  const uploadFile = async uploadedFile => {
-    if (uploadedFile) {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const csvData = reader.result;
-        // El parámetro { header: true } indica que la primera fila del CSV contiene los encabezados de columna.
-        const parsedData = Papa.parse(csvData, { header: true }).data;
-        // parsedData es un objeto que contiene los datos del CSV en formato JSON.
-        try {
-          // TODO
-          // await axios.post('URL_DEL_BACKEND', { data: parsedData });
-          console.log('parsedData', parsedData);
-          console.log('Datos enviados exitosamente al backend.');
-        } catch (error) {
-          console.error('Error al enviar los datos al backend:', error);
-        }
-      };
-      reader.readAsText(uploadedFile);
+    if (fetchResponse.status === 201) {
+      const entityMessage = entity === 'colorants' ? 'colorantes' : 'colores';
+      message = `Archivo de ${entityMessage} agregado satisfactoriamente! `;
+      if (entity === 'colorants') handleColorantFileRemove();
+      else handleSystemColorFileRemove();
     }
-  };
+
+    setAlert({
+      isVisible: true,
+      message,
+      severity: 'success',
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (error) return handleError();
+
+    if (response && response.status === 201) return postSuccess(response);
+  }, [postSuccess, error, response, handleError]);
 
   const onSubmit = async () => {
-    if (entity === 'colorants') await uploadFile(colorantFile);
-    else await uploadFile(systemColorFile);
+    const csvToSend = entity === 'colorants' ? colorantFile : systemColorFile;
+    const formData = new FormData();
+    formData.append('csvFile', csvToSend);
+    doFetch({
+      body: formData,
+    });
   };
 
   const handleBack = () => {
@@ -91,6 +143,20 @@ const UploadFileForm = ({ title, entity }) => {
 
   return (
     <Container component='div' maxWidth='sm'>
+      {alert.isVisible && (
+        <Fade
+          in={alert.isVisible}
+          addEndListener={() => {
+            setTimeout(() => {
+              setAlert(false);
+            }, 5000);
+          }}
+        >
+          <StyledAlert onClose={closeAlert} severity={alert.severity}>
+            {alert.message}
+          </StyledAlert>
+        </Fade>
+      )}
       <StyledTitle>{title}</StyledTitle>
 
       <StyledBox component='form' onSubmit={onSubmit}>
@@ -130,10 +196,10 @@ const UploadFileForm = ({ title, entity }) => {
           </Button>
           <StyledButton
             component='label'
-            onClick={onSubmit()}
+            onClick={onSubmit}
             variant='contained'
-            disabled={!systemColorFile || colorantFile}
-            loading={false}
+            disabled={(!hasColorants && entity === 'colors') || getIsLoading}
+            loading={isLoading}
           >
             Guardar
           </StyledButton>

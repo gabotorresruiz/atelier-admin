@@ -78,7 +78,8 @@ const Colorants = () => {
           tableTitle='Colorantes'
           entity='colorants'
           headColumns={colorantsColumns}
-          enableUpload
+          enableOnlyUpload
+          enableDelete={false}
         />
       ) : (
         <LinearLoader />

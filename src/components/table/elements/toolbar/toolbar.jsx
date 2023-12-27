@@ -64,8 +64,8 @@ const Toolbar = ({
   rowSelected,
   tableTitle,
   onSearch,
-  enableUpload = false,
   enableOnlyUpload = false,
+  enableDelete = true,
   setHasSearched,
 }) => {
   const [{ error, isLoading }, doFetch] = useFetch({
@@ -190,7 +190,7 @@ const Toolbar = ({
                 </Tooltip>
               </Grid>
             )}
-            {enableUpload && (
+            {enableOnlyUpload && (
               <Grid item>
                 <Tooltip title='Subir Archivo' placement='top'>
                   <Fab
@@ -220,14 +220,15 @@ const Toolbar = ({
                 </Fab>
               </Tooltip>
             </Grid>
-
-            <Grid item>
-              <Tooltip title='Eliminar' placement='top'>
-                <Fab onClick={handleDelete} size='small' color='error'>
-                  <DeleteIcon />
-                </Fab>
-              </Tooltip>
-            </Grid>
+            {enableDelete && (
+              <Grid item>
+                <Tooltip title='Eliminar' placement='top'>
+                  <Fab onClick={handleDelete} size='small' color='error'>
+                    <DeleteIcon />
+                  </Fab>
+                </Tooltip>
+              </Grid>
+            )}
           </>
         )}
       </Grid>
