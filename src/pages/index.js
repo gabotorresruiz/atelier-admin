@@ -27,7 +27,8 @@ export const Products = React.lazy(() => import('./products'));
 export const AddProduct = React.lazy(() => import('./products/add-product'));
 export const EditProduct = React.lazy(() => import('./products/edit-product'));
 export const Colors = React.lazy(() => import('./colors'));
-export const AddColors = React.lazy(() => import('./colors/add-colors'));
+export const AddColor = React.lazy(() => import('./colors/add-color'));
+export const EditColor = React.lazy(() => import('./colors/edit-color'));
 export const Colorants = React.lazy(() => import('./colorants'));
 export const UploadColorant = React.lazy(
   () => import('./colorants/upload-colorant'),

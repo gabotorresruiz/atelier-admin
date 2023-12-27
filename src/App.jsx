@@ -22,9 +22,10 @@ import {
   Products,
   SubCategories,
   Colors,
-  AddColors,
+  AddColor,
   Colorants,
   UploadColorant,
+  EditColor,
 } from './pages';
 
 import Layout from './layout';
@@ -70,7 +71,8 @@ const App = () => (
           <Route path='products/new' element={<AddProduct />} />
           <Route path='products/edit/:id' element={<EditProduct />} />
           <Route path='colors' element={<Colors />} />
-          <Route path='colors/upload' element={<AddColors />} />
+          <Route path='colors/edit/:id' element={<EditColor />} />
+          <Route path='colors/upload' element={<AddColor />} />
           <Route path='colorants' element={<Colorants />} />
           <Route path='colorants/edit/:id' element={<EditColorant />} />
           <Route path='colorants/upload' element={<UploadColorant />} />
