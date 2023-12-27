@@ -22,6 +22,12 @@ const StyledImg = styled('img')`
   width: 100%;
 `;
 
+const StyledColorBox = styled('div')`
+  height: 20px;
+  width: 80px;
+  border: 1px solid #ddd;
+`;
+
 moment.updateLocale('es', {
   relativeTime: {
     future: 'en %s',
@@ -113,7 +119,12 @@ const Row = ({ data, headColumns, index, selected, setSelected }) => {
                 </Tooltip>
               </TableCell>
             );
-
+          case 'colorBox':
+            return (
+              <TableCell key={item.id}>
+                <StyledColorBox style={{ backgroundColor: data[item.id] }} />
+              </TableCell>
+            );
           default:
             return <TableCell key={item.id}>{data[item.id]}</TableCell>;
         }

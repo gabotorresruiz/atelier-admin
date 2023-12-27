@@ -39,11 +39,11 @@ const SelectedFileText = styled.p`
   color: #3498db;
 `;
 
-const getColor = props => {
-  if (props.disabled) return '#cccccc';
-  if (props.isDragAccept) return '#00e676';
-  if (props.isDragReject) return '#ff1744';
-  if (props.isFocused) return '#2196f3';
+const getColor = ({ disabled, isDragAccept, isDragReject, isFocused }) => {
+  if (disabled) return '#cccccc';
+  if (isDragAccept) return '#00e676';
+  if (isDragReject) return '#ff1744';
+  if (isFocused) return '#2196f3';
 
   return '#eeeeee';
 };

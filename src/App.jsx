@@ -24,13 +24,13 @@ import {
   Colors,
   AddColors,
   Colorants,
-  AddColorant,
   UploadColorant,
 } from './pages';
 
 import Layout from './layout';
 import { LinearLoader } from './components';
 import { WithProtectedRoute } from './HOC';
+import EditColorant from './pages/colorants/edit-colorant/edit-colorant';
 
 const App = () => (
   <BrowserRouter>
@@ -72,7 +72,7 @@ const App = () => (
           <Route path='colors' element={<Colors />} />
           <Route path='colors/upload' element={<AddColors />} />
           <Route path='colorants' element={<Colorants />} />
-          <Route path='colorants/new' element={<AddColorant />} />
+          <Route path='colorants/edit/:id' element={<EditColorant />} />
           <Route path='colorants/upload' element={<UploadColorant />} />
         </Route>
       </Route>
