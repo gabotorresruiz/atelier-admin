@@ -64,8 +64,11 @@ const disabledStyle = {
 };
 
 const ColorForm = ({ title, id = 0, data = {} }) => {
+  const [showColorants, setShowColorants] = useState(false);
   const defaultName = data.name ? data.name : '';
   const defualtPrice = data.price ? data.price : '';
+  const defaultCode = data.code ? data.code : '';
+  const defaultFamilyColor = data.familyColor ? data.familyColor : '';
   const colorantKeys = Object.keys(data).filter(key =>
     key.startsWith('colorant'),
   );
@@ -98,6 +101,8 @@ const ColorForm = ({ title, id = 0, data = {} }) => {
     defaultValues: {
       name: defaultName,
       price: defualtPrice,
+      code: defaultCode,
+      familyColor: defaultFamilyColor,
     },
     resolver: yupResolver(schema),
   });
@@ -105,9 +110,9 @@ const ColorForm = ({ title, id = 0, data = {} }) => {
     navigate(-1);
   };
 
-  const onSubmit = ({ colorantName, price }) => {
+  const onSubmit = ({ name, price }) => {
     doFetch({
-      body: JSON.stringify({ name: colorantName, price }),
+      body: JSON.stringify({ name, price }),
       contentType: 'application/json',
     });
   };
@@ -150,6 +155,9 @@ const ColorForm = ({ title, id = 0, data = {} }) => {
 
   const closeAlert = () => {
     setAlert(false);
+  };
+  const toggleColorants = () => {
+    setShowColorants(prev => !prev);
   };
 
   return (
@@ -235,6 +243,67 @@ const ColorForm = ({ title, id = 0, data = {} }) => {
               />
             </Grid>
             <Grid item xs={12}>
+              <Controller
+                name='code'
+                id='code'
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <TextField
+                    fullWidth
+                    InputProps={{
+                      readOnly: true,
+                      style: disabledStyle,
+                    }}
+                    label='Código Color'
+                    name='code'
+                    onChange={onChange}
+                    required
+                    type='text'
+                    value={value}
+                    variant='outlined'
+                  />
+                )}
+              />
+              <ErrorMessage
+                errors={errors}
+                name='code'
+                render={({ message }) => (
+                  <StyledErrorMessage>{message}</StyledErrorMessage>
+                )}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <Controller
+                name='familyColor'
+                id='familyColor'
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <TextField
+                    fullWidth
+                    InputProps={{
+                      readOnly: true,
+                      style: disabledStyle,
+                    }}
+                    label='Familia Color'
+                    name='familyColor'
+                    onChange={onChange}
+                    required
+                    type='text'
+                    value={value}
+                    variant='outlined'
+                  />
+                )}
+              />
+              <ErrorMessage
+                errors={errors}
+                name='familyColor'
+                render={({ message }) => (
+                  <StyledErrorMessage>{message}</StyledErrorMessage>
+                )}
+              />
+            </Grid>
+            <Grid item xs={12}>
               <Box
                 style={{
                   backgroundColor: data.hex,
@@ -244,8 +313,12 @@ const ColorForm = ({ title, id = 0, data = {} }) => {
               />
             </Grid>
           </Grid>
-          <Grid container spacing={2}>
-            {colorantKeys.map((key, index) => (
+          <Button variant='outlined' onClick={toggleColorants}>
+            {showColorants ? 'Ocultar Colorantes' : 'Ver Colorantes'}
+          </Button>
+
+          {showColorants &&
+            colorantKeys.map((key, index) => (
               <Grid item xs={12} key={key}>
                 <TextField
                   fullWidth
@@ -259,7 +332,6 @@ const ColorForm = ({ title, id = 0, data = {} }) => {
                 />
               </Grid>
             ))}
-          </Grid>
 
           <StyledBoxWrapper>
             <Button
