@@ -15,6 +15,7 @@ import {
   Fade,
   Grid,
   TextField,
+  Tooltip,
 } from '@mui/material';
 import { useFetch } from '../../hooks';
 import schema from './schema';
@@ -62,6 +63,30 @@ const StyledTitle = styled('h1')`
 const disabledStyle = {
   backgroundColor: '#f0f0f0',
 };
+
+const ColorDisplayBox = styled(Box)(
+  ({ theme, colorHex }) => `
+    background-color: ${colorHex};
+    height: 50px;
+    width: 100%;
+    border: 1px solid ${theme.palette.divider};
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: ${theme.shape.borderRadius}px;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+`,
+);
+
+const HexLabel = styled('span')(
+  ({ theme }) => `
+    color: ${theme.palette.text.primary};
+    margin-left: ${theme.spacing(1)};
+    font-size: 0.875rem;
+`,
+);
 
 const ColorForm = ({ title, id = 0, data = {} }) => {
   const [showColorants, setShowColorants] = useState(false);
@@ -303,7 +328,7 @@ const ColorForm = ({ title, id = 0, data = {} }) => {
                 )}
               />
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <Box
                 style={{
                   backgroundColor: data.hex,
@@ -311,6 +336,13 @@ const ColorForm = ({ title, id = 0, data = {} }) => {
                   width: '100%',
                 }}
               />
+            </Grid> */}
+            <Grid item xs={12}>
+              <Tooltip title={`Color Hex: ${data.hex || '#FFFFFF'}`} arrow>
+                <ColorDisplayBox colorHex={data.hex}>
+                  <HexLabel>{data.hex}</HexLabel>
+                </ColorDisplayBox>
+              </Tooltip>
             </Grid>
           </Grid>
           <Button variant='outlined' onClick={toggleColorants}>
