@@ -61,7 +61,8 @@ const StyledTitle = styled('h1')`
 `;
 
 const disabledStyle = {
-  backgroundColor: '#f0f0f0',
+  backgroundColor: 'rgba(240, 240, 240, 0.7)',
+  color: '#000',
 };
 
 const ColorDisplayBox = styled(Box)(
