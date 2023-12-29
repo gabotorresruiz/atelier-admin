@@ -329,15 +329,6 @@ const ColorForm = ({ title, id = 0, data = {} }) => {
                 )}
               />
             </Grid>
-            {/* <Grid item xs={12}>
-              <Box
-                style={{
-                  backgroundColor: data.hex,
-                  height: '50px',
-                  width: '100%',
-                }}
-              />
-            </Grid> */}
             <Grid item xs={12}>
               <Tooltip title={`Color Hex: ${data.hex || '#FFFFFF'}`} arrow>
                 <ColorDisplayBox colorHex={data.hex}>
