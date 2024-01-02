@@ -26,6 +26,9 @@ import {
   Colorants,
   UploadColorant,
   EditColor,
+  Trends,
+  AddTrend,
+  EditTrend,
 } from './pages';
 
 import Layout from './layout';
@@ -76,6 +79,9 @@ const App = () => (
           <Route path='colorants' element={<Colorants />} />
           <Route path='colorants/edit/:id' element={<EditColorant />} />
           <Route path='colorants/upload' element={<UploadColorant />} />
+          <Route path='trends' element={<Trends />} />
+          <Route path='trends/new' element={<AddTrend />} />
+          <Route path='trendss/edit/:id' element={<EditTrend />} />
         </Route>
       </Route>
       <Route path='*' element={<p>404 Not Found</p>} />
