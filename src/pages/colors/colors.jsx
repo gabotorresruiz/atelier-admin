@@ -25,6 +25,11 @@ const colorsColumns = [
     type: 'colorBox',
   },
   {
+    id: 'code',
+    label: 'Código',
+    type: 'text',
+  },
+  {
     id: 'price',
     label: 'Precio',
     type: 'number',
