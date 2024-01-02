@@ -16,6 +16,8 @@ import {
   Fade,
   Grid,
   TextField,
+  Switch,
+  FormControlLabel,
 } from '@mui/material';
 import { LinearLoader, MultiSelect } from '../../components';
 import { useFetch } from '../../hooks';
@@ -102,6 +104,13 @@ const StyledDropzoneContainer = styled('div')`
 `;
 
 const ProductForm = ({ title, id = 0, data = {} }) => {
+  const [hasTintometricColors, setHasTintometricColors] = useState(
+    data.withTintometric ?? false,
+  );
+  useEffect(() => {
+    setHasTintometricColors(data.withTintometric ?? false);
+  }, [data.withTintometric]);
+
   const navigate = useNavigate();
 
   const [alert, setAlert] = useState({
@@ -183,6 +192,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
     const formData = new FormData();
 
     formData.append('name', productName);
+    formData.append('withTintometric', hasTintometricColors);
     formData.append('subcategories', JSON.stringify(selectedSubCategories));
     formData.append('image', image);
 
@@ -332,6 +342,20 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
               />
             </Grid>
           </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={hasTintometricColors}
+                  onChange={event =>
+                    setHasTintometricColors(event.target.checked)
+                  }
+                />
+              }
+              label='Tiene Colores del Sistema Tintométrico'
+            />
+          </Grid>
+
           <StyledDropzoneContainer
             {...getRootProps({ isFocused, isDragAccept, isDragReject })}
           >
