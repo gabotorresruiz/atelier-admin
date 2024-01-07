@@ -18,7 +18,7 @@ const StyledAlert = styled(Alert)(
 const EditTrend = () => {
   const { id } = useParams();
   const [{ error, isLoading, response }] = useFetch({
-    entity: 'trends',
+    entity: 'trends', // to check endpoint
     fetchMethod: 'GET',
     id,
   });

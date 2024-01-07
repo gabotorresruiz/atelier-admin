@@ -154,29 +154,7 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
   });
 
   const onSubmit = ({ productName, produtcs, trendDescription }) => {
-    // const selectedSubCategories = subCategories
-    //   .map(subCategoryName => {
-    //     const matchingOption = getResponse.find(
-    //       option => option.name === subCategoryName,
-    //     );
-    //     if (matchingOption) {
-    //       return {
-    //         id: matchingOption.id,
-    //         name: matchingOption.name,
-    //       };
-    //     }
-    //     return null;
-    //   })
-    //   .filter(Boolean);
-
-    // const formData = new FormData();
-
-    formData.append('name', productName);
-    formData.append('description', trendDescription);
-    // formData.append('produtcs', JSON.stringify(products));
-    formData.append('image', image);
-
-    doFetch({ body: formData });
+    // TODO
   };
 
   const closeAlert = () => {
