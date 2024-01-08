@@ -13,3 +13,4 @@ export const CustomizedTable = React.lazy(() => import('./customized-table'));
 export const UploadFileForm = React.lazy(() => import('./upload-file-form'));
 export const ColorantForm = React.lazy(() => import('./colorant-form'));
 export const ColorForm = React.lazy(() => import('./color-form'));
+export const TrendsForm = React.lazy(() => import('./trends-form'));

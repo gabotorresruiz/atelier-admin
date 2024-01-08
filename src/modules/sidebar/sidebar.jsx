@@ -9,6 +9,7 @@ import {
 import InventoryIcon from '@mui/icons-material/Inventory';
 import PaletteIcon from '@mui/icons-material/Palette';
 import ColorizeIcon from '@mui/icons-material/Colorize';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import { ListItemLink } from '../../components';
 
 const StyledDrawer = styled(Drawer)`
@@ -112,6 +113,17 @@ const Sidebar = React.memo(() => {
             selectedItem={selectedItem}
             text='Colores'
             to='/colors'
+          />
+        </List>
+        <Divider />
+        <List>
+          <ListItemLink
+            icon={<TrendingUpIcon />}
+            id='/trends'
+            onClick={handleClick}
+            selectedItem={selectedItem}
+            text='Tendencias'
+            to='/trends'
           />
         </List>
         <Divider />

@@ -33,3 +33,6 @@ export const Colorants = React.lazy(() => import('./colorants'));
 export const UploadColorant = React.lazy(
   () => import('./colorants/upload-colorant'),
 );
+export const Trends = React.lazy(() => import('./trends'));
+export const AddTrend = React.lazy(() => import('./trends/add-trend'));
+export const EditTrend = React.lazy(() => import('./trends/edit-trend'));
