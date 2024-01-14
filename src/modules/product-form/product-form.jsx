@@ -18,6 +18,10 @@ import {
   TextField,
   Switch,
   FormControlLabel,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
 } from '@mui/material';
 import { LinearLoader, MultiSelect } from '../../components';
 import { useFetch } from '../../hooks';
@@ -137,6 +141,29 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
 
   const defaultproductName = data.name ? data.name : '';
   const defaultSubCategories = data.subcategories ? data.subcategories : [];
+  const defaultSizes = data.sizes ? data.sizes : [];
+  const fakeSizes = [
+    {
+      id: 1,
+      name: '0,5 litros',
+    },
+    {
+      id: 2,
+      name: '1 litro',
+    },
+    {
+      id: 3,
+      name: '3 litros',
+    },
+    {
+      id: 4,
+      name: '6 litros',
+    },
+    {
+      id: 5,
+      name: '10 litros',
+    },
+  ];
 
   const [loadingImg, setLoadingImg] = useState(false);
   const [preview, setPreview] = useState(null);
@@ -162,6 +189,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
 
   const {
     control,
+    watch,
     handleSubmit,
     formState: { errors, isValid },
     reset,
@@ -173,7 +201,9 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = ({ productName, subCategories }) => {
+  const selectedSizes = watch('sizes');
+
+  const onSubmit = ({ productName, subCategories, ...rest }) => {
     const selectedSubCategories = subCategories
       .map(subCategoryName => {
         const matchingOption = getResponse.find(
@@ -188,6 +218,16 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
         return null;
       })
       .filter(Boolean);
+
+    const sizesData = selectedSizes.map(sizeName => {
+      const size = fakeSizes.find(s => s.name === sizeName);
+      return {
+        sizeId: size.id,
+        basePrice: rest[`price_${sizeName}`],
+      };
+    });
+    // send sizes when the backend is ready
+    console.log('sizes to send:', sizesData);
 
     const formData = new FormData();
 
@@ -343,6 +383,78 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
             </Grid>
           </Grid>
           <Grid item xs={12}>
+            <Controller
+              control={control}
+              name='sizes'
+              defaultValue={defaultSizes.map(size => size.id)}
+              render={({ field }) => (
+                <MultiSelect
+                  fullWidth
+                  name='sizes'
+                  inputLabel='Capacidades'
+                  label='Capacidades'
+                  required
+                  disabled={false} // change to isLoading sizes from backend later
+                  onChange={field.onChange}
+                  value={Array.isArray(field.value) ? field.value : []}
+                  options={
+                    fakeSizes
+                      ? fakeSizes.map(size => ({
+                          value: size.id,
+                          label: size.name,
+                        }))
+                      : []
+                  }
+                  variant='outlined'
+                />
+              )}
+            />
+            <ErrorMessage
+              errors={errors}
+              name='sizes'
+              render={({ message }) => (
+                <StyledErrorMessage>{message}</StyledErrorMessage>
+              )}
+            />
+          </Grid>
+
+          {selectedSizes &&
+            selectedSizes.map(sizeName => (
+              <Grid item xs={12} key={sizeName}>
+                <Controller
+                  control={control}
+                  name={`price_${sizeName}`}
+                  render={({ field }) => {
+                    const size = fakeSizes.find(s => s.name === sizeName);
+                    return (
+                      <FormControl fullWidth>
+                        <InputLabel
+                          htmlFor={`price_${sizeName}`}
+                          required
+                        >{`Precio base para ${size?.name}`}</InputLabel>
+                        <OutlinedInput
+                          {...field}
+                          type='number'
+                          required
+                          startAdornment={
+                            <InputAdornment position='start'>$</InputAdornment>
+                          }
+                          label={`Precio base para ${size?.name}`}
+                        />
+                      </FormControl>
+                    );
+                  }}
+                />
+                <ErrorMessage
+                  errors={errors}
+                  name={`price_${sizeName}`}
+                  render={({ message }) => (
+                    <StyledErrorMessage>{message}</StyledErrorMessage>
+                  )}
+                />
+              </Grid>
+            ))}
+          <Grid item xs={12}>
             <FormControlLabel
               control={
                 <Switch
@@ -352,10 +464,9 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
                   }
                 />
               }
-              label='Tiene Colores del Sistema Tintométrico'
+              label='Tiene colores del sistema tintométrico'
             />
           </Grid>
-
           <StyledDropzoneContainer
             {...getRootProps({ isFocused, isDragAccept, isDragReject })}
           >
