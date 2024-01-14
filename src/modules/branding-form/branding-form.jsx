@@ -97,6 +97,7 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
   // logo states
   const [loadingLogo, setLoadingLogo] = useState(false);
   const [previewLogo, setPreviewLogo] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [logoImage, setLogoImage] = useState(null);
 
   const navigate = useNavigate();
@@ -185,17 +186,18 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = lableValues => {
+  const onSubmit = formValues => {
     const formData = new FormData();
 
-    formData.append('name', lableValues.name);
-    formData.append('title', lableValues.title);
-    formData.append('subtitle', lableValues.subtitle);
-    formData.append('email', lableValues.email);
-    formData.append('phone', lableValues.phone);
-    formData.append('phone', lableValues.address);
+    formData.append('name', formValues.name);
+    formData.append('title', formValues.title);
+    formData.append('subtitle', formValues.subtitle);
+    formData.append('email', formValues.email);
+    formData.append('phone', formValues.phone);
+    formData.append('address', formValues.address);
     if (image) formData.append('image', image);
-    if (logoImage) formData.append('logoImage', logoImage);
+    console.log('formData', formData);
+    // if (logoImage) formData.append('logoImage', logoImage);
 
     doFetch({ body: formData });
   };
