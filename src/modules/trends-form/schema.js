@@ -5,6 +5,10 @@ const schema = yup.object({
     .string()
     .required('Debe ingresar nombre de Tendencia')
     .required(),
+  trendDescription: yup
+    .string()
+    .required('Debe ingresar descripición para la tendencia')
+    .required(),
 });
 
 export default schema;

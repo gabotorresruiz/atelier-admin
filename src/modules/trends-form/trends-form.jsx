@@ -113,10 +113,24 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
     severity: '',
   });
 
+  // const [{ error: getProductsError, isLoadingProducts: getProductIsLoading, response: getProductsResponse }] =
+  // useFetch({
+  //   entity: 'products',
+  //   fetchMethod: 'GET',
+  // });
+
   const isEmptyData = Object.keys(data).length === 0;
 
   const defaultTrendName = data.name ? data.name : '';
   const defaultProducts = data.products ? data.products : [];
+
+  const fetchMethod = isEmptyData ? 'POST' : 'PUT';
+
+  const [{ error, isLoading, response }, doFetch, resetFetch] = useFetch({
+    entity: 'trends',
+    fetchMethod,
+    id,
+  });
 
   const [loadingImg, setLoadingImg] = useState(false);
   const [preview, setPreview] = useState(null);
@@ -154,7 +168,14 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
   });
 
   const onSubmit = ({ productName, produtcs, trendDescription }) => {
-    // TODO
+    // add products when the backend is ready
+    const formData = new FormData();
+
+    formData.append('name', productName);
+    formData.append('descripcion', trendDescription);
+    formData.append('image', image);
+
+    doFetch({ body: formData });
   };
 
   const closeAlert = () => {
@@ -164,6 +185,44 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
   const handleBack = () => {
     navigate(-1);
   };
+
+  const handleError = useCallback(() => {
+    setAlert({
+      isVisible: true,
+      message: 'Algo salió mal... Por favor intente nuevamente',
+      severity: 'error',
+    });
+  }, []);
+
+  const postSuccess = useCallback(
+    fetchResponse => {
+      let message = '';
+
+      if (fetchResponse.status === 201) {
+        message = 'Tendencia agregado satisfactoriamente!';
+        reset();
+        setPreview(null);
+        resetFetch();
+      }
+
+      if (fetchResponse.status === 200)
+        message = 'Tendencia editado satisfactoriamente!';
+
+      setAlert({
+        isVisible: true,
+        message,
+        severity: 'success',
+      });
+    },
+    [reset, resetFetch],
+  );
+
+  useEffect(() => {
+    if (error) return handleError();
+
+    if (response && (response.status === 201 || response.status === 200))
+      return postSuccess(response);
+  }, [postSuccess, error, response, handleError, loadingImg]);
 
   return (
     <>
@@ -239,6 +298,7 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
                     }}
                     label='Descripción'
                     name='trendDescription'
+                    required
                     onChange={onChange}
                     type='text'
                     value={value}
@@ -319,7 +379,7 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
               onClick={handleSubmit(onSubmit)}
               variant='contained'
               disabled={!isValid}
-              // loading={isLoading}
+              sloading={isLoading}
             >
               Guardar
             </StyledButton>
