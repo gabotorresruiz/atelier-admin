@@ -394,7 +394,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
                   inputLabel='Capacidades'
                   label='Capacidades'
                   required
-                  // disabled={false}
+                  disabled={false} // change to isLoading sizes from backend later
                   onChange={field.onChange}
                   value={Array.isArray(field.value) ? field.value : []}
                   options={
@@ -424,31 +424,34 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
                 <Controller
                   control={control}
                   name={`price_${sizeName}`}
-                  required
                   render={({ field }) => {
                     const size = fakeSizes.find(s => s.name === sizeName);
                     return (
                       <FormControl fullWidth>
                         <InputLabel
                           htmlFor={`price_${sizeName}`}
+                          required
                         >{`Precio base para ${size?.name}`}</InputLabel>
                         <OutlinedInput
                           {...field}
                           type='number'
+                          required
                           startAdornment={
                             <InputAdornment position='start'>$</InputAdornment>
                           }
                           label={`Precio base para ${size?.name}`}
-                          error={!!errors[`price_${sizeName}`]}
                         />
                       </FormControl>
                     );
                   }}
                 />
-
-                {errors[`price_${sizeName}`] && (
-                  <span>{errors[`price_${sizeName}`].message}</span>
-                )}
+                <ErrorMessage
+                  errors={errors}
+                  name={`price_${sizeName}`}
+                  render={({ message }) => (
+                    <StyledErrorMessage>{message}</StyledErrorMessage>
+                  )}
+                />
               </Grid>
             ))}
           <Grid item xs={12}>
