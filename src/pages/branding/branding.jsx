@@ -1,10 +1,11 @@
 /* eslint-disable no-nested-ternary */
 import React, { Suspense, useCallback, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { Alert, Button } from '@mui/material';
 import { useFetch } from '../../hooks';
 import { LinearLoader } from '../../components';
+import { BrandingForm } from '../../modules';
 
 const StyledAlert = styled(Alert)(
   ({ theme }) => `
@@ -17,7 +18,7 @@ const StyledAlert = styled(Alert)(
 
 const Branding = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const [id, setId] = useState(null);
   const [{ error, isLoading, response }] = useFetch({
     entity: 'brandings',
     fetchMethod: 'GET',
@@ -45,8 +46,13 @@ const Branding = () => {
     if (error) return handleError();
   }, [error, handleError]);
 
+  useEffect(() => {
+    if (response && response.length > 0) {
+      setId(response[0].id);
+    }
+  }, [response]);
+
   const handleAddDesign = () => navigate('/branding/new');
-  const handleEditDesign = () => navigate(`/branding/edit/${id}`);
 
   return (
     <Suspense fallback={<LinearLoader />}>
@@ -57,16 +63,7 @@ const Branding = () => {
       )}
       {!isLoading && !error ? (
         response && Object.keys(response).length > 0 ? (
-          <div>
-            <p>Ya tiene diseño de marca.</p>
-            <Button
-              variant='contained'
-              color='primary'
-              onClick={handleEditDesign}
-            >
-              Editar Diseño
-            </Button>
-          </div>
+          <BrandingForm title='Editar Marca' id={id} data={response[0]} />
         ) : (
           <div>
             <p>No tiene diseño de marca agregado.</p>

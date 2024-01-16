@@ -2,7 +2,7 @@ import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import styled from 'styled-components';
 
-const StyledCSVUploader = styled.div`
+const StyledFileUploader = styled.div`
   text-align: left;
   width: 100%;
   border-radius: 5px;
@@ -76,7 +76,15 @@ const ButtonContainer = styled.div`
   text-align: center;
 `;
 
-const CSVUploader = ({ onFileUpload, onFileRemove, file, label, disabled }) => {
+const FileUploader = ({
+  onFileUpload,
+  onFileRemove,
+  file,
+  label,
+  disabled,
+  fileType = 'csv',
+  uploadText,
+}) => {
   const onDrop = acceptedFiles => {
     const uploadedFile = acceptedFiles[0];
     if (uploadedFile) {
@@ -84,10 +92,15 @@ const CSVUploader = ({ onFileUpload, onFileRemove, file, label, disabled }) => {
     }
   };
 
+  const acceptedFileTypes = {
+    csv: { 'text/csv': ['.csv'] },
+    image: { 'image/*': [] },
+  };
+
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({
       onDrop,
-      accept: { 'text/csv': ['.csv'] },
+      accept: acceptedFileTypes[fileType],
       disabled,
     });
 
@@ -96,7 +109,7 @@ const CSVUploader = ({ onFileUpload, onFileRemove, file, label, disabled }) => {
   };
 
   return (
-    <StyledCSVUploader>
+    <StyledFileUploader>
       {label && <UploadLabel>{`Subir ${label}`}</UploadLabel>}
       <StyledDropzoneContainer
         {...getRootProps()}
@@ -106,10 +119,7 @@ const CSVUploader = ({ onFileUpload, onFileRemove, file, label, disabled }) => {
         disabled={disabled}
       >
         <input {...getInputProps()} />
-        <UploadText>
-          Arrastra y suelta un archivo CSV aquí, o haz click para seleccionar
-          desde tus archivos
-        </UploadText>
+        <UploadText>{uploadText}</UploadText>
       </StyledDropzoneContainer>
       {file && (
         <div>
@@ -121,8 +131,8 @@ const CSVUploader = ({ onFileUpload, onFileRemove, file, label, disabled }) => {
           </ButtonContainer>
         </div>
       )}
-    </StyledCSVUploader>
+    </StyledFileUploader>
   );
 };
 
-export default CSVUploader;
+export default FileUploader;

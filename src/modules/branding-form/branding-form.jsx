@@ -88,6 +88,8 @@ const StyledImg = styled('img')`
 `;
 
 const BrandingForm = ({ title, id = 0, data = {} }) => {
+  console.log('id', id);
+  console.log('data', data);
   // main image states
   const [loadingImg, setLoadingImg] = useState(false);
   const [preview, setPreview] = useState(null);
@@ -116,7 +118,7 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
   const defaultBrandingEmail = Object.keys(data).length === 0 ? '' : data.email;
   const defaultBrandingPhone = Object.keys(data).length === 0 ? '' : data.phone;
   const defaultBrandingAdress =
-    Object.keys(data).length === 0 ? '' : data.adress;
+    Object.keys(data).length === 0 ? '' : data.address;
 
   const [{ response, error, isLoading }, doFetch] = useFetch({
     entity: 'brandings',
@@ -181,7 +183,7 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
       subtitle: defaultBrandingSubtitle,
       email: defaultBrandingEmail,
       phone: defaultBrandingPhone,
-      adress: defaultBrandingAdress,
+      address: defaultBrandingAdress,
     },
     resolver: yupResolver(schema),
   });
@@ -420,7 +422,7 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
                     name='phone'
                     onChange={onChange}
                     required
-                    type='number'
+                    type='string'
                     value={value}
                   />
                 )}

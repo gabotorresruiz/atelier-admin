@@ -10,7 +10,7 @@ const schema = yup.object({
     .email('Debe ingresar un email válido'),
   address: yup.string().required('Debe ingresar una dirección').required(),
   phone: yup
-    .number()
+    .string()
     .typeError('Debe ingresar un número válido')
     .required('Debe ingresar un celular de contacto')
     .positive('Debe ingresar un número válido'),

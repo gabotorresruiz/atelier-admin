@@ -5,7 +5,7 @@ import { styled } from '@mui/system';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useFetch } from '../../hooks';
-import { CSVUploader } from '../../components';
+import { FileUploader } from '../../components';
 
 const StyledBoxWrapper = styled(Box)(
   ({ theme }) => `
@@ -169,20 +169,26 @@ const UploadFileForm = ({ title, entity }) => {
         )}
 
         {entity === 'colorants' && (
-          <CSVUploader
+          <FileUploader
             onFileUpload={handleColorantFileUpload}
             onFileRemove={handleColorantFileRemove}
             file={colorantFile}
             disabled={false}
+            uploadText='Arrastra y suelta un archivo CSV aquí, o haz click para seleccionar
+            desde tus archivos'
+            s
           />
         )}
 
         {entity === 'colors' && (
-          <CSVUploader
+          <FileUploader
             onFileUpload={handleSystemColorFileUpload}
             onFileRemove={handleSystemColorFileRemove}
             file={systemColorFile}
             disabled={!hasColorants}
+            uploadText='Arrastra y suelta un archivo CSV aquí, o haz click para seleccionar
+            desde tus archivos'
+            s
           />
         )}
 
