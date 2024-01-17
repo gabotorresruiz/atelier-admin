@@ -12,8 +12,7 @@ const schema = yup.object({
   phone: yup
     .string()
     .typeError('Debe ingresar un número válido')
-    .required('Debe ingresar un celular de contacto')
-    .positive('Debe ingresar un número válido'),
+    .required('Debe ingresar un celular de contacto'),
 });
 
 export default schema;

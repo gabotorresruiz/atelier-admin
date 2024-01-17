@@ -1,6 +1,8 @@
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import styled from 'styled-components';
+import { Delete as DeleteIcon } from '@mui/icons-material';
+import { Tooltip } from '@mui/material';
 
 const StyledFileUploader = styled.div`
   text-align: left;
@@ -14,20 +16,6 @@ const UploadLabel = styled.label`
   font-size: 1.2rem;
 `;
 
-const UploadButton = styled.button`
-  background-color: #3498db;
-  color: #ffffff;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #2980b9;
-  }
-`;
-
 const UploadText = styled.p`
   margin-top: 1rem;
   font-size: 1.1rem;
@@ -36,7 +24,12 @@ const UploadText = styled.p`
 const SelectedFileText = styled.p`
   margin-top: 1rem;
   font-size: 1.1rem;
-  color: #3498db;
+  color: #7a7a7a;
+`;
+const SelectedFileContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espacio entre el texto y el botón */
 `;
 
 const getColor = ({ disabled, isDragAccept, isDragReject, isFocused }) => {
@@ -70,10 +63,6 @@ const StyledDropzoneContainer = styled('div')`
   }
 
   width: 100%;
-`;
-
-const ButtonContainer = styled.div`
-  text-align: center;
 `;
 
 const FileUploader = ({
@@ -122,14 +111,12 @@ const FileUploader = ({
         <UploadText>{uploadText}</UploadText>
       </StyledDropzoneContainer>
       {file && (
-        <div>
+        <SelectedFileContainer>
           <SelectedFileText>Archivo seleccionado: {file.name}</SelectedFileText>
-          <ButtonContainer>
-            <UploadButton type='button' onClick={removeFile}>
-              Quitar archivo
-            </UploadButton>
-          </ButtonContainer>
-        </div>
+          <Tooltip title='Quitar archivo' placement='top'>
+            <DeleteIcon onClick={removeFile} />
+          </Tooltip>
+        </SelectedFileContainer>
       )}
     </StyledFileUploader>
   );

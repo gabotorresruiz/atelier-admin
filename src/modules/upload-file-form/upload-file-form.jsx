@@ -188,7 +188,6 @@ const UploadFileForm = ({ title, entity }) => {
             disabled={!hasColorants}
             uploadText='Arrastra y suelta un archivo CSV aquí, o haz click para seleccionar
             desde tus archivos'
-            s
           />
         )}
 

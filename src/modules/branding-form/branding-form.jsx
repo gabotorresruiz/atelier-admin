@@ -249,6 +249,16 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
       return postSuccess(response);
   }, [postSuccess, error, response, handleError]);
 
+  const removeLogo = () => {
+    setLogoImage(null);
+    setPreviewLogo(null);
+  };
+
+  const removeMainImage = () => {
+    setImage(null);
+    setPreview(null);
+  };
+
   return (
     <>
       {loadingImg ?? <LinearLoader />}
@@ -452,9 +462,18 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
             </p>
           </StyledDropzoneContainer>
           {preview && (
-            <StyledImageWrapper>
-              <StyledImg src={preview} alt='Preview' />
-            </StyledImageWrapper>
+            <>
+              <StyledImageWrapper>
+                <StyledImg src={preview} alt='Preview' />
+              </StyledImageWrapper>
+              <Button
+                onClick={removeMainImage}
+                variant='outlined'
+                color='secondary'
+              >
+                Remover Imagen Home
+              </Button>
+            </>
           )}
 
           {/* Dropzone for the logo */}
@@ -469,11 +488,15 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
             <p>Arrastra el logo aquí, o haz click para seleccionarlo</p>
           </StyledDropzoneContainer>
           {previewLogo && (
-            <StyledImageWrapper>
-              <StyledImg src={previewLogo} alt='Preview Logo' />
-            </StyledImageWrapper>
+            <>
+              <StyledImageWrapper>
+                <StyledImg src={previewLogo} alt='Preview Logo' />
+              </StyledImageWrapper>
+              <Button onClick={removeLogo} variant='outlined' color='secondary'>
+                Remover Logo
+              </Button>
+            </>
           )}
-
           <StyledBoxWrapper>
             <Button
               startIcon={<ArrowBackIosIcon />}
