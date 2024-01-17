@@ -222,7 +222,6 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
     formData.append('address', formValues.address);
     // if (image) formData.append('image', image);
     // if (logoImage) formData.append('logoImageUrl', logoImage);
-    console.log('formData', formData);
     doFetch({ body: formData });
   };
 
