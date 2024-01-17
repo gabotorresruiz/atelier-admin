@@ -10,6 +10,7 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import PaletteIcon from '@mui/icons-material/Palette';
 import ColorizeIcon from '@mui/icons-material/Colorize';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import DesignServicesIcon from '@mui/icons-material/DesignServices';
 import { ListItemLink } from '../../components';
 
 const StyledDrawer = styled(Drawer)`
@@ -47,6 +48,17 @@ const Sidebar = React.memo(() => {
             selectedItem={selectedItem}
             text='Dashboard'
             to='/dashboard'
+          />
+        </List>
+        <Divider />
+        <List>
+          <ListItemLink
+            icon={<DesignServicesIcon />}
+            id='/branding'
+            onClick={handleClick}
+            selectedItem={selectedItem}
+            text='Diseño de Marca'
+            to='/branding'
           />
         </List>
         <Divider />

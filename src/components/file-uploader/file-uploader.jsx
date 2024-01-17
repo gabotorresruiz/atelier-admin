@@ -1,8 +1,10 @@
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import styled from 'styled-components';
+import { Delete as DeleteIcon } from '@mui/icons-material';
+import { Tooltip } from '@mui/material';
 
-const StyledCSVUploader = styled.div`
+const StyledFileUploader = styled.div`
   text-align: left;
   width: 100%;
   border-radius: 5px;
@@ -14,20 +16,6 @@ const UploadLabel = styled.label`
   font-size: 1.2rem;
 `;
 
-const UploadButton = styled.button`
-  background-color: #3498db;
-  color: #ffffff;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #2980b9;
-  }
-`;
-
 const UploadText = styled.p`
   margin-top: 1rem;
   font-size: 1.1rem;
@@ -36,7 +24,12 @@ const UploadText = styled.p`
 const SelectedFileText = styled.p`
   margin-top: 1rem;
   font-size: 1.1rem;
-  color: #3498db;
+  color: #7a7a7a;
+`;
+const SelectedFileContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espacio entre el texto y el botón */
 `;
 
 const getColor = ({ disabled, isDragAccept, isDragReject, isFocused }) => {
@@ -72,11 +65,15 @@ const StyledDropzoneContainer = styled('div')`
   width: 100%;
 `;
 
-const ButtonContainer = styled.div`
-  text-align: center;
-`;
-
-const CSVUploader = ({ onFileUpload, onFileRemove, file, label, disabled }) => {
+const FileUploader = ({
+  onFileUpload,
+  onFileRemove,
+  file,
+  label,
+  disabled,
+  fileType = 'csv',
+  uploadText,
+}) => {
   const onDrop = acceptedFiles => {
     const uploadedFile = acceptedFiles[0];
     if (uploadedFile) {
@@ -84,10 +81,15 @@ const CSVUploader = ({ onFileUpload, onFileRemove, file, label, disabled }) => {
     }
   };
 
+  const acceptedFileTypes = {
+    csv: { 'text/csv': ['.csv'] },
+    image: { 'image/*': [] },
+  };
+
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({
       onDrop,
-      accept: { 'text/csv': ['.csv'] },
+      accept: acceptedFileTypes[fileType],
       disabled,
     });
 
@@ -96,7 +98,7 @@ const CSVUploader = ({ onFileUpload, onFileRemove, file, label, disabled }) => {
   };
 
   return (
-    <StyledCSVUploader>
+    <StyledFileUploader>
       {label && <UploadLabel>{`Subir ${label}`}</UploadLabel>}
       <StyledDropzoneContainer
         {...getRootProps()}
@@ -106,23 +108,18 @@ const CSVUploader = ({ onFileUpload, onFileRemove, file, label, disabled }) => {
         disabled={disabled}
       >
         <input {...getInputProps()} />
-        <UploadText>
-          Arrastra y suelta un archivo CSV aquí, o haz click para seleccionar
-          desde tus archivos
-        </UploadText>
+        <UploadText>{uploadText}</UploadText>
       </StyledDropzoneContainer>
       {file && (
-        <div>
+        <SelectedFileContainer>
           <SelectedFileText>Archivo seleccionado: {file.name}</SelectedFileText>
-          <ButtonContainer>
-            <UploadButton type='button' onClick={removeFile}>
-              Quitar archivo
-            </UploadButton>
-          </ButtonContainer>
-        </div>
+          <Tooltip title='Quitar archivo' placement='top'>
+            <DeleteIcon onClick={removeFile} />
+          </Tooltip>
+        </SelectedFileContainer>
       )}
-    </StyledCSVUploader>
+    </StyledFileUploader>
   );
 };
 
-export default CSVUploader;
+export default FileUploader;
