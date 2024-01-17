@@ -2,10 +2,23 @@
 import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
-import { Alert, Button } from '@mui/material';
+import { Alert, Button, Box, Typography } from '@mui/material';
 import { useFetch } from '../../hooks';
 import { LinearLoader } from '../../components';
 import { BrandingForm } from '../../modules';
+
+const CenteredBox = styled(Box)({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '80vh',
+});
+
+const MessageText = styled(Typography)({
+  fontSize: '1.5rem',
+  marginBottom: '20px',
+});
 
 const StyledAlert = styled(Alert)(
   ({ theme }) => `
@@ -65,16 +78,17 @@ const Branding = () => {
         response && Object.keys(response).length > 0 ? (
           <BrandingForm title='Editar Marca' id={id} data={response[0]} />
         ) : (
-          <div>
-            <p>No tiene diseño de marca agregado.</p>
+          <CenteredBox>
+            <MessageText>No tiene diseño de marca agregado.</MessageText>
             <Button
               variant='contained'
               color='primary'
               onClick={handleAddDesign}
+              size='large'
             >
-              Diseñar Marca
+              Crear Marca
             </Button>
-          </div>
+          </CenteredBox>
         )
       ) : (
         <LinearLoader />

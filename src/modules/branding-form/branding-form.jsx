@@ -465,13 +465,6 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
             <h3>Imagen Principal</h3>
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                {selectedHomeImg && (
-                  <StyledImageWrapper>
-                    <StyledImg src={selectedHomeImg} alt='Current Image' />
-                  </StyledImageWrapper>
-                )}
-              </Grid>
-              <Grid item xs={6}>
                 {preview ? (
                   <StyledImageWrapper>
                     <StyledImg src={preview} alt='New Image' />
@@ -496,6 +489,13 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
                   </StyledDropzoneWrapper>
                 )}
               </Grid>
+              <Grid item xs={6}>
+                {selectedHomeImg && (
+                  <StyledImageWrapper>
+                    <StyledImg src={selectedHomeImg} alt='Current Image' />
+                  </StyledImageWrapper>
+                )}
+              </Grid>
             </Grid>
           </Grid>
 
@@ -503,13 +503,6 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
           <Grid item xs={12}>
             <h3>Logo</h3>
             <Grid container spacing={2}>
-              <Grid item xs={6}>
-                {selectedLogoImg && (
-                  <StyledImageWrapper>
-                    <StyledImg src={selectedLogoImg} alt='Current Logo' />
-                  </StyledImageWrapper>
-                )}
-              </Grid>
               <Grid item xs={6}>
                 {previewLogo ? (
                   <StyledImageWrapper>
@@ -531,6 +524,13 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
                     <input {...getInputPropsLogo()} />
                     <p>Arrastra o haz click para seleccionar un nuevo logo</p>
                   </StyledDropzoneWrapper>
+                )}
+              </Grid>
+              <Grid item xs={6}>
+                {selectedLogoImg && (
+                  <StyledImageWrapper>
+                    <StyledImg src={selectedLogoImg} alt='Current Logo' />
+                  </StyledImageWrapper>
                 )}
               </Grid>
             </Grid>
