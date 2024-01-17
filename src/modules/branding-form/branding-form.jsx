@@ -8,7 +8,16 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { Alert, Box, Button, Container, Grid, TextField } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  Container,
+  Grid,
+  TextField,
+  Tooltip,
+} from '@mui/material';
+import { Delete as DeleteIcon } from '@mui/icons-material';
 import { LinearLoader } from '../../components';
 import { useFetch } from '../../hooks';
 import schema from './schema';
@@ -55,12 +64,21 @@ const StyledBox = styled(Box)(
   gap: ${theme.spacing(2)};
 `,
 );
+const StyledImageWrapper = styled('div')`
+  height: 300px;
+  width: 100%;
+  margin-bottom: 25px;
+  border: 2px dashed #bdbdbd;
+  padding: 10px;
+  box-sizing: border-box;
+`;
 
-const StyledDropzoneContainer = styled('div')`
-  flex: 1;
+const StyledDropzoneWrapper = styled('div')`
+  height: 300px;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  flex-direction: column;
+  justify-content: center;
   padding: 20px;
   border-width: 2px;
   border-radius: 2px;
@@ -70,22 +88,28 @@ const StyledDropzoneContainer = styled('div')`
   color: #bdbdbd;
   outline: none;
   cursor: pointer;
+  border: 2px dashed #bdbdbd;
+
+  p {
+    text-align: center;
+    width: 100%;
+  }
 
   &:hover {
     border-color: #212121;
   }
 `;
 
-const StyledImageWrapper = styled('div')`
-  height: 300px;
-  width: 100%;
-  margin-bottom: 25px;
-`;
-
 const StyledImg = styled('img')`
   object-fit: scale-down;
   height: 100%;
   width: 100%;
+`;
+
+const StyledDeleteIconWrapper = styled('div')`
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
 `;
 
 const BrandingForm = ({ title, id = 0, data = {} }) => {
@@ -197,7 +221,6 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
     formData.append('phone', formValues.phone);
     formData.append('address', formValues.address);
     // if (image) formData.append('image', image);
-    console.log('image');
     // if (logoImage) formData.append('logoImageUrl', logoImage);
     console.log('formData', formData);
     doFetch({ body: formData });
@@ -271,20 +294,6 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
         <h1>{title}</h1>
         <StyledBox component='form' onSubmit={onSubmit}>
           <Grid container spacing={2}>
-            {/* {selectedHomeImg ? (
-              <Grid item xs={12}>
-                <StyledImageWrapper>
-                  <StyledImg src={selectedHomeImg} alt='Upload preview' />
-                </StyledImageWrapper>
-              </Grid>
-            ) : null}
-            {selectedLogoImg ? (
-              <Grid item xs={12}>
-                <StyledImageWrapper>
-                  <StyledImg src={selectedLogoImg} alt='Upload preview' />
-                </StyledImageWrapper>
-              </Grid>
-            ) : null} */}
             <Grid item xs={12}>
               <Controller
                 name='name'
@@ -453,86 +462,70 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
             </Grid>
           </Grid>
 
-          {/* Dropzone for the main image */}
-          <h3>Imagen Principal</h3>
-          {selectedHomeImg ? (
-            <Grid item xs={12}>
-              <StyledImageWrapper>
-                <StyledImg src={selectedHomeImg} alt='Upload home' />
-              </StyledImageWrapper>
+          {/* Main image section */}
+          <Grid item xs={12}>
+            <h3>Imagen Principal</h3>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                {selectedHomeImg && (
+                  <StyledImageWrapper>
+                    <StyledImg src={selectedHomeImg} alt='Current Image' />
+                  </StyledImageWrapper>
+                )}
+              </Grid>
+              <Grid item xs={6}>
+                {preview ? (
+                  <StyledImageWrapper>
+                    <StyledImg src={preview} alt='New Image' />
+                    <StyledDeleteIconWrapper>
+                      <Tooltip title='Remover Imagen Nueva' placement='top'>
+                        <DeleteIcon onClick={removeMainImage} />
+                      </Tooltip>
+                    </StyledDeleteIconWrapper>
+                  </StyledImageWrapper>
+                ) : (
+                  <StyledDropzoneWrapper {...getRootPropsMain()}>
+                    <input {...getInputPropsMain()} />
+                    <p>
+                      Arrastra o haz click para seleccionar una nueva imagen
+                    </p>
+                  </StyledDropzoneWrapper>
+                )}
+              </Grid>
             </Grid>
-          ) : null}
-          <StyledDropzoneContainer
-            {...getRootPropsMain({
-              isFocusedMain,
-              isDragAcceptMain,
-              isDragRejectMain,
-            })}
-          >
-            <input {...getInputPropsMain()} />
-            {id ? (
-              <p>
-                Edita la imagen principal para el home aquí, arrastra la nueva
-                imagen o haz click para seleccionar desde tus archivos
-              </p>
-            ) : (
-              <p>
-                Arrastra la imagen principal para el home aquí, o haz click para
-                seleccionar desde tus archivos
-              </p>
-            )}
-          </StyledDropzoneContainer>
-          {preview && (
-            <>
-              <StyledImageWrapper>
-                <StyledImg src={preview} alt='Preview' />
-              </StyledImageWrapper>
-              <Button
-                onClick={removeMainImage}
-                variant='outlined'
-                color='secondary'
-              >
-                Remover Imagen Home
-              </Button>
-            </>
-          )}
+          </Grid>
 
-          {/* Dropzone for the logo */}
-          <h3>Logo</h3>
-          {selectedLogoImg ? (
-            <Grid item xs={12}>
-              <StyledImageWrapper>
-                <StyledImg src={selectedLogoImg} alt='Upload preview' />
-              </StyledImageWrapper>
+          {/* Logo image section */}
+          <Grid item xs={12}>
+            <h3>Logo</h3>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                {selectedLogoImg && (
+                  <StyledImageWrapper>
+                    <StyledImg src={selectedLogoImg} alt='Current Logo' />
+                  </StyledImageWrapper>
+                )}
+              </Grid>
+              <Grid item xs={6}>
+                {previewLogo ? (
+                  <StyledImageWrapper>
+                    <StyledImg src={previewLogo} alt='News logo' />
+                    <StyledDeleteIconWrapper>
+                      <Tooltip title='Remover Nuevo Logo' placement='top'>
+                        <DeleteIcon onClick={removeLogo} />
+                      </Tooltip>
+                    </StyledDeleteIconWrapper>
+                  </StyledImageWrapper>
+                ) : (
+                  <StyledDropzoneWrapper {...getRootPropsLogo()}>
+                    <input {...getInputPropsLogo()} />
+                    <p>Arrastra o haz click para seleccionar un nuevo logo</p>
+                  </StyledDropzoneWrapper>
+                )}
+              </Grid>
             </Grid>
-          ) : null}
-          <StyledDropzoneContainer
-            {...getRootPropsLogo({
-              isFocusedLogo,
-              isDragAcceptLogo,
-              isDragRejectLogo,
-            })}
-          >
-            <input {...getInputPropsLogo()} />
-            {id ? (
-              <p>
-                Edita el logo aquí, arrastra el nuevo logo o haz click para
-                seleccionar desde tus archivos
-              </p>
-            ) : (
-              <p>Arrastra el logo aquí, o haz click para seleccionarlo</p>
-            )}
-          </StyledDropzoneContainer>
-          {previewLogo && (
-            <>
-              <StyledImageWrapper>
-                <StyledImg src={previewLogo} alt='Preview Logo' />
-              </StyledImageWrapper>
-              <Button onClick={removeLogo} variant='outlined' color='secondary'>
-                Remover Logo
-              </Button>
-            </>
-          )}
+          </Grid>
+
           <StyledBoxWrapper>
             <Button
               startIcon={<ArrowBackIosIcon />}
