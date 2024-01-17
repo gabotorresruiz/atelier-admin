@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
@@ -88,18 +89,16 @@ const StyledImg = styled('img')`
 `;
 
 const BrandingForm = ({ title, id = 0, data = {} }) => {
-  console.log('id', id);
-  console.log('data', data);
   // main image states
   const [loadingImg, setLoadingImg] = useState(false);
   const [preview, setPreview] = useState(null);
   const [image, setImage] = useState(null);
-  const [selectedImg] = useState(data.imageUrl ?? '');
+  const [selectedHomeImg] = useState(data.homeImageUrl ?? '');
+  const [selectedLogoImg] = useState(data.logoImageUrl ?? '');
 
   // logo states
   const [loadingLogo, setLoadingLogo] = useState(false);
   const [previewLogo, setPreviewLogo] = useState(null);
-  // eslint-disable-next-line no-unused-vars
   const [logoImage, setLogoImage] = useState(null);
 
   const navigate = useNavigate();
@@ -197,10 +196,10 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
     formData.append('email', formValues.email);
     formData.append('phone', formValues.phone);
     formData.append('address', formValues.address);
-    if (image) formData.append('image', image);
+    // if (image) formData.append('image', image);
+    console.log('image');
+    // if (logoImage) formData.append('logoImageUrl', logoImage);
     console.log('formData', formData);
-    // if (logoImage) formData.append('logoImage', logoImage);
-
     doFetch({ body: formData });
   };
 
@@ -272,13 +271,20 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
         <h1>{title}</h1>
         <StyledBox component='form' onSubmit={onSubmit}>
           <Grid container spacing={2}>
-            {selectedImg ? (
+            {/* {selectedHomeImg ? (
               <Grid item xs={12}>
                 <StyledImageWrapper>
-                  <StyledImg src={selectedImg} alt='Upload preview' />
+                  <StyledImg src={selectedHomeImg} alt='Upload preview' />
                 </StyledImageWrapper>
               </Grid>
             ) : null}
+            {selectedLogoImg ? (
+              <Grid item xs={12}>
+                <StyledImageWrapper>
+                  <StyledImg src={selectedLogoImg} alt='Upload preview' />
+                </StyledImageWrapper>
+              </Grid>
+            ) : null} */}
             <Grid item xs={12}>
               <Controller
                 name='name'
@@ -448,6 +454,14 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
           </Grid>
 
           {/* Dropzone for the main image */}
+          <h3>Imagen Principal</h3>
+          {selectedHomeImg ? (
+            <Grid item xs={12}>
+              <StyledImageWrapper>
+                <StyledImg src={selectedHomeImg} alt='Upload home' />
+              </StyledImageWrapper>
+            </Grid>
+          ) : null}
           <StyledDropzoneContainer
             {...getRootPropsMain({
               isFocusedMain,
@@ -456,10 +470,17 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
             })}
           >
             <input {...getInputPropsMain()} />
-            <p>
-              Arrastra la imagen principal para el home aquí, o haz click para
-              seleccionar desde tus archivos
-            </p>
+            {id ? (
+              <p>
+                Edita la imagen principal para el home aquí, arrastra la nueva
+                imagen o haz click para seleccionar desde tus archivos
+              </p>
+            ) : (
+              <p>
+                Arrastra la imagen principal para el home aquí, o haz click para
+                seleccionar desde tus archivos
+              </p>
+            )}
           </StyledDropzoneContainer>
           {preview && (
             <>
@@ -477,6 +498,14 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
           )}
 
           {/* Dropzone for the logo */}
+          <h3>Logo</h3>
+          {selectedLogoImg ? (
+            <Grid item xs={12}>
+              <StyledImageWrapper>
+                <StyledImg src={selectedLogoImg} alt='Upload preview' />
+              </StyledImageWrapper>
+            </Grid>
+          ) : null}
           <StyledDropzoneContainer
             {...getRootPropsLogo({
               isFocusedLogo,
@@ -485,7 +514,14 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
             })}
           >
             <input {...getInputPropsLogo()} />
-            <p>Arrastra el logo aquí, o haz click para seleccionarlo</p>
+            {id ? (
+              <p>
+                Edita el logo aquí, arrastra el nuevo logo o haz click para
+                seleccionar desde tus archivos
+              </p>
+            ) : (
+              <p>Arrastra el logo aquí, o haz click para seleccionarlo</p>
+            )}
           </StyledDropzoneContainer>
           {previewLogo && (
             <>
