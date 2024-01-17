@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
@@ -220,8 +219,8 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
     formData.append('email', formValues.email);
     formData.append('phone', formValues.phone);
     formData.append('address', formValues.address);
-    // if (image) formData.append('image', image);
-    // if (logoImage) formData.append('logoImageUrl', logoImage);
+    if (image) formData.append('homeImage', image);
+    if (logoImage) formData.append('logoImage', logoImage);
     doFetch({ body: formData });
   };
 
@@ -483,7 +482,13 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
                     </StyledDeleteIconWrapper>
                   </StyledImageWrapper>
                 ) : (
-                  <StyledDropzoneWrapper {...getRootPropsMain()}>
+                  <StyledDropzoneWrapper
+                    {...getRootPropsMain({
+                      isFocused: isFocusedMain,
+                      isDragAccept: isDragAcceptMain,
+                      isDragReject: isDragRejectMain,
+                    })}
+                  >
                     <input {...getInputPropsMain()} />
                     <p>
                       Arrastra o haz click para seleccionar una nueva imagen
@@ -516,7 +521,13 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
                     </StyledDeleteIconWrapper>
                   </StyledImageWrapper>
                 ) : (
-                  <StyledDropzoneWrapper {...getRootPropsLogo()}>
+                  <StyledDropzoneWrapper
+                    {...getRootPropsLogo({
+                      isFocused: isFocusedLogo,
+                      isDragAccept: isDragAcceptLogo,
+                      isDragReject: isDragRejectLogo,
+                    })}
+                  >
                     <input {...getInputPropsLogo()} />
                     <p>Arrastra o haz click para seleccionar un nuevo logo</p>
                   </StyledDropzoneWrapper>
