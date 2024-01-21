@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
@@ -152,34 +153,13 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
 
   const defaultproductName = data.name ? data.name : '';
   const defaultSubCategories = data.subcategories ? data.subcategories : [];
-  const defaultSizes = data.productsizes ? data.productsizes : [];
-  // const fakeSizes = [
-  //   {
-  //     id: 1,
-  //     name: '0,5 litros',
-  //   },
-  //   {
-  //     id: 2,
-  //     name: '1 litro',
-  //   },
-  //   {
-  //     id: 3,
-  //     name: '3 litros',
-  //   },
-  //   {
-  //     id: 4,
-  //     name: '6 litros',
-  //   },
-  //   {
-  //     id: 5,
-  //     name: '10 litros',
-  //   },
-  // ];
+  const defaultSizes = data.sizes ? data.sizes : [];
+  const defaultCode = data.code ? data.code : [];
 
   const [loadingImg, setLoadingImg] = useState(false);
   const [preview, setPreview] = useState(null);
   const [image, setImage] = useState(null);
-  const [selectedImg] = useState(data.imageUrl ?? '');
+  const [selectedImg] = useState(data.image ?? '');
 
   const onDrop = useCallback(acceptedFiles => {
     if (typeof acceptedFiles[0] === 'undefined') return;
@@ -215,6 +195,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
   const selectedSizes = watch('sizes');
 
   const onSubmit = ({ productName, subCategories, ...rest }) => {
+    console.log('entra a onsbumits');
     const selectedSubCategories = subCategories
       .map(subCategoryName => {
         const matchingOption = getResponse.find(
@@ -243,11 +224,14 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
     const formData = new FormData();
 
     formData.append('name', productName);
-    formData.append('withTintometric', hasTintometricColors);
     formData.append('subcategories', JSON.stringify(selectedSubCategories));
     formData.append('image', image);
-    formData.append('productsizes', sizesData);
-    console.log('formdata', formData);
+    formData.append('sizes', JSON.stringify(sizesData));
+    formData.append('withTintometric', hasTintometricColors);
+    console.log('productName', productName);
+    console.log('subcategories', JSON.stringify(selectedSubCategories));
+    console.log('sizesData', JSON.stringify(sizesData));
+    console.log('withTintometric', hasTintometricColors);
     doFetch({ body: formData });
   };
 
@@ -398,10 +382,8 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
             <Controller
               control={control}
               name='sizes'
-              defaultValue={defaultSizes.map(size => size.id)}
-              // defaultValue={defaultSizes.map(
-              //   size => size.quantity, // no tengo quantity
-              // )}
+              // defaultValue={defaultSizes.map(size => size.id)}
+              defaultValue={defaultSizes.map(size => size.quantity)}
               render={({ field }) => (
                 <MultiSelect
                   fullWidth
@@ -510,8 +492,8 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
               component='label'
               onClick={handleSubmit(onSubmit)}
               variant='contained'
-              disabled={!isValid}
-              loading={isLoading}
+              // disabled={!isValid}
+              // loading={isLoading}
             >
               Guardar
             </StyledButton>
