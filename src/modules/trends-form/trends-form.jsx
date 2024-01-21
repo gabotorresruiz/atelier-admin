@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
@@ -17,8 +16,6 @@ import {
   Fade,
   Grid,
   TextField,
-  Switch,
-  FormControlLabel,
 } from '@mui/material';
 import { LinearLoader, MultiSelect } from '../../components';
 import { useFetch } from '../../hooks';
@@ -113,10 +110,30 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
     severity: '',
   });
 
+  const [
+    {
+      error: getProductsError,
+      isLoading: getProductIsLoading,
+      response: getProductsResponse,
+    },
+  ] = useFetch({
+    entity: 'products',
+    fetchMethod: 'GET',
+  });
+
   const isEmptyData = Object.keys(data).length === 0;
 
   const defaultTrendName = data.name ? data.name : '';
+  const defaultTrendDescription = data.description ? data.description : '';
   const defaultProducts = data.products ? data.products : [];
+
+  const fetchMethod = isEmptyData ? 'POST' : 'PUT';
+
+  const [{ error, isLoading, response }, doFetch, resetFetch] = useFetch({
+    entity: 'trends',
+    fetchMethod,
+    id,
+  });
 
   const [loadingImg, setLoadingImg] = useState(false);
   const [preview, setPreview] = useState(null);
@@ -149,12 +166,33 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
     mode: 'all',
     defaultValues: {
       trendName: defaultTrendName,
+      trendDescription: defaultTrendDescription,
     },
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = ({ productName, produtcs, trendDescription }) => {
-    // TODO
+  const onSubmit = ({ trendName, products, trendDescription }) => {
+    const selectedProducts = products
+      .map(product => {
+        const matchingOption = getProductsResponse.find(
+          option => option.name === product,
+        );
+        if (matchingOption) {
+          return {
+            id: matchingOption.id,
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
+
+    const formData = new FormData();
+
+    formData.append('name', trendName);
+    formData.append('description', trendDescription);
+    formData.append('image', image);
+    formData.append('products', JSON.stringify(selectedProducts));
+    doFetch({ body: formData });
   };
 
   const closeAlert = () => {
@@ -164,6 +202,44 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
   const handleBack = () => {
     navigate(-1);
   };
+
+  const handleError = useCallback(() => {
+    setAlert({
+      isVisible: true,
+      message: 'Algo salió mal... Por favor intente nuevamente',
+      severity: 'error',
+    });
+  }, []);
+
+  const postSuccess = useCallback(
+    fetchResponse => {
+      let message = '';
+
+      if (fetchResponse.status === 201) {
+        message = 'Tendencia agregado satisfactoriamente!';
+        reset();
+        setPreview(null);
+        resetFetch();
+      }
+
+      if (fetchResponse.status === 200)
+        message = 'Tendencia editado satisfactoriamente!';
+
+      setAlert({
+        isVisible: true,
+        message,
+        severity: 'success',
+      });
+    },
+    [reset, resetFetch],
+  );
+
+  useEffect(() => {
+    if (error) return handleError();
+
+    if (response && (response.status === 201 || response.status === 200))
+      return postSuccess(response);
+  }, [postSuccess, error, response, handleError, loadingImg]);
 
   return (
     <>
@@ -232,13 +308,12 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
                 render={({ field: { onChange, value } }) => (
                   <TextField
                     fullWidth
-                    InputProps={{
-                      inputProps: {
-                        min: 0,
-                      },
+                    inputProps={{
+                      maxLength: 255,
                     }}
                     label='Descripción'
                     name='trendDescription'
+                    required
                     onChange={onChange}
                     type='text'
                     value={value}
@@ -266,25 +341,24 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
                     inputLabel='Productos'
                     label='Productos'
                     required
-                    // disabled={getIsLoading}
+                    disabled={getProductIsLoading}
                     onChange={field.onChange}
                     value={Array.isArray(field.value) ? field.value : []}
-                    // options={
-                    //   getResponse && !getError
-                    //     ? getResponse.map(option => ({
-                    //         value: option.id,
-                    //         label: option.name,
-                    //       }))
-                    //     : []
-                    // }
-                    options={[]}
+                    options={
+                      getProductsResponse && !getProductsError
+                        ? getProductsResponse.map(option => ({
+                            value: option.id,
+                            label: option.name,
+                          }))
+                        : []
+                    }
                     variant='outlined'
                   />
                 )}
               />
               <ErrorMessage
                 errors={errors}
-                name='subCategories'
+                name='products'
                 render={({ message }) => (
                   <StyledErrorMessage>{message}</StyledErrorMessage>
                 )}
@@ -319,7 +393,7 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
               onClick={handleSubmit(onSubmit)}
               variant='contained'
               disabled={!isValid}
-              // loading={isLoading}
+              loading={isLoading}
             >
               Guardar
             </StyledButton>
