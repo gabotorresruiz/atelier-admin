@@ -153,7 +153,15 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
 
   const defaultproductName = data.name ? data.name : '';
   const defaultSubCategories = data.subcategories ? data.subcategories : [];
-  const defaultSizes = data.sizes ? data.sizes : [];
+  // const defaultSizes = data.products_sizes ? data.products_sizes : [];
+
+  const defaultSizes = data.products_sizes
+    ? data.products_sizes.map(({ size, basePrice }) => ({
+        quantity: size.quantity,
+        basePrice,
+      }))
+    : [];
+
   const defaultCode = data.code ? data.code : [];
 
   const [loadingImg, setLoadingImg] = useState(false);
@@ -419,7 +427,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
             <Controller
               control={control}
               name='sizes'
-              defaultValue={defaultSizes.map(size => size.quantity)}
+              defaultValue={defaultSizes.map(({ quantity }) => quantity)}
               render={({ field }) => (
                 <MultiSelect
                   fullWidth
@@ -456,7 +464,10 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
                 <Controller
                   control={control}
                   name={`price_${quantity}`}
-                  defaultValue=''
+                  defaultValue={
+                    defaultSizes.find(e => e.quantity === quantity)
+                      ?.basePrice || ''
+                  }
                   render={({ field }) => (
                     <FormControl fullWidth>
                       <InputLabel
