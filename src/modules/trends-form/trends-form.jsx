@@ -393,7 +393,7 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
               onClick={handleSubmit(onSubmit)}
               variant='contained'
               disabled={!isValid}
-              sloading={isLoading}
+              loading={isLoading}
             >
               Guardar
             </StyledButton>
