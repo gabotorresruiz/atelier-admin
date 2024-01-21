@@ -22,10 +22,7 @@ const schema = yup.lazy(values =>
           .array()
           .min(1, 'Debe seleccionar al menos una subcategoría')
           .required('Debe seleccionar al menos una subcategoría'),
-        sizes: yup
-          .array()
-          .min(1, 'Debe seleccionar al menos una capacidad')
-          .required('Debe seleccionar al menos una capacidad'),
+        sizes: yup.array(),
       },
     ),
   ),
