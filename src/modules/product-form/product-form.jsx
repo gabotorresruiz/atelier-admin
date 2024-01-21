@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
@@ -153,7 +152,6 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
 
   const defaultproductName = data.name ? data.name : '';
   const defaultSubCategories = data.subcategories ? data.subcategories : [];
-  // const defaultSizes = data.products_sizes ? data.products_sizes : [];
 
   const defaultSizes = data.products_sizes
     ? data.products_sizes.map(({ size, basePrice }) => ({
@@ -203,51 +201,50 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
 
   const selectedSizes = watch('sizes');
 
-  useEffect(() => {
-    console.log('cambia selectedSizes a ::::', selectedSizes);
-  }, [selectedSizes]);
+  const generateRandomNumber = () => {
+    const min = 10 ** 15;
+    const max = 10 ** 16 - 1;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
 
-  const onSubmit = ({ productName, subCategories, ...rest }) => {
-    try {
-      const selectedSubCategories = subCategories
-        .map(subCategoryName => {
-          const matchingOption = getResponse.find(
-            option => option.name === subCategoryName,
-          );
-          if (matchingOption) {
-            return {
-              id: matchingOption.id,
-              name: matchingOption.name,
-            };
-          }
-          return null;
-        })
-        .filter(Boolean);
+  const onSubmit = ({ productName, subCategories, productCode, ...rest }) => {
+    const selectedSubCategories = subCategories
+      .map(subCategoryName => {
+        const matchingOption = getResponse.find(
+          option => option.name === subCategoryName,
+        );
+        if (matchingOption) {
+          return {
+            id: matchingOption.id,
+            name: matchingOption.name,
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
 
-      const sizesData = selectedSizes.map(quantity => {
-        const size = getResponseSizes.find(s => s.quantity === quantity);
-        return {
-          sizeId: size.id,
-          basePrice: rest[`price_${quantity}`],
-        };
-      });
-      console.log('sizesData:', sizesData);
+    const sizesData = selectedSizes.map(sizeName => {
+      const size = getResponseSizes.find(s => s.quantity === sizeName);
 
-      const formData = new FormData();
+      const formattedSizeName = sizeName.toString().replace('.', '_');
 
-      formData.append('name', productName);
-      formData.append('subcategories', JSON.stringify(selectedSubCategories));
-      formData.append('image', image);
-      formData.append('sizes', JSON.stringify(sizesData));
-      formData.append('withTintometric', hasTintometricColors);
-      console.log('productName', productName);
-      console.log('subcategories', JSON.stringify(selectedSubCategories));
-      console.log('sizesData', JSON.stringify(sizesData));
-      console.log('withTintometric', hasTintometricColors);
-      doFetch({ body: formData });
-    } catch (err) {
-      console.error('Error al procesar el formulario', err);
-    }
+      return {
+        sizeId: size.id,
+        basePrice: parseFloat(rest[`price_${formattedSizeName}`]),
+      };
+    });
+
+    const formData = new FormData();
+
+    formData.append('name', productName);
+    formData.append('code', productCode);
+    formData.append('sku', generateRandomNumber()); // harcoded sku for now
+    formData.append('subcategories', JSON.stringify(selectedSubCategories));
+    formData.append('image', image);
+    formData.append('sizes', JSON.stringify(sizesData));
+    formData.append('withTintometric', hasTintometricColors);
+
+    doFetch({ body: formData });
   };
 
   const closeAlert = () => {
@@ -337,7 +334,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
                         min: 0,
                       },
                     }}
-                    label='Nombre Producto'
+                    label='Nombre Producto (único)'
                     name='productName'
                     onChange={onChange}
                     required
@@ -368,8 +365,9 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
                         min: 0,
                       },
                     }}
-                    label='Código del Producto'
+                    label='Código del Producto (único)'
                     name='productCode'
+                    required
                     onChange={onChange}
                     type='text'
                     value={value}
@@ -436,6 +434,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
                   label='Capacidades'
                   disabled={getIsLoadingSizes}
                   onChange={field.onChange}
+                  required
                   value={Array.isArray(field.value) ? field.value : []}
                   options={
                     getResponseSizes && !getErrorSizes
@@ -459,21 +458,21 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
           </Grid>
 
           {selectedSizes &&
-            selectedSizes.map(quantity => (
-              <Grid item xs={12} key={quantity}>
+            selectedSizes.map(sizeName => (
+              <Grid item xs={12} key={sizeName}>
                 <Controller
                   control={control}
-                  name={`price_${quantity}`}
+                  name={`price_${sizeName.toString().replace('.', '_')}`}
                   defaultValue={
-                    defaultSizes.find(e => e.quantity === quantity)
+                    defaultSizes.find(e => e.quantity === sizeName)
                       ?.basePrice || ''
                   }
                   render={({ field }) => (
                     <FormControl fullWidth>
                       <InputLabel
-                        htmlFor={`price_${quantity}`}
+                        htmlFor={`price_${sizeName.toString().replace('.', '_')}`}
                         required
-                      >{`Precio base para ${quantity} litros`}</InputLabel>
+                      >{`Precio base para ${sizeName} litros`}</InputLabel>
                       <OutlinedInput
                         {...field}
                         type='number'
@@ -481,14 +480,14 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
                         startAdornment={
                           <InputAdornment position='start'>$</InputAdornment>
                         }
-                        label={`Precio base para ${quantity} litros`}
+                        label={`Precio base para ${sizeName} litros`}
                       />
                     </FormControl>
                   )}
                 />
                 <ErrorMessage
                   errors={errors}
-                  name={`price_${quantity}`}
+                  name={`price_${sizeName.toString().replace('.', '_')}`}
                   render={({ message }) => (
                     <StyledErrorMessage>{message}</StyledErrorMessage>
                   )}
@@ -534,8 +533,8 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
               component='label'
               onClick={handleSubmit(onSubmit)}
               variant='contained'
-              // disabled={!isValid}
-              // loading={isLoading}
+              disabled={!isValid}
+              loading={isLoading}
             >
               Guardar
             </StyledButton>
