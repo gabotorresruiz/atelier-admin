@@ -113,15 +113,21 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
     severity: '',
   });
 
-  // const [{ error: getProductsError, isLoadingProducts: getProductIsLoading, response: getProductsResponse }] =
-  // useFetch({
-  //   entity: 'products',
-  //   fetchMethod: 'GET',
-  // });
+  const [
+    {
+      error: getProductsError,
+      isLoading: getProductIsLoading,
+      response: getProductsResponse,
+    },
+  ] = useFetch({
+    entity: 'products',
+    fetchMethod: 'GET',
+  });
 
   const isEmptyData = Object.keys(data).length === 0;
 
   const defaultTrendName = data.name ? data.name : '';
+  const defaultTrendDescription = data.description ? data.description : '';
   const defaultProducts = data.products ? data.products : [];
 
   const fetchMethod = isEmptyData ? 'POST' : 'PUT';
@@ -163,18 +169,36 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
     mode: 'all',
     defaultValues: {
       trendName: defaultTrendName,
+      trendDescription: defaultTrendDescription,
     },
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = ({ productName, produtcs, trendDescription }) => {
-    // add products when the backend is ready
+  const onSubmit = ({ trendName, products, trendDescription }) => {
+    const selectedProducts = products
+      .map(product => {
+        const matchingOption = getProductsResponse.find(
+          option => option.name === product,
+        );
+        if (matchingOption) {
+          return {
+            id: matchingOption.id,
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
+
     const formData = new FormData();
 
-    formData.append('name', productName);
-    formData.append('descripcion', trendDescription);
-    formData.append('image', image);
-
+    formData.append('name', trendName);
+    formData.append('description', trendDescription);
+    // formData.append('image', image);
+    formData.append('products', JSON.stringify(selectedProducts));
+    console.log('trendName', trendName);
+    console.log('trendDescription', trendDescription);
+    console.log('image', image);
+    console.log('selectedProducts', JSON.stringify(selectedProducts));
     doFetch({ body: formData });
   };
 
@@ -326,25 +350,24 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
                     inputLabel='Productos'
                     label='Productos'
                     required
-                    // disabled={getIsLoading}
+                    disabled={getProductIsLoading}
                     onChange={field.onChange}
                     value={Array.isArray(field.value) ? field.value : []}
-                    // options={
-                    //   getResponse && !getError
-                    //     ? getResponse.map(option => ({
-                    //         value: option.id,
-                    //         label: option.name,
-                    //       }))
-                    //     : []
-                    // }
-                    options={[]}
+                    options={
+                      getProductsResponse && !getProductsError
+                        ? getProductsResponse.map(option => ({
+                            value: option.id,
+                            label: option.name,
+                          }))
+                        : []
+                    }
                     variant='outlined'
                   />
                 )}
               />
               <ErrorMessage
                 errors={errors}
-                name='subCategories'
+                name='products'
                 render={({ message }) => (
                   <StyledErrorMessage>{message}</StyledErrorMessage>
                 )}
