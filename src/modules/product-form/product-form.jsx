@@ -342,6 +342,37 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
             </Grid>
             <Grid item xs={12}>
               <Controller
+                name='productCode'
+                id='productCode'
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <TextField
+                    fullWidth
+                    InputProps={{
+                      inputProps: {
+                        min: 0,
+                      },
+                    }}
+                    label='Código del Producto'
+                    name='productCode'
+                    onChange={onChange}
+                    required
+                    type='text'
+                    value={value}
+                    variant='outlined'
+                  />
+                )}
+              />
+              <ErrorMessage
+                errors={errors}
+                name='productCode'
+                render={({ message }) => (
+                  <StyledErrorMessage>{message}</StyledErrorMessage>
+                )}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Controller
                 control={control}
                 name='subCategories'
                 defaultValue={defaultSubCategories.map(
