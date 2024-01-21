@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
@@ -17,8 +16,6 @@ import {
   Fade,
   Grid,
   TextField,
-  Switch,
-  FormControlLabel,
 } from '@mui/material';
 import { LinearLoader, MultiSelect } from '../../components';
 import { useFetch } from '../../hooks';
@@ -193,12 +190,8 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
 
     formData.append('name', trendName);
     formData.append('description', trendDescription);
-    // formData.append('image', image);
+    formData.append('image', image);
     formData.append('products', JSON.stringify(selectedProducts));
-    console.log('trendName', trendName);
-    console.log('trendDescription', trendDescription);
-    console.log('image', image);
-    console.log('selectedProducts', JSON.stringify(selectedProducts));
     doFetch({ body: formData });
   };
 
@@ -315,10 +308,8 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
                 render={({ field: { onChange, value } }) => (
                   <TextField
                     fullWidth
-                    InputProps={{
-                      inputProps: {
-                        min: 0,
-                      },
+                    inputProps={{
+                      maxLength: 255,
                     }}
                     label='Descripción'
                     name='trendDescription'
