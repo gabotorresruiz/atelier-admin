@@ -18,6 +18,9 @@ const schema = yup.lazy(values =>
         productName: yup
           .string()
           .required('Debe ingresar el nombre del producto'),
+        productCode: yup
+          .string()
+          .required('Debe ingresar el código del producto'),
         subCategories: yup
           .array()
           .min(1, 'Debe seleccionar al menos una subcategoría')
