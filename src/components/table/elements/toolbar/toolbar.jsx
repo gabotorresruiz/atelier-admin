@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { styled } from '@mui/system';
 import { alpha } from '@mui/material/styles';
 import Swal from 'sweetalert2';
@@ -12,6 +12,7 @@ import {
   TextField,
   InputAdornment,
   IconButton,
+  Button,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
@@ -19,6 +20,7 @@ import {
   Add as AddIcon,
   Delete as DeleteIcon,
   Edit as EditIcon,
+  Cached as CachedIcon,
 } from '@mui/icons-material';
 import { useFetch } from '../../../../hooks';
 import { Link } from '../../..';
@@ -40,6 +42,7 @@ const StyledTableTitle = styled('h1')`
 const StyledTypography = styled(Typography)`
   flex: 1 1 100%;
 `;
+
 const StyledTextField = styled(TextField)`
   & .MuiOutlinedInput-root {
     border-radius: 25px;
@@ -58,14 +61,26 @@ const StyledTextField = styled(TextField)`
   }
 `;
 
+const StyledItemGrid = styled(Grid)`
+  &.MuiGrid-item {
+    padding: 0 16px 0 0;
+  }
+`;
+
+const StyledRefreshFab = styled(Fab)`
+  margin-right: 16px;
+`;
+
 const Toolbar = ({
   entity,
   refreshData,
   rowSelected,
   tableTitle,
+  searchQuery,
   onSearch,
   enableOnlyUpload = false,
   enableDelete = true,
+  hasSearched,
   setHasSearched,
 }) => {
   const [{ error, isLoading }, doFetch] = useFetch({
@@ -74,18 +89,23 @@ const Toolbar = ({
     id: rowSelected,
   });
 
-  const [localSearchValue, setLocalSearchValue] = useState('');
-
   const handleSearchChange = event => {
-    setLocalSearchValue(event.target.value);
+    onSearch(event.target.value);
   };
 
-  const handleSearch = () => {
-    onSearch(localSearchValue);
-    setHasSearched(true); // not working
+  const handleSearch = e => {
+    e.preventDefault();
+
+    refreshData(searchQuery);
+    setHasSearched(true);
   };
 
-  useEffect(() => {}, [error, isLoading]);
+  const refreshTable = () => {
+    refreshData('');
+    onSearch('');
+    setHasSearched(false);
+  };
+
   const doDelete = () => {
     doFetch({});
   };
@@ -158,26 +178,42 @@ const Toolbar = ({
       >
         {!rowSelected && (
           <>
-            <Grid item>
-              <StyledTextField
-                placeholder='Buscar...'
-                variant='outlined'
-                size='small'
-                value={localSearchValue}
-                onChange={handleSearchChange}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      <IconButton onClick={handleSearch}>
-                        <SearchIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
+            {hasSearched ? (
+              <Tooltip title='Refrescar' placement='top'>
+                <StyledRefreshFab
+                  component={Button}
+                  size='small'
+                  onClick={refreshTable}
+                >
+                  <CachedIcon />
+                </StyledRefreshFab>
+              </Tooltip>
+            ) : null}
+            <StyledItemGrid item>
+              <form onSubmit={e => handleSearch(e)}>
+                <StyledTextField
+                  placeholder='Buscar...'
+                  variant='outlined'
+                  size='small'
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position='end'>
+                        <IconButton
+                          type='submit'
+                          onClick={e => handleSearch(e)}
+                        >
+                          <SearchIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </form>
+            </StyledItemGrid>
             {!enableOnlyUpload && (
-              <Grid item>
+              <StyledItemGrid item>
                 <Tooltip title='Agregar' placement='top'>
                   <Fab
                     color='primary'
@@ -188,10 +224,10 @@ const Toolbar = ({
                     <AddIcon />
                   </Fab>
                 </Tooltip>
-              </Grid>
+              </StyledItemGrid>
             )}
             {enableOnlyUpload && (
-              <Grid item>
+              <StyledItemGrid item>
                 <Tooltip title='Subir Archivo' placement='top'>
                   <Fab
                     color='primary'
@@ -202,14 +238,14 @@ const Toolbar = ({
                     <FileUploadIcon />
                   </Fab>
                 </Tooltip>
-              </Grid>
+              </StyledItemGrid>
             )}
           </>
         )}
 
         {rowSelected !== null && (
           <>
-            <Grid item>
+            <StyledItemGrid item>
               <Tooltip title='Editar' placement='top'>
                 <Fab
                   component={Link}
@@ -219,15 +255,15 @@ const Toolbar = ({
                   <EditIcon />
                 </Fab>
               </Tooltip>
-            </Grid>
+            </StyledItemGrid>
             {enableDelete && (
-              <Grid item>
+              <StyledItemGrid item>
                 <Tooltip title='Eliminar' placement='top'>
                   <Fab onClick={handleDelete} size='small' color='error'>
                     <DeleteIcon />
                   </Fab>
                 </Tooltip>
-              </Grid>
+              </StyledItemGrid>
             )}
           </>
         )}

@@ -85,7 +85,7 @@ const Colors = () => {
           data={response}
           refreshData={refreshData}
           tableTitle='Colores'
-          entity='colors'
+          entity='tintometric-colors'
           headColumns={colorsColumns}
           enableOnlyUpload
           enableDelete={false}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/system';
 import {
   Box,
@@ -13,6 +13,7 @@ import {
   DialogActions,
   Button,
 } from '@mui/material';
+import { useFetch } from '../../hooks';
 
 import { Body, Head, Toolbar } from './elements';
 
@@ -40,34 +41,45 @@ const StyledTableContainer = styled(TableContainer)`
 const Table = ({
   entity,
   headColumns,
-  refreshData,
   data = [],
-  isLoading = false,
+  firstSearchLoading = false,
   enableOnlyUpload = false,
   enableDelete = true,
   tableTitle = '',
 }) => {
   const [selected, setSelected] = useState(null);
   const [page, setPage] = useState(0);
+  const [tableData, setTableData] = useState(data);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
-  const prevSearchQueryRef = useRef();
+  const [{ isLoading, response }, doFetch] = useFetch({
+    entity,
+    fetchMethod: 'GET',
+    initialFetch: false,
+  });
 
   useEffect(() => {
-    if (hasSearched && data.length === 0) {
-      setOpenDialog(true);
-    }
-  }, [hasSearched, data]);
+    if (hasSearched && tableData.length === 0) setOpenDialog(true);
+  }, [hasSearched, tableData.length]);
 
   useEffect(() => {
-    if (searchQuery !== '' && prevSearchQueryRef.current !== searchQuery) {
-      refreshData(searchQuery);
-    }
-    prevSearchQueryRef.current = searchQuery;
-  }, [hasSearched, refreshData, searchQuery]);
+    if (response) setTableData(response);
+  }, [response]);
+
+  const refreshData = useCallback(
+    searchText => {
+      doFetch({
+        newParams: {
+          search: searchText,
+          attribute: 'name',
+        },
+      });
+    },
+    [doFetch],
+  );
 
   const handleChangePage = (e, newPage) => {
     setPage(newPage);
@@ -100,21 +112,22 @@ const Table = ({
           enableOnlyUpload={enableOnlyUpload}
           enableDelete={enableDelete}
           onSearch={setSearchQuery}
+          searchQuery={searchQuery}
+          hasSearched={hasSearched}
           setHasSearched={setHasSearched}
         />
         <StyledTableContainer>
-          {isLoading && <StyledLoadingBackground />}
+          {firstSearchLoading || isLoading ? <StyledLoadingBackground /> : null}
           <MuiTable aria-labelledby='table-title' size='medium'>
             <Head headColumns={headColumns} />
 
             <Body
-              data={data}
+              data={tableData}
               headColumns={headColumns}
               page={page}
               rowsPerPage={rowsPerPage}
               selected={selected}
               setSelected={setSelected}
-              onResetSearch={handleResetSearch}
             />
           </MuiTable>
         </StyledTableContainer>
@@ -122,7 +135,7 @@ const Table = ({
         <TablePagination
           rowsPerPageOptions={[rowsPerPage]}
           component='div'
-          count={data?.length || 0}
+          count={tableData?.length || 0}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

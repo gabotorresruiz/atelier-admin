@@ -5,7 +5,13 @@ import { getLoggedUser, getQueryParams } from '../utils';
 const API_BASE_URI = import.meta.env.VITE_API_BASE_URI;
 const SCHEMA = import.meta.env.VITE_SCHEMA_NAME;
 
-const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
+const useFetch = ({
+  entity,
+  fetchMethod,
+  initialFetch = true,
+  id = 0,
+  fetchParams = null,
+}) => {
   const navigate = useNavigate();
   const [response, setResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -112,7 +118,7 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
       : `${API_BASE_URI}/${entity}`;
 
     if (params) uri += getQueryParams(params);
-    if (method === 'GET' && !refreshData) {
+    if (method === 'GET' && initialFetch && !refreshData) {
       fetchData(uri, options);
       return;
     }
@@ -124,6 +130,7 @@ const useFetch = ({ entity, fetchMethod, id = 0, fetchParams = null }) => {
     entity,
     fetchData,
     id,
+    initialFetch,
     isLoading,
     method,
     params,
