@@ -15,7 +15,7 @@ const baseColumns = [
 ];
 
 const CustomizedTable = ({
-  refreshData,
+  doFetch,
   isLoading,
   data = [],
   tableTitle,
@@ -29,7 +29,7 @@ const CustomizedTable = ({
     data={data}
     headColumns={headColumns}
     isLoading={isLoading}
-    refreshData={refreshData}
+    doFetch={doFetch}
     tableTitle={tableTitle}
     enableOnlyUpload={enableOnlyUpload}
     enableDelete={enableDelete}
