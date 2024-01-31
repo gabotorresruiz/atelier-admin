@@ -21,11 +21,23 @@ import {
   MacroCategories,
   Products,
   SubCategories,
+  Colors,
+  AddColor,
+  Colorants,
+  UploadColorant,
+  EditColor,
+  Trends,
+  AddTrend,
+  EditTrend,
+  Branding,
+  AddBranding,
+  EditBranding,
 } from './pages';
 
 import Layout from './layout';
 import { LinearLoader } from './components';
 import { WithProtectedRoute } from './HOC';
+import EditColorant from './pages/colorants/edit-colorant/edit-colorant';
 
 const App = () => (
   <BrowserRouter>
@@ -64,6 +76,18 @@ const App = () => (
           <Route path='products' element={<Products />} />
           <Route path='products/new' element={<AddProduct />} />
           <Route path='products/edit/:id' element={<EditProduct />} />
+          <Route path='colors' element={<Colors />} />
+          <Route path='colors/edit/:id' element={<EditColor />} />
+          <Route path='colors/upload' element={<AddColor />} />
+          <Route path='colorants' element={<Colorants />} />
+          <Route path='colorants/edit/:id' element={<EditColorant />} />
+          <Route path='colorants/upload' element={<UploadColorant />} />
+          <Route path='trends' element={<Trends />} />
+          <Route path='trends/new' element={<AddTrend />} />
+          <Route path='trends/edit/:id' element={<EditTrend />} />
+          <Route path='branding' element={<Branding />} />
+          <Route path='branding/new' element={<AddBranding />} />
+          <Route path='branding/edit/:id' element={<EditBranding />} />
         </Route>
       </Route>
       <Route path='*' element={<p>404 Not Found</p>} />

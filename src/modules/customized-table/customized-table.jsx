@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table } from '../../components';
 
-const headColumns = [
+const baseColumns = [
   {
     id: 'name',
     label: 'Nombre',
@@ -15,19 +15,24 @@ const headColumns = [
 ];
 
 const CustomizedTable = ({
-  refreshData,
+  doFetch,
   isLoading,
   data = [],
   tableTitle,
   entity,
+  enableOnlyUpload = false,
+  enableDelete = true,
+  headColumns = baseColumns,
 }) => (
   <Table
     entity={entity}
     data={data}
     headColumns={headColumns}
     isLoading={isLoading}
-    refreshData={refreshData}
+    doFetch={doFetch}
     tableTitle={tableTitle}
+    enableOnlyUpload={enableOnlyUpload}
+    enableDelete={enableDelete}
   />
 );
 

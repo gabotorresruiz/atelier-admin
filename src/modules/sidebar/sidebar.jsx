@@ -7,6 +7,10 @@ import {
   Dashboard as DashboardIcon,
 } from '@mui/icons-material';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import PaletteIcon from '@mui/icons-material/Palette';
+import ColorizeIcon from '@mui/icons-material/Colorize';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import DesignServicesIcon from '@mui/icons-material/DesignServices';
 import { ListItemLink } from '../../components';
 
 const StyledDrawer = styled(Drawer)`
@@ -44,6 +48,17 @@ const Sidebar = React.memo(() => {
             selectedItem={selectedItem}
             text='Dashboard'
             to='/dashboard'
+          />
+        </List>
+        <Divider />
+        <List>
+          <ListItemLink
+            icon={<DesignServicesIcon />}
+            id='/branding'
+            onClick={handleClick}
+            selectedItem={selectedItem}
+            text='Diseño de Marca'
+            to='/branding'
           />
         </List>
         <Divider />
@@ -88,6 +103,39 @@ const Sidebar = React.memo(() => {
             selectedItem={selectedItem}
             text='Productos'
             to='/products'
+          />
+        </List>
+        <Divider />
+        <List>
+          <ListItemLink
+            icon={<ColorizeIcon />}
+            id='/colorants'
+            onClick={handleClick}
+            selectedItem={selectedItem}
+            text='Colorantes'
+            to='/colorants'
+          />
+        </List>
+        <Divider />
+        <List>
+          <ListItemLink
+            icon={<PaletteIcon />}
+            id='/colors'
+            onClick={handleClick}
+            selectedItem={selectedItem}
+            text='Colores'
+            to='/colors'
+          />
+        </List>
+        <Divider />
+        <List>
+          <ListItemLink
+            icon={<TrendingUpIcon />}
+            id='/trends'
+            onClick={handleClick}
+            selectedItem={selectedItem}
+            text='Tendencias'
+            to='/trends'
           />
         </List>
         <Divider />

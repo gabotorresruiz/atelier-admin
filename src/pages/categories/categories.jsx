@@ -26,9 +26,15 @@ const Categories = () => {
     severity: '',
   });
 
-  const refreshData = useCallback(() => {
-    doFetch({ refresh: true });
-  }, [doFetch]);
+  const refreshData = searchText => {
+    doFetch({
+      newParams: {
+        search: searchText,
+        attribute: 'name',
+      },
+      refresh: true,
+    });
+  };
 
   const closeAlert = () => {
     setAlert(false);

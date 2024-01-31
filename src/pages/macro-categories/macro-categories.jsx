@@ -26,9 +26,18 @@ const MacroCategories = () => {
     severity: '',
   });
 
-  const refreshData = useCallback(() => {
-    doFetch({ refresh: true });
-  }, [doFetch]);
+  // const refreshData = useCallback(
+  //   searchText => {
+  //     console.log('searchText: ', searchText);
+  //     doFetch({
+  //       newParams: {
+  //         search: searchText,
+  //         attribute: 'name',
+  //       },
+  //     });
+  //   },
+  //   [doFetch],
+  // );
 
   const closeAlert = () => {
     setAlert(false);
@@ -56,7 +65,7 @@ const MacroCategories = () => {
       {!isLoading && response !== null && !error ? (
         <CustomizedTable
           data={response}
-          refreshData={refreshData}
+          doFetch={doFetch}
           tableTitle='Macrocategorías'
           entity='macro-categories'
         />
