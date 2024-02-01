@@ -16,6 +16,7 @@ import {
   Fade,
   Grid,
   TextField,
+  TextareaAutosize,
 } from '@mui/material';
 import { LinearLoader, MultiSelect } from '../../components';
 import { useFetch } from '../../hooks';
@@ -100,6 +101,34 @@ const StyledDropzoneContainer = styled('div')`
     border-color: #212121;
   }
 `;
+
+const StyledTextareaAutosize = styled(TextareaAutosize)(
+  () => `
+  box-sizing: border-box;
+  width: 100%;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 16.5px 14px;
+  border-radius: 4px;
+  border: 1px solid #B0B8C4;
+  box-shadow: 0px 2px 2px #F3F6F9;
+
+  &:hover {
+    border-color: #434D5B;
+  }
+
+  &:focus {
+    border-color: #1976D2;
+    border-width: 2px;
+  }
+
+  &:focus-visible {
+    outline: 0;
+  }
+`,
+);
 
 const TrendsForm = ({ title, id = 0, data = {} }) => {
   const navigate = useNavigate();
@@ -305,16 +334,18 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
                 name='trendDescription'
                 id='trendDescription'
                 control={control}
+                required
                 render={({ field: { onChange, value } }) => (
-                  <TextField
+                  <StyledTextareaAutosize
                     fullWidth
-                    inputProps={{
-                      maxLength: 255,
-                    }}
-                    label='Descripción'
                     name='trendDescription'
-                    required
-                    onChange={onChange}
+                    minRows={3}
+                    placeholder='Descripción *'
+                    onChange={e => {
+                      // Enforce character limit
+                      const truncatedValue = e.target.value.slice(0, 255);
+                      onChange(truncatedValue);
+                    }}
                     type='text'
                     value={value}
                     variant='outlined'
