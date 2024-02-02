@@ -7,37 +7,40 @@ import {
   Routes,
 } from 'react-router-dom';
 import {
+  AddBranding,
   AddCategory,
+  AddColor,
   AddMacroCategory,
   AddProduct,
+  AddSize,
   AddSubCategory,
+  AddTrend,
+  Branding,
   Categories,
+  Colorants,
+  Colors,
   Dashboard,
+  EditBranding,
   EditCategory,
+  EditColor,
   EditMacroCategory,
   EditProduct,
+  EditSize,
   EditSubCategory,
+  EditTrend,
   Login,
   MacroCategories,
   Products,
   SubCategories,
-  Colors,
-  AddColor,
-  Colorants,
-  UploadColorant,
-  EditColor,
   Trends,
-  AddTrend,
-  EditTrend,
-  Branding,
-  AddBranding,
-  EditBranding,
+  UploadColorant,
 } from './pages';
 
 import Layout from './layout';
 import { LinearLoader } from './components';
 import { WithProtectedRoute } from './HOC';
 import EditColorant from './pages/colorants/edit-colorant/edit-colorant';
+import Sizes from './pages/sizes/sizes';
 
 const App = () => (
   <BrowserRouter>
@@ -88,6 +91,9 @@ const App = () => (
           <Route path='branding' element={<Branding />} />
           <Route path='branding/new' element={<AddBranding />} />
           <Route path='branding/edit/:id' element={<EditBranding />} />
+          <Route path='sizes' element={<Sizes />} />
+          <Route path='sizes/new' element={<AddSize />} />
+          <Route path='sizes/edit/:id' element={<EditSize />} />
         </Route>
       </Route>
       <Route path='*' element={<p>404 Not Found</p>} />
