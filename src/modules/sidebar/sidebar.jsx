@@ -6,11 +6,12 @@ import {
   Category as CategoryIcon,
   Dashboard as DashboardIcon,
 } from '@mui/icons-material';
-import InventoryIcon from '@mui/icons-material/Inventory';
 import PaletteIcon from '@mui/icons-material/Palette';
 import ColorizeIcon from '@mui/icons-material/Colorize';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import DesignServicesIcon from '@mui/icons-material/DesignServices';
+import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
+import FormatPaintIcon from '@mui/icons-material/FormatPaint';
 import { ListItemLink } from '../../components';
 
 const StyledDrawer = styled(Drawer)`
@@ -97,12 +98,23 @@ const Sidebar = React.memo(() => {
         <Divider />
         <List>
           <ListItemLink
-            icon={<InventoryIcon />}
+            icon={<FormatPaintIcon />}
             id='/products'
             onClick={handleClick}
             selectedItem={selectedItem}
             text='Productos'
             to='/products'
+          />
+        </List>
+        <Divider />
+        <List>
+          <ListItemLink
+            icon={<FormatColorFillIcon />}
+            id='/sizes'
+            onClick={handleClick}
+            selectedItem={selectedItem}
+            text='Capacidades'
+            to='/sizes'
           />
         </List>
         <Divider />
