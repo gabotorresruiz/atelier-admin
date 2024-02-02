@@ -124,7 +124,7 @@ const Sidebar = React.memo(() => {
             onClick={handleClick}
             selectedItem={selectedItem}
             text='Colores'
-            to='/colors'
+            to='/tintometric-colors'
           />
         </List>
         <Divider />

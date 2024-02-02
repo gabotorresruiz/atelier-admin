@@ -1,8 +1,8 @@
 version: '3.7'
 
 services:
-  app:
-    container_name: atelier-admin-app-dev
+  atelier-admin-panel:
+    container_name: admin-panel-service
     build:
       context: .
       dockerfile: Dockerfile.dev

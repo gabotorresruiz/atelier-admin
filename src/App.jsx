@@ -76,9 +76,9 @@ const App = () => (
           <Route path='products' element={<Products />} />
           <Route path='products/new' element={<AddProduct />} />
           <Route path='products/edit/:id' element={<EditProduct />} />
-          <Route path='colors' element={<Colors />} />
-          <Route path='colors/edit/:id' element={<EditColor />} />
-          <Route path='colors/upload' element={<AddColor />} />
+          <Route path='tintometric-colors' element={<Colors />} />
+          <Route path='tintometric-colors/edit/:id' element={<EditColor />} />
+          <Route path='tintometric-colors/upload' element={<AddColor />} />
           <Route path='colorants' element={<Colorants />} />
           <Route path='colorants/edit/:id' element={<EditColorant />} />
           <Route path='colorants/upload' element={<UploadColorant />} />
