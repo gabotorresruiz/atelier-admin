@@ -135,7 +135,7 @@ const Sidebar = React.memo(() => {
             id='/colors'
             onClick={handleClick}
             selectedItem={selectedItem}
-            text='Colores'
+            text='Sist. Tintométrico'
             to='/tintometric-colors'
           />
         </List>

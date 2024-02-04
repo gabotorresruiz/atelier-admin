@@ -71,6 +71,7 @@ const Table = ({
 
   const refreshData = useCallback(
     searchText => {
+      setPage(0);
       doFetch({
         newParams: {
           search: searchText,
@@ -91,6 +92,7 @@ const Table = ({
   };
 
   const handleResetSearch = () => {
+    setPage(0);
     setSearchQuery('');
     refreshData('');
     setHasSearched(false);
