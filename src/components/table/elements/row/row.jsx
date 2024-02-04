@@ -91,14 +91,14 @@ const Row = ({ data, headColumns, index, selected, setSelected }) => {
               </StyledImageCell>
             );
 
-          case 'numeric':
-            const formatter = new Intl.NumberFormat('de-DE', {
+          case 'number':
+            const formatter = new Intl.NumberFormat('es-UY', {
               style: 'currency',
-              currency: 'USD',
+              currency: 'UYU',
             });
 
             return (
-              <StyledNumericTableCell key={item.id} align='right'>
+              <StyledNumericTableCell key={item.id}>
                 {formatter.format(data[item.id])}
               </StyledNumericTableCell>
             );
