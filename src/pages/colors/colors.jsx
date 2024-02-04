@@ -31,7 +31,7 @@ const colorsColumns = [
   },
   {
     id: 'price',
-    label: 'Precio',
+    label: 'Precio por litro de color',
     type: 'number',
   },
   {

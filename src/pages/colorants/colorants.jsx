@@ -22,7 +22,7 @@ const colorantsColumns = [
   },
   {
     id: 'price',
-    label: 'Precio',
+    label: 'Precio por litro de colorante',
     type: 'number',
   },
   {
