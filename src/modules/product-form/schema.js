@@ -18,6 +18,10 @@ const schema = yup.lazy(values =>
         productName: yup
           .string()
           .required('Debe ingresar el nombre del producto'),
+        productDescription: yup
+          .string()
+          .required('Debe ingresar descripición del producto')
+          .required(),
         productCode: yup
           .string()
           .required('Debe ingresar el código del producto'),
