@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
@@ -136,7 +137,11 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
   const defaultBrandingName = Object.keys(data).length === 0 ? '' : data.name;
   const defaultBrandingTitle = Object.keys(data).length === 0 ? '' : data.title;
   const defaultBrandingSubtitle =
-    Object.keys(data).length === 0 ? '' : data.subtitle;
+    Object.keys(data).length === 0
+      ? ''
+      : data.subtitle !== 'null'
+        ? data.subtitle
+        : '';
   const defaultBrandingEmail = Object.keys(data).length === 0 ? '' : data.email;
   const defaultBrandingPhone = Object.keys(data).length === 0 ? '' : data.phone;
   const defaultBrandingAdress =
@@ -215,7 +220,7 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
 
     formData.append('name', formValues.name);
     formData.append('title', formValues.title);
-    formData.append('subtitle', formValues.subtitle);
+    if (formValues.subtitle) formData.append('subtitle', formValues.subtitle);
     formData.append('email', formValues.email);
     formData.append('phone', formValues.phone);
     formData.append('address', formValues.address);
@@ -369,7 +374,6 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
                     label='Subítulo'
                     name='subtitle'
                     onChange={onChange}
-                    required
                     type='text'
                     value={value}
                   />

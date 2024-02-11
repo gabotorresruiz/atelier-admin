@@ -3,7 +3,7 @@ import * as yup from 'yup';
 const schema = yup.object({
   name: yup.string().required('Debe ingresar el nombre de la Marca').required(),
   title: yup.string().required('Debe ingresar un título').required(),
-  subtitle: yup.string().required('Debe ingresar un subtítulo').required(),
+  subtitle: yup.string(),
   email: yup
     .string()
     .required('Debe ingresar un email')

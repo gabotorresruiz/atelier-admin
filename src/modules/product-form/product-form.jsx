@@ -22,6 +22,7 @@ import {
   InputLabel,
   OutlinedInput,
   InputAdornment,
+  TextareaAutosize,
 } from '@mui/material';
 import { LinearLoader, MultiSelect } from '../../components';
 import { useFetch } from '../../hooks';
@@ -107,6 +108,34 @@ const StyledDropzoneContainer = styled('div')`
   }
 `;
 
+const StyledTextareaAutosize = styled(TextareaAutosize)(
+  () => `
+  box-sizing: border-box;
+  width: 100%;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 16.5px 14px;
+  border-radius: 4px;
+  border: 1px solid #B0B8C4;
+  box-shadow: 0px 2px 2px #F3F6F9;
+
+  &:hover {
+    border-color: #434D5B;
+  }
+
+  &:focus {
+    border-color: #1976D2;
+    border-width: 2px;
+  }
+
+  &:focus-visible {
+    outline: 0;
+  }
+`,
+);
+
 const ProductForm = ({ title, id = 0, data = {} }) => {
   const [hasTintometricColors, setHasTintometricColors] = useState(
     data.withTintometric ?? false,
@@ -150,7 +179,8 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
     id,
   });
 
-  const defaultproductName = data.name ? data.name : '';
+  const defaultProductName = data.name ? data.name : '';
+  const defaultProductDescription = data.description ? data.description : '';
   const defaultSubCategories = data.subcategories ? data.subcategories : [];
 
   const defaultSizes = data.products_sizes
@@ -193,7 +223,8 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
   } = useForm({
     mode: 'all',
     defaultValues: {
-      productName: defaultproductName,
+      productName: defaultProductName,
+      productDescription: defaultProductDescription,
       productCode: defaultCode,
     },
     resolver: yupResolver(schema),
@@ -207,7 +238,13 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
 
-  const onSubmit = ({ productName, subCategories, productCode, ...rest }) => {
+  const onSubmit = ({
+    productName,
+    productDescription,
+    subCategories,
+    productCode,
+    ...rest
+  }) => {
     const selectedSubCategories = subCategories
       .map(subCategoryName => {
         const matchingOption = getResponse.find(
@@ -237,6 +274,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
     const formData = new FormData();
 
     formData.append('name', productName);
+    formData.append('description', productDescription);
     formData.append('code', productCode);
     formData.append('sku', generateRandomNumber()); // harcoded sku for now
     formData.append('subcategories', JSON.stringify(selectedSubCategories));
@@ -347,6 +385,37 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
               <ErrorMessage
                 errors={errors}
                 name='productName'
+                render={({ message }) => (
+                  <StyledErrorMessage>{message}</StyledErrorMessage>
+                )}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Controller
+                name='productDescription'
+                id='productDescription'
+                control={control}
+                required
+                render={({ field: { onChange, value } }) => (
+                  <StyledTextareaAutosize
+                    fullWidth
+                    name='productDescription'
+                    minRows={3}
+                    placeholder='Descripción *'
+                    onChange={e => {
+                      // Enforce character limit
+                      const truncatedValue = e.target.value.slice(0, 255);
+                      onChange(truncatedValue);
+                    }}
+                    type='text'
+                    value={value}
+                    variant='outlined'
+                  />
+                )}
+              />
+              <ErrorMessage
+                errors={errors}
+                name='productDescription'
                 render={({ message }) => (
                   <StyledErrorMessage>{message}</StyledErrorMessage>
                 )}
