@@ -8,6 +8,7 @@ import {
 } from '@mui/icons-material';
 import PaletteIcon from '@mui/icons-material/Palette';
 import ColorizeIcon from '@mui/icons-material/Colorize';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import DesignServicesIcon from '@mui/icons-material/DesignServices';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
@@ -51,7 +52,6 @@ const Sidebar = React.memo(() => {
             to='/dashboard'
           />
         </List>
-        <Divider />
         <List>
           <ListItemLink
             icon={<DesignServicesIcon />}
@@ -73,7 +73,6 @@ const Sidebar = React.memo(() => {
             to='/macro-categories'
           />
         </List>
-        <Divider />
         <List>
           <ListItemLink
             icon={<CategoryIcon />}
@@ -84,7 +83,6 @@ const Sidebar = React.memo(() => {
             to='/categories'
           />
         </List>
-        <Divider />
         <List>
           <ListItemLink
             icon={<CategoryIcon />}
@@ -95,7 +93,6 @@ const Sidebar = React.memo(() => {
             to='/sub-categories'
           />
         </List>
-        <Divider />
         <List>
           <ListItemLink
             icon={<FormatPaintIcon />}
@@ -106,7 +103,6 @@ const Sidebar = React.memo(() => {
             to='/products'
           />
         </List>
-        <Divider />
         <List>
           <ListItemLink
             icon={<FormatColorFillIcon />}
@@ -128,7 +124,6 @@ const Sidebar = React.memo(() => {
             to='/colorants'
           />
         </List>
-        <Divider />
         <List>
           <ListItemLink
             icon={<PaletteIcon />}
@@ -151,6 +146,16 @@ const Sidebar = React.memo(() => {
           />
         </List>
         <Divider />
+        <List>
+          <ListItemLink
+            icon={<ShoppingCartIcon />}
+            id='/orders'
+            onClick={handleClick}
+            selectedItem={selectedItem}
+            text='Órdenes'
+            to='/orders'
+          />
+        </List>
       </StyledBox>
     </StyledDrawer>
   );

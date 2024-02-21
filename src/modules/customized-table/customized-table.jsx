@@ -20,6 +20,7 @@ const CustomizedTable = ({
   data = [],
   tableTitle,
   entity,
+  disabledAdd = true,
   enableOnlyUpload = false,
   enableDelete = true,
   headColumns = baseColumns,
@@ -31,6 +32,7 @@ const CustomizedTable = ({
     isLoading={isLoading}
     doFetch={doFetch}
     tableTitle={tableTitle}
+    disabledAdd={disabledAdd}
     enableOnlyUpload={enableOnlyUpload}
     enableDelete={enableDelete}
   />
