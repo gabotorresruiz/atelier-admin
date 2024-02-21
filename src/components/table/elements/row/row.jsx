@@ -49,6 +49,12 @@ moment.updateLocale('es', {
   },
 });
 
+const statusNaming = {
+  PENDING: 'En proceso',
+  PAID: 'Pagada',
+  DELIVERED: 'Enviada',
+};
+
 const Row = ({ data, headColumns, index, selected, setSelected }) => {
   const itemSelected = useMemo(() => selected === data.id, [data.id, selected]);
 
@@ -124,6 +130,10 @@ const Row = ({ data, headColumns, index, selected, setSelected }) => {
               <TableCell key={item.id}>
                 <StyledColorBox style={{ backgroundColor: data[item.id] }} />
               </TableCell>
+            );
+          case 'status':
+            return (
+              <TableCell key={item.id}>{statusNaming[data[item.id]]}</TableCell>
             );
           default:
             return <TableCell key={item.id}>{data[item.id]}</TableCell>;

@@ -23,6 +23,7 @@ import {
   EditBranding,
   EditCategory,
   EditColor,
+  EditColorant,
   EditMacroCategory,
   EditProduct,
   EditSize,
@@ -30,7 +31,10 @@ import {
   EditTrend,
   Login,
   MacroCategories,
+  Orders,
+  EditOrder,
   Products,
+  Sizes,
   SubCategories,
   Trends,
   UploadColorant,
@@ -39,8 +43,6 @@ import {
 import Layout from './layout';
 import { LinearLoader } from './components';
 import { WithProtectedRoute } from './HOC';
-import EditColorant from './pages/colorants/edit-colorant/edit-colorant';
-import Sizes from './pages/sizes/sizes';
 
 const App = () => (
   <BrowserRouter>
@@ -94,6 +96,8 @@ const App = () => (
           <Route path='sizes' element={<Sizes />} />
           <Route path='sizes/new' element={<AddSize />} />
           <Route path='sizes/edit/:id' element={<EditSize />} />
+          <Route path='orders' element={<Orders />} />
+          <Route path='orders/edit/:id' element={<EditOrder />} />
         </Route>
       </Route>
       <Route path='*' element={<p>404 Not Found</p>} />

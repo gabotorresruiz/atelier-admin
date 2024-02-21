@@ -78,6 +78,7 @@ const Toolbar = ({
   tableTitle,
   searchQuery,
   onSearch,
+  disabledAdd = true,
   enableOnlyUpload = false,
   enableDelete = true,
   hasSearched,
@@ -174,7 +175,6 @@ const Toolbar = ({
         container
         direction='row'
         justifyContent='flex-end'
-        spacing={2}
       >
         {!rowSelected && (
           <>
@@ -192,7 +192,9 @@ const Toolbar = ({
             <StyledItemGrid item>
               <form onSubmit={e => handleSearch(e)}>
                 <StyledTextField
-                  placeholder='Buscar...'
+                  placeholder={
+                    entity === 'orders' ? 'Buscar por # de orden' : 'Buscar...'
+                  }
                   variant='outlined'
                   size='small'
                   value={searchQuery}
@@ -212,7 +214,7 @@ const Toolbar = ({
                 />
               </form>
             </StyledItemGrid>
-            {!enableOnlyUpload && (
+            {disabledAdd && !enableOnlyUpload && (
               <StyledItemGrid item>
                 <Tooltip title='Agregar' placement='top'>
                   <Fab
