@@ -102,6 +102,7 @@ const StyledDropzoneContainer = styled('div')`
   color: #bdbdbd;
   outline: none;
   cursor: pointer;
+  margin-top: 15px;
 
   &:hover {
     border-color: #212121;
@@ -137,9 +138,14 @@ const StyledTextareaAutosize = styled(TextareaAutosize)(
 );
 
 const ProductForm = ({ title, id = 0, data = {} }) => {
+  const [productBasePrice, setProductBasePrice] = useState(data.price ?? null);
+  const [hasProductSize, setHasProductSize] = useState(
+    !!(data.products_sizes && data.products_sizes.length > 0),
+  );
   const [hasTintometricColors, setHasTintometricColors] = useState(
     data.withTintometric ?? false,
   );
+
   useEffect(() => {
     setHasTintometricColors(data.withTintometric ?? false);
   }, [data.withTintometric]);
@@ -182,6 +188,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
   const defaultProductName = data.name ? data.name : '';
   const defaultProductDescription = data.description ? data.description : '';
   const defaultSubCategories = data.subcategories ? data.subcategories : [];
+  const defaultPrice = data.price ? data.price : '';
 
   const defaultSizes = data.products_sizes
     ? data.products_sizes.map(({ size, basePrice }) => ({
@@ -226,6 +233,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
       productName: defaultProductName,
       productDescription: defaultProductDescription,
       productCode: defaultCode,
+      productPrice: defaultPrice,
     },
     resolver: yupResolver(schema),
   });
@@ -243,6 +251,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
     productDescription,
     subCategories,
     productCode,
+    productPrice,
     ...rest
   }) => {
     const selectedSubCategories = subCategories
@@ -260,26 +269,31 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
       })
       .filter(Boolean);
 
-    const sizesData = selectedSizes.map(sizeName => {
-      const size = getResponseSizes.find(s => s.quantity === sizeName);
+    const sizesData = hasProductSize
+      ? JSON.stringify(
+          selectedSizes.map(sizeName => {
+            const size = getResponseSizes.find(s => s.quantity === sizeName);
 
-      const formattedSizeName = sizeName.toString().replace('.', '_');
+            const formattedSizeName = sizeName.toString().replace('.', '_');
 
-      return {
-        sizeId: size.id,
-        basePrice: parseFloat(rest[`price_${formattedSizeName}`]),
-      };
-    });
+            return {
+              sizeId: size.id,
+              basePrice: parseFloat(rest[`price_${formattedSizeName}`]),
+            };
+          }),
+        )
+      : null;
 
     const formData = new FormData();
 
     formData.append('name', productName);
     formData.append('description', productDescription);
     formData.append('code', productCode);
+    formData.append('price', !hasProductSize ? productPrice : null);
     formData.append('sku', generateRandomNumber()); // harcoded sku for now
     formData.append('subcategories', JSON.stringify(selectedSubCategories));
     formData.append('image', image);
-    formData.append('sizes', JSON.stringify(sizesData));
+    formData.append('sizes', sizesData);
     formData.append('withTintometric', hasTintometricColors);
 
     doFetch({ body: formData });
@@ -359,6 +373,22 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
                 </StyledImageWrapper>
               </Grid>
             ) : null}
+            <Grid mb='25px' item xs={12}>
+              {preview && (
+                <StyledImageWrapper>
+                  <StyledImg src={preview} alt='Preview' />
+                </StyledImageWrapper>
+              )}
+              <StyledDropzoneContainer
+                {...getRootProps({ isFocused, isDragAccept, isDragReject })}
+              >
+                <input {...getInputProps()} />
+                <p>
+                  Arrastra una image, o haz click para seleccionar desde tus
+                  archivos
+                </p>
+              </StyledDropzoneContainer>
+            </Grid>
             <Grid item xs={12}>
               <Controller
                 name='productName'
@@ -492,41 +522,84 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
           </Grid>
           <Grid item xs={12}>
             <Controller
+              name='productPrice'
+              id='productPrice'
               control={control}
-              name='sizes'
-              defaultValue={defaultSizes.map(({ quantity }) => quantity)}
-              render={({ field }) => (
-                <MultiSelect
-                  fullWidth
-                  name='sizes'
-                  inputLabel='Capacidades'
-                  label='Capacidades'
-                  disabled={getIsLoadingSizes}
-                  onChange={field.onChange}
-                  required
-                  value={Array.isArray(field.value) ? field.value : []}
-                  options={
-                    getResponseSizes && !getErrorSizes
-                      ? getResponseSizes.map(option => ({
-                          value: option.id,
-                          label: option.quantity,
-                        }))
-                      : []
-                  }
-                  variant='outlined'
-                />
+              render={({ field: { onChange, value } }) => (
+                <FormControl fullWidth>
+                  <InputLabel>Precio</InputLabel>
+                  <OutlinedInput
+                    type='number'
+                    value={value}
+                    onChange={e => {
+                      onChange(e);
+                      setProductBasePrice(e.target.value);
+                    }}
+                    startAdornment={
+                      <InputAdornment position='start'>$</InputAdornment>
+                    }
+                    label='Precio'
+                  />
+                </FormControl>
               )}
             />
             <ErrorMessage
               errors={errors}
-              name='sizes'
+              name='productPrice'
               render={({ message }) => (
                 <StyledErrorMessage>{message}</StyledErrorMessage>
               )}
             />
           </Grid>
-
-          {selectedSizes &&
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={hasProductSize}
+                  onChange={event => setHasProductSize(event.target.checked)}
+                />
+              }
+              label='Tiene capacidades'
+            />
+          </Grid>
+          {hasProductSize ? (
+            <Grid item xs={12}>
+              <Controller
+                control={control}
+                name='sizes'
+                defaultValue={defaultSizes.map(({ quantity }) => quantity)}
+                render={({ field }) => (
+                  <MultiSelect
+                    fullWidth
+                    name='sizes'
+                    inputLabel='Capacidades'
+                    label='Capacidades'
+                    disabled={getIsLoadingSizes}
+                    onChange={field.onChange}
+                    value={Array.isArray(field.value) ? field.value : []}
+                    options={
+                      getResponseSizes && !getErrorSizes
+                        ? getResponseSizes.map(option => ({
+                            value: option.id,
+                            label: option.quantity,
+                          }))
+                        : []
+                    }
+                    variant='outlined'
+                  />
+                )}
+              />
+              <ErrorMessage
+                errors={errors}
+                name='sizes'
+                render={({ message }) => (
+                  <StyledErrorMessage>{message}</StyledErrorMessage>
+                )}
+              />
+            </Grid>
+          ) : null}
+          {hasProductSize &&
+            selectedSizes &&
             selectedSizes.map(sizeName => (
               <Grid item xs={12} key={sizeName}>
                 <Controller
@@ -576,20 +649,6 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
               label='Tiene colores del sistema tintométrico'
             />
           </Grid>
-          <StyledDropzoneContainer
-            {...getRootProps({ isFocused, isDragAccept, isDragReject })}
-          >
-            <input {...getInputProps()} />
-            <p>
-              Arrastra una image, o haz click para seleccionar desde tus
-              archivos
-            </p>
-          </StyledDropzoneContainer>
-          {preview && (
-            <StyledImageWrapper>
-              <StyledImg src={preview} alt='Preview' />
-            </StyledImageWrapper>
-          )}
           <StyledBoxWrapper>
             <Button
               startIcon={<ArrowBackIosIcon />}
@@ -602,7 +661,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
               component='label'
               onClick={handleSubmit(onSubmit)}
               variant='contained'
-              disabled={!isValid}
+              disabled={!isValid || (!hasProductSize && !productBasePrice)}
               loading={isLoading}
             >
               Guardar
