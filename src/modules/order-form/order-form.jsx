@@ -402,8 +402,8 @@ const OrderForm = ({ title, id = 0, data = {} }) => {
                         </Box>
                         <Box>
                           <Typography variant='heading' component='h3'>
-                            {product.quantity} x{' '}
-                            {formatter.format(product.totalPrice)}
+                            {formatter.format(product.totalPrice)} x{' '}
+                            {product.quantity}
                           </Typography>
                         </Box>
                       </Box>
