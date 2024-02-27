@@ -7,7 +7,6 @@ import {
   Routes,
 } from 'react-router-dom';
 import {
-  AddBranding,
   AddCategory,
   AddColor,
   AddMacroCategory,
@@ -20,7 +19,6 @@ import {
   Colorants,
   Colors,
   Dashboard,
-  EditBranding,
   EditCategory,
   EditColor,
   EditColorant,
@@ -91,8 +89,6 @@ const App = () => (
           <Route path='trends/new' element={<AddTrend />} />
           <Route path='trends/edit/:id' element={<EditTrend />} />
           <Route path='branding' element={<Branding />} />
-          <Route path='branding/new' element={<AddBranding />} />
-          <Route path='branding/edit/:id' element={<EditBranding />} />
           <Route path='sizes' element={<Sizes />} />
           <Route path='sizes/new' element={<AddSize />} />
           <Route path='sizes/edit/:id' element={<EditSize />} />
