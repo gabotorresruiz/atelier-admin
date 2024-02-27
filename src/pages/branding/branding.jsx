@@ -1,24 +1,9 @@
-/* eslint-disable no-nested-ternary */
 import React, { Suspense, useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
-import { Alert, Button, Box, Typography } from '@mui/material';
+import { Alert } from '@mui/material';
 import { useFetch } from '../../hooks';
 import { LinearLoader } from '../../components';
 import { BrandingForm } from '../../modules';
-
-const CenteredBox = styled(Box)({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: '80vh',
-});
-
-const MessageText = styled(Typography)({
-  fontSize: '1.5rem',
-  marginBottom: '20px',
-});
 
 const StyledAlert = styled(Alert)(
   ({ theme }) => `
@@ -30,8 +15,7 @@ const StyledAlert = styled(Alert)(
 );
 
 const Branding = () => {
-  const navigate = useNavigate();
-  const [id, setId] = useState(null);
+  const [brandingId, setBrandingId] = useState(null);
   const [{ error, isLoading, response }] = useFetch({
     entity: 'brandings',
     fetchMethod: 'GET',
@@ -60,12 +44,8 @@ const Branding = () => {
   }, [error, handleError]);
 
   useEffect(() => {
-    if (response && response.length > 0) {
-      setId(response[0].id);
-    }
+    if (response && response.length > 0) setBrandingId(response[0].id);
   }, [response]);
-
-  const handleAddDesign = () => navigate('/branding/new');
 
   return (
     <Suspense fallback={<LinearLoader />}>
@@ -75,21 +55,11 @@ const Branding = () => {
         </StyledAlert>
       )}
       {!isLoading && !error ? (
-        response && Object.keys(response).length > 0 ? (
-          <BrandingForm title='Editar Marca' id={id} data={response[0]} />
-        ) : (
-          <CenteredBox>
-            <MessageText>No tiene diseño de marca agregado.</MessageText>
-            <Button
-              variant='contained'
-              color='primary'
-              onClick={handleAddDesign}
-              size='large'
-            >
-              Crear Marca
-            </Button>
-          </CenteredBox>
-        )
+        <BrandingForm
+          title='Editar Marca'
+          id={brandingId}
+          data={response ? response[0] : {}}
+        />
       ) : (
         <LinearLoader />
       )}

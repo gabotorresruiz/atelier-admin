@@ -1,22 +1,12 @@
 /* eslint-disable no-nested-ternary */
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { useDropzone } from 'react-dropzone';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import LoadingButton from '@mui/lab/LoadingButton';
-import {
-  Alert,
-  Box,
-  Button,
-  Container,
-  Grid,
-  TextField,
-  Tooltip,
-} from '@mui/material';
+import { Alert, Box, Container, Grid, TextField, Tooltip } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
 import { LinearLoader } from '../../components';
 import { useFetch } from '../../hooks';
@@ -33,7 +23,7 @@ const getColor = props => {
 const StyledBoxWrapper = styled(Box)(
   ({ theme }) => `
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   gap: ${theme.spacing(1)};
 `,
@@ -117,35 +107,20 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
   const [loadingImg, setLoadingImg] = useState(false);
   const [preview, setPreview] = useState(null);
   const [image, setImage] = useState(null);
-  const [selectedHomeImg] = useState(data.homeImageUrl ?? '');
-  const [selectedLogoImg] = useState(data.logoImageUrl ?? '');
-
-  // logo states
-  const [loadingLogo, setLoadingLogo] = useState(false);
-  const [previewLogo, setPreviewLogo] = useState(null);
-  const [logoImage, setLogoImage] = useState(null);
-
-  const navigate = useNavigate();
+  const [selectedHomeImg, setSelectedHomeImg] = useState('');
+  const [selectedLogoImg, setSelectedLogoImg] = useState('');
   const [alert, setAlert] = useState({
     isVisible: false,
     message: '',
     severity: '',
   });
 
-  const fetchMethod = Object.keys(data).length === 0 ? 'POST' : 'PUT';
+  // logo states
+  const [loadingLogo, setLoadingLogo] = useState(false);
+  const [previewLogo, setPreviewLogo] = useState(null);
+  const [logoImage, setLogoImage] = useState(null);
 
-  const defaultBrandingName = Object.keys(data).length === 0 ? '' : data.name;
-  const defaultBrandingTitle = Object.keys(data).length === 0 ? '' : data.title;
-  const defaultBrandingSubtitle =
-    Object.keys(data).length === 0
-      ? ''
-      : data.subtitle !== 'null'
-        ? data.subtitle
-        : '';
-  const defaultBrandingEmail = Object.keys(data).length === 0 ? '' : data.email;
-  const defaultBrandingPhone = Object.keys(data).length === 0 ? '' : data.phone;
-  const defaultBrandingAdress =
-    Object.keys(data).length === 0 ? '' : data.address;
+  const fetchMethod = Object.keys(data).length === 0 ? 'POST' : 'PUT';
 
   const [{ response, error, isLoading }, doFetch] = useFetch({
     entity: 'brandings',
@@ -205,12 +180,12 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
   } = useForm({
     mode: 'all',
     defaultValues: {
-      name: defaultBrandingName,
-      title: defaultBrandingTitle,
-      subtitle: defaultBrandingSubtitle,
-      email: defaultBrandingEmail,
-      phone: defaultBrandingPhone,
-      address: defaultBrandingAdress,
+      name: '',
+      title: '',
+      subtitle: '',
+      email: '',
+      phone: '',
+      address: '',
     },
     resolver: yupResolver(schema),
   });
@@ -220,7 +195,7 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
 
     formData.append('name', formValues.name);
     formData.append('title', formValues.title);
-    if (formValues.subtitle) formData.append('subtitle', formValues.subtitle);
+    formData.append('subtitle', formValues.subtitle ?? null);
     formData.append('email', formValues.email);
     formData.append('phone', formValues.phone);
     formData.append('address', formValues.address);
@@ -233,10 +208,6 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
     setAlert(false);
   };
 
-  const handleBack = () => {
-    navigate(-1);
-  };
-
   const handleError = useCallback(() => {
     setAlert({
       isVisible: true,
@@ -245,27 +216,37 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
     });
   }, []);
 
-  const postSuccess = useCallback(
-    fetchResponse => {
-      let message = '';
+  const postSuccess = useCallback(fetchResponse => {
+    let message = '';
 
-      if (fetchResponse.status === 201) {
-        message = 'Marca agregada satisfactoriamente!';
-        reset();
-      }
+    if (fetchResponse.status === 201)
+      message = 'Marca agregada satisfactoriamente!';
 
-      if (fetchResponse.status === 200) {
-        message = 'Marca editada satisfactoriamente!';
-      }
+    if (fetchResponse.status === 200)
+      message = 'Marca editada satisfactoriamente!';
 
-      setAlert({
-        isVisible: true,
-        message,
-        severity: 'success',
+    setAlert({
+      isVisible: true,
+      message,
+      severity: 'success',
+    });
+  }, []);
+
+  useEffect(() => {
+    if (Object.keys(data).length > 0) {
+      reset({
+        name: data.name,
+        title: data.title,
+        subtitle: data.subtitle,
+        address: data.address,
+        email: data.email,
+        phone: data.phone,
       });
-    },
-    [reset],
-  );
+
+      setSelectedHomeImg(data.homeImageUrl);
+      setSelectedLogoImg(data.logoImageUrl);
+    }
+  }, [data, reset]);
 
   useEffect(() => {
     if (error) return handleError();
@@ -395,7 +376,7 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
                 render={({ field: { onChange, value } }) => (
                   <TextField
                     fullWidth
-                    label='email'
+                    label='Email'
                     name='email'
                     onChange={onChange}
                     required
@@ -494,11 +475,11 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
                 )}
               </Grid>
               <Grid item xs={6}>
-                {selectedHomeImg && (
+                {selectedHomeImg ? (
                   <StyledImageWrapper>
-                    <StyledImg src={selectedHomeImg} alt='Current Image' />
+                    <StyledImg src={selectedHomeImg} alt='' />
                   </StyledImageWrapper>
-                )}
+                ) : null}
               </Grid>
             </Grid>
           </Grid>
@@ -510,7 +491,7 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
               <Grid item xs={6}>
                 {previewLogo ? (
                   <StyledImageWrapper>
-                    <StyledImg src={previewLogo} alt='News logo' />
+                    <StyledImg src={previewLogo} alt='' />
                     <StyledDeleteIconWrapper>
                       <Tooltip title='Remover Nuevo Logo' placement='top'>
                         <DeleteIcon onClick={removeLogo} />
@@ -541,13 +522,6 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
           </Grid>
 
           <StyledBoxWrapper>
-            <Button
-              startIcon={<ArrowBackIosIcon />}
-              onClick={handleBack}
-              variant='outlined'
-            >
-              Volver
-            </Button>
             <StyledButton
               component='label'
               onClick={handleSubmit(onSubmit)}

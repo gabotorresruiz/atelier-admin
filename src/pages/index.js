@@ -39,11 +39,9 @@ export const UploadColorant = React.lazy(
 export const Trends = React.lazy(() => import('./trends'));
 export const AddTrend = React.lazy(() => import('./trends/add-trend'));
 export const EditTrend = React.lazy(() => import('./trends/edit-trend'));
+
 export const Branding = React.lazy(() => import('./branding'));
-export const AddBranding = React.lazy(() => import('./branding/add-branding'));
-export const EditBranding = React.lazy(
-  () => import('./branding/edit-branding'),
-);
+
 export const Sizes = React.lazy(() => import('./sizes'));
 export const AddSize = React.lazy(() => import('./sizes/add-size'));
 export const EditSize = React.lazy(() => import('./sizes/edit-size'));
