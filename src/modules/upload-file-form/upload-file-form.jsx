@@ -1,27 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Alert, AlertTitle, Box, Button, Container, Fade } from '@mui/material';
+import { Alert, AlertTitle, Box, Container, Fade } from '@mui/material';
 import { styled } from '@mui/system';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import LoadingButton from '@mui/lab/LoadingButton';
 import { useFetch } from '../../hooks';
-import { FileUploader } from '../../components';
-
-const StyledBoxWrapper = styled(Box)(
-  ({ theme }) => `
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: ${theme.spacing(1)};
-`,
-);
-
-const StyledButton = styled(LoadingButton)(
-  ({ theme }) => `
-  margin-left: ${theme.spacing(1)};
-  margin-top: ${theme.spacing(3)};
-`,
-);
+import { FileUploader, FormButtons } from '../../components';
 
 const StyledBox = styled(Box)(
   ({ theme }) => `
@@ -34,14 +16,13 @@ const StyledBox = styled(Box)(
 const StyledTitle = styled('h1')`
   text-align: center;
   margin-bottom: 20px;
+  margin-top: 0;
 `;
 
-const StyledAlert = styled(Alert)(
-  ({ theme }) => `
-  position: absolute;
-  right: ${theme.spacing(3)};
-`,
-);
+const StyledAlert = styled(Alert)`
+  position: fixed;
+  right: 25px;
+`;
 
 const UploadFileForm = ({ title, entity }) => {
   const navigate = useNavigate();
@@ -142,7 +123,18 @@ const UploadFileForm = ({ title, entity }) => {
   };
 
   return (
-    <Container component='div' maxWidth='sm'>
+    <Box mb={5} sx={{ position: 'relative' }}>
+      <FormButtons
+        handleBack={handleBack}
+        onSubmit={onSubmit}
+        disabled={
+          (entity === 'colorants' && !colorantFile) ||
+          (entity === 'colors' && !hasColorants) ||
+          (entity === 'colors' && !systemColorFile) ||
+          getIsLoading
+        }
+        isLoading={isLoading}
+      />
       {alert.isVisible && (
         <Fade
           in={alert.isVisible}
@@ -157,60 +149,40 @@ const UploadFileForm = ({ title, entity }) => {
           </StyledAlert>
         </Fade>
       )}
-      <StyledTitle>{title}</StyledTitle>
-
-      <StyledBox component='form' onSubmit={onSubmit}>
-        {entity === 'colors' && (
-          <Alert severity='info'>
-            <AlertTitle>Info</AlertTitle>
-            Debe tener colorantes agregados antes de subir colores para el
-            sistema tintométrico
-          </Alert>
-        )}
-
-        {entity === 'colorants' && (
-          <FileUploader
-            onFileUpload={handleColorantFileUpload}
-            onFileRemove={handleColorantFileRemove}
-            file={colorantFile}
-            disabled={false}
-            uploadText='Arrastra y suelta un archivo CSV aquí, o haz click para seleccionar
+      <Container component='div' maxWidth='sm'>
+        <StyledTitle>{title}</StyledTitle>
+        <StyledBox component='form' onSubmit={onSubmit}>
+          {entity === 'colors' && (
+            <Alert severity='info'>
+              <AlertTitle>Info</AlertTitle>
+              Debe tener colorantes agregados antes de subir colores para el
+              sistema tintométrico
+            </Alert>
+          )}
+          {entity === 'colorants' && (
+            <FileUploader
+              onFileUpload={handleColorantFileUpload}
+              onFileRemove={handleColorantFileRemove}
+              file={colorantFile}
+              disabled={false}
+              uploadText='Arrastra y suelta un archivo CSV aquí, o haz click para seleccionar
             desde tus archivos'
-            s
-          />
-        )}
-
-        {entity === 'colors' && (
-          <FileUploader
-            onFileUpload={handleSystemColorFileUpload}
-            onFileRemove={handleSystemColorFileRemove}
-            file={systemColorFile}
-            disabled={!hasColorants}
-            uploadText='Arrastra y suelta un archivo CSV aquí, o haz click para seleccionar
+              s
+            />
+          )}
+          {entity === 'colors' && (
+            <FileUploader
+              onFileUpload={handleSystemColorFileUpload}
+              onFileRemove={handleSystemColorFileRemove}
+              file={systemColorFile}
+              disabled={!hasColorants}
+              uploadText='Arrastra y suelta un archivo CSV aquí, o haz click para seleccionar
             desde tus archivos'
-          />
-        )}
-
-        <StyledBoxWrapper>
-          <Button
-            startIcon={<ArrowBackIosIcon />}
-            onClick={handleBack}
-            variant='outlined'
-          >
-            Volver
-          </Button>
-          <StyledButton
-            component='label'
-            onClick={onSubmit}
-            variant='contained'
-            disabled={(!hasColorants && entity === 'colors') || getIsLoading}
-            loading={isLoading}
-          >
-            Guardar
-          </StyledButton>
-        </StyledBoxWrapper>
-      </StyledBox>
-    </Container>
+            />
+          )}
+        </StyledBox>
+      </Container>
+    </Box>
   );
 };
 

@@ -8,3 +8,4 @@ export const MultiSelect = React.lazy(() => import('./multi-select'));
 export const Select = React.lazy(() => import('./select'));
 export const Table = React.lazy(() => import('./table'));
 export const FileUploader = React.lazy(() => import('./file-uploader'));
+export const FormButtons = React.lazy(() => import('./form-buttons'));

@@ -3,22 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { Controller, useForm } from 'react-hook-form';
 import { useDropzone } from 'react-dropzone';
-
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import LoadingButton from '@mui/lab/LoadingButton';
 import {
   Alert,
   Box,
-  Button,
   Container,
   Fade,
   Grid,
   TextField,
   TextareaAutosize,
 } from '@mui/material';
-import { LinearLoader, MultiSelect } from '../../components';
+import { FormButtons, LinearLoader, MultiSelect } from '../../components';
 import { useFetch } from '../../hooks';
 import schema from './schema';
 
@@ -30,32 +26,15 @@ const getColor = props => {
   return '#eeeeee';
 };
 
-const StyledBoxWrapper = styled(Box)(
-  ({ theme }) => `
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: ${theme.spacing(1)};
-`,
-);
-
-const StyledButton = styled(LoadingButton)(
-  ({ theme }) => `
-  margin-left: ${theme.spacing(1)};
-  margin-top: ${theme.spacing(3)};
-`,
-);
-
 const StyledErrorMessage = styled('span')`
   color: ${({ theme }) => theme.palette.error.dark};
 `;
 
-const StyledAlert = styled(Alert)(
-  ({ theme }) => `
-  position: absolute;
-  right: ${theme.spacing(3)};
-`,
-);
+const StyledAlert = styled(Alert)`
+  position: fixed;
+  right: 25px;
+`;
+
 const StyledBox = styled(Box)(
   ({ theme }) => `
   display: flex;
@@ -80,6 +59,7 @@ const StyledImg = styled('img')`
 const StyledTitle = styled('h1')`
   text-align: center;
   margin-bottom: 20px;
+  margin-top: 0;
 `;
 
 const StyledDropzoneContainer = styled('div')`
@@ -88,6 +68,7 @@ const StyledDropzoneContainer = styled('div')`
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  margin-bottom: 15px;
   border-width: 2px;
   border-radius: 2px;
   border-color: ${props => getColor(props)};
@@ -159,6 +140,7 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
   const fetchMethod = isEmptyData ? 'POST' : 'PUT';
 
   const [{ error, isLoading, response }, doFetch, resetFetch] = useFetch({
+    shouldReload: true,
     entity: 'trends',
     fetchMethod,
     id,
@@ -271,7 +253,14 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
   }, [postSuccess, error, response, handleError, loadingImg]);
 
   return (
-    <>
+    <Box mb={5} sx={{ position: 'relative' }}>
+      <FormButtons
+        handleBack={handleBack}
+        handleSubmit={handleSubmit}
+        onSubmit={onSubmit}
+        disabled={!isValid}
+        isLoading={isLoading}
+      />
       {loadingImg ?? <LinearLoader />}
       {alert.isVisible && (
         <Fade
@@ -298,6 +287,22 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
                 </StyledImageWrapper>
               </Grid>
             ) : null}
+            <Grid item xs={12}>
+              {preview && (
+                <StyledImageWrapper>
+                  <StyledImg src={preview} alt='Preview' />
+                </StyledImageWrapper>
+              )}
+              <StyledDropzoneContainer
+                {...getRootProps({ isFocused, isDragAccept, isDragReject })}
+              >
+                <input {...getInputProps()} />
+                <p>
+                  Arrastra una image, o haz click para seleccionar desde tus
+                  archivos
+                </p>
+              </StyledDropzoneContainer>
+            </Grid>
             <Grid item xs={12}>
               <Controller
                 name='trendName'
@@ -396,42 +401,9 @@ const TrendsForm = ({ title, id = 0, data = {} }) => {
               />
             </Grid>
           </Grid>
-
-          <StyledDropzoneContainer
-            {...getRootProps({ isFocused, isDragAccept, isDragReject })}
-          >
-            <input {...getInputProps()} />
-            <p>
-              Arrastra una image, o haz click para seleccionar desde tus
-              archivos
-            </p>
-          </StyledDropzoneContainer>
-          {preview && (
-            <StyledImageWrapper>
-              <StyledImg src={preview} alt='Preview' />
-            </StyledImageWrapper>
-          )}
-          <StyledBoxWrapper>
-            <Button
-              startIcon={<ArrowBackIosIcon />}
-              onClick={handleBack}
-              variant='outlined'
-            >
-              Volver
-            </Button>
-            <StyledButton
-              component='label'
-              onClick={handleSubmit(onSubmit)}
-              variant='contained'
-              disabled={!isValid}
-              loading={isLoading}
-            >
-              Guardar
-            </StyledButton>
-          </StyledBoxWrapper>
         </StyledBox>
       </Container>
-    </>
+    </Box>
   );
 };
 

@@ -5,10 +5,17 @@ import { useDropzone } from 'react-dropzone';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
-import LoadingButton from '@mui/lab/LoadingButton';
-import { Alert, Box, Container, Grid, TextField, Tooltip } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Container,
+  Grid,
+  TextField,
+  Tooltip,
+  Fade,
+} from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
-import { LinearLoader } from '../../components';
+import { FormButtons, LinearLoader } from '../../components';
 import { useFetch } from '../../hooks';
 import schema from './schema';
 
@@ -20,32 +27,15 @@ const getColor = props => {
   return '#eeeeee';
 };
 
-const StyledBoxWrapper = styled(Box)(
-  ({ theme }) => `
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: ${theme.spacing(1)};
-`,
-);
-
-const StyledButton = styled(LoadingButton)(
-  ({ theme }) => `
-  margin-left: ${theme.spacing(1)};
-  margin-top: ${theme.spacing(3)};
-`,
-);
-
 const StyledErrorMessage = styled('span')`
   color: ${({ theme }) => theme.palette.error.dark};
 `;
 
-const StyledAlert = styled(Alert)(
-  ({ theme }) => `
-  position: absolute;
-  right: ${theme.spacing(3)};
-`,
-);
+const StyledAlert = styled(Alert)`
+  position: fixed;
+  right: 25px;
+`;
+
 const StyledBox = styled(Box)(
   ({ theme }) => `
   display: flex;
@@ -102,6 +92,12 @@ const StyledDeleteIconWrapper = styled('div')`
   margin-top: 10px;
 `;
 
+const StyledTitle = styled('h1')`
+  text-align: center;
+  margin-bottom: 20px;
+  margin-top: 0;
+`;
+
 const BrandingForm = ({ title, id = 0, data = {} }) => {
   // main image states
   const [loadingImg, setLoadingImg] = useState(false);
@@ -123,6 +119,7 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
   const fetchMethod = Object.keys(data).length === 0 ? 'POST' : 'PUT';
 
   const [{ response, error, isLoading }, doFetch] = useFetch({
+    shouldReload: true,
     entity: 'brandings',
     fetchMethod,
     id,
@@ -266,16 +263,31 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
   };
 
   return (
-    <>
+    <Box mb={5} sx={{ position: 'relative' }}>
+      <FormButtons
+        handleSubmit={handleSubmit}
+        onSubmit={onSubmit}
+        disabled={!isValid}
+        isLoading={isLoading}
+      />
       {loadingImg ?? <LinearLoader />}
       {loadingLogo ?? <LinearLoader />}
       {alert.isVisible && (
-        <StyledAlert onClose={closeAlert} severity={alert.severity}>
-          {alert.message}
-        </StyledAlert>
+        <Fade
+          in={alert.isVisible}
+          addEndListener={() => {
+            setTimeout(() => {
+              setAlert(false);
+            }, 5000);
+          }}
+        >
+          <StyledAlert onClose={closeAlert} severity={alert.severity}>
+            {alert.message}
+          </StyledAlert>
+        </Fade>
       )}
       <Container component='div' maxWidth='sm'>
-        <h1>{title}</h1>
+        <StyledTitle>{title}</StyledTitle>
         <StyledBox component='form' onSubmit={onSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -520,21 +532,9 @@ const BrandingForm = ({ title, id = 0, data = {} }) => {
               </Grid>
             </Grid>
           </Grid>
-
-          <StyledBoxWrapper>
-            <StyledButton
-              component='label'
-              onClick={handleSubmit(onSubmit)}
-              variant='contained'
-              disabled={!isValid}
-              loading={isLoading}
-            >
-              Guardar
-            </StyledButton>
-          </StyledBoxWrapper>
         </StyledBox>
       </Container>
-    </>
+    </Box>
   );
 };
 

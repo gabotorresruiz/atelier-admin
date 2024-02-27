@@ -72,6 +72,7 @@ const Table = ({
 
   const refreshData = useCallback(
     searchText => {
+      setSelected(null);
       setPage(0);
       doFetch({
         newParams: {

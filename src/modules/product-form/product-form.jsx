@@ -6,12 +6,9 @@ import { useDropzone } from 'react-dropzone';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import LoadingButton from '@mui/lab/LoadingButton';
 import {
   Alert,
   Box,
-  Button,
   Container,
   Fade,
   Grid,
@@ -24,7 +21,7 @@ import {
   InputAdornment,
   TextareaAutosize,
 } from '@mui/material';
-import { LinearLoader, MultiSelect } from '../../components';
+import { FormButtons, LinearLoader, MultiSelect } from '../../components';
 import { useFetch } from '../../hooks';
 import schema from './schema';
 
@@ -36,32 +33,15 @@ const getColor = props => {
   return '#eeeeee';
 };
 
-const StyledBoxWrapper = styled(Box)(
-  ({ theme }) => `
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: ${theme.spacing(1)};
-`,
-);
-
-const StyledButton = styled(LoadingButton)(
-  ({ theme }) => `
-  margin-left: ${theme.spacing(1)};
-  margin-top: ${theme.spacing(3)};
-`,
-);
-
 const StyledErrorMessage = styled('span')`
   color: ${({ theme }) => theme.palette.error.dark};
 `;
 
-const StyledAlert = styled(Alert)(
-  ({ theme }) => `
-  position: absolute;
-  right: ${theme.spacing(3)};
-`,
-);
+const StyledAlert = styled(Alert)`
+  position: fixed;
+  right: 25px;
+`;
+
 const StyledBox = styled(Box)(
   ({ theme }) => `
   display: flex;
@@ -86,6 +66,7 @@ const StyledImg = styled('img')`
 const StyledTitle = styled('h1')`
   text-align: center;
   margin-bottom: 20px;
+  margin-top: 0;
 `;
 
 const StyledDropzoneContainer = styled('div')`
@@ -180,6 +161,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
   const fetchMethod = isEmptyData ? 'POST' : 'PUT';
 
   const [{ error, isLoading, response }, doFetch, resetFetch] = useFetch({
+    shouldReload: true,
     entity: 'products',
     fetchMethod,
     id,
@@ -346,7 +328,14 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
   }, [postSuccess, error, response, handleError, loadingImg]);
 
   return (
-    <>
+    <Box mb={5} sx={{ position: 'relative' }}>
+      <FormButtons
+        handleBack={handleBack}
+        handleSubmit={handleSubmit}
+        onSubmit={onSubmit}
+        disabled={!isValid || (!hasProductSize && !productBasePrice)}
+        isLoading={isLoading}
+      />
       {loadingImg ?? <LinearLoader />}
       {alert.isVisible && (
         <Fade
@@ -649,27 +638,9 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
               label='Tiene colores del sistema tintométrico'
             />
           </Grid>
-          <StyledBoxWrapper>
-            <Button
-              startIcon={<ArrowBackIosIcon />}
-              onClick={handleBack}
-              variant='outlined'
-            >
-              Volver
-            </Button>
-            <StyledButton
-              component='label'
-              onClick={handleSubmit(onSubmit)}
-              variant='contained'
-              disabled={!isValid || (!hasProductSize && !productBasePrice)}
-              loading={isLoading}
-            >
-              Guardar
-            </StyledButton>
-          </StyledBoxWrapper>
         </StyledBox>
       </Container>
-    </>
+    </Box>
   );
 };
 

@@ -4,40 +4,20 @@ import { styled } from '@mui/system';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import LoadingButton from '@mui/lab/LoadingButton';
-
-import { Alert, Box, Button, Container, Grid, TextField } from '@mui/material';
+import { Alert, Box, Container, Grid, TextField, Fade } from '@mui/material';
 import { useFetch } from '../../hooks';
 import schema from './schema';
-import { MultiSelect } from '../../components';
-
-const StyledBoxWrapper = styled(Box)(
-  ({ theme }) => `
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: ${theme.spacing(1)};
-`,
-);
-
-const StyledButton = styled(LoadingButton)(
-  ({ theme }) => `
-  margin-left: ${theme.spacing(1)};
-  margin-top: ${theme.spacing(3)};
-`,
-);
+import { FormButtons, MultiSelect } from '../../components';
 
 const StyledErrorMessage = styled('span')`
   color: ${({ theme }) => theme.palette.error.dark};
 `;
 
-const StyledAlert = styled(Alert)(
-  ({ theme }) => `
-  position: absolute;
-  right: ${theme.spacing(3)};
-`,
-);
+const StyledAlert = styled(Alert)`
+  position: fixed;
+  right: 25px;
+`;
+
 const StyledBox = styled(Box)(
   ({ theme }) => `
   display: flex;
@@ -46,6 +26,12 @@ const StyledBox = styled(Box)(
   gap: ${theme.spacing(2)};
 `,
 );
+
+const StyledTitle = styled('h1')`
+  text-align: center;
+  margin-bottom: 20px;
+  margin-top: 0;
+`;
 
 const CategoryForm = ({ title, id = 0, data = {} }) => {
   const navigate = useNavigate();
@@ -158,14 +144,30 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
   }, [postSuccess, error, response, handleError]);
 
   return (
-    <>
+    <Box mb={5} sx={{ position: 'relative' }}>
+      <FormButtons
+        handleBack={handleBack}
+        handleSubmit={handleSubmit}
+        onSubmit={onSubmit}
+        disabled={!isValid}
+        isLoading={isLoading}
+      />
       {alert.isVisible && (
-        <StyledAlert onClose={closeAlert} severity={alert.severity}>
-          {alert.message}
-        </StyledAlert>
+        <Fade
+          in={alert.isVisible}
+          addEndListener={() => {
+            setTimeout(() => {
+              setAlert(false);
+            }, 5000);
+          }}
+        >
+          <StyledAlert onClose={closeAlert} severity={alert.severity}>
+            {alert.message}
+          </StyledAlert>
+        </Fade>
       )}
       <Container component='div' maxWidth='sm'>
-        <h1>{title}</h1>
+        <StyledTitle>{title}</StyledTitle>
         <StyledBox component='form' onSubmit={onSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -238,28 +240,9 @@ const CategoryForm = ({ title, id = 0, data = {} }) => {
               />
             </Grid>
           </Grid>
-
-          <StyledBoxWrapper>
-            <Button
-              startIcon={<ArrowBackIosIcon />}
-              onClick={handleBack}
-              variant='outlined'
-            >
-              Volver
-            </Button>
-            <StyledButton
-              component='label'
-              onClick={handleSubmit(onSubmit)}
-              variant='contained'
-              disabled={!isValid}
-              loading={isLoading}
-            >
-              Guardar
-            </StyledButton>
-          </StyledBoxWrapper>
         </StyledBox>
       </Container>
-    </>
+    </Box>
   );
 };
 

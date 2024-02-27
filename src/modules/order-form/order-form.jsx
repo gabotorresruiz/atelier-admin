@@ -4,13 +4,9 @@ import { styled } from '@mui/system';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import LoadingButton from '@mui/lab/LoadingButton';
-
 import {
   Alert,
   Box,
-  Button,
   Card,
   CardContent,
   CardMedia,
@@ -22,30 +18,21 @@ import {
   MenuItem,
   Select,
   Typography,
+  Fade,
 } from '@mui/material';
+import { FormButtons } from '../../components';
 import { useFetch } from '../../hooks';
 import schema from './schema';
-
-const StyledBoxWrapper = styled(Box)(
-  ({ theme }) => `
-  margin-top: ${theme.spacing(3)};
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: ${theme.spacing(1)};
-`,
-);
 
 const StyledErrorMessage = styled('span')`
   color: ${({ theme }) => theme.palette.error.dark};
 `;
 
-const StyledAlert = styled(Alert)(
-  ({ theme }) => `
-  position: absolute;
-  right: ${theme.spacing(3)};
-`,
-);
+const StyledAlert = styled(Alert)`
+  position: fixed;
+  right: 25px;
+`;
+
 const StyledBox = styled(Box)(
   ({ theme }) => `
   display: flex;
@@ -59,6 +46,12 @@ const StyledSampleColor = styled('div')`
   border-radius: 5px;
   height: 35px;
   width: 35%;
+`;
+
+const StyledTitle = styled('h1')`
+  text-align: center;
+  margin-bottom: 20px;
+  margin-top: 0;
 `;
 
 const formatter = new Intl.NumberFormat('es-UY', {
@@ -154,14 +147,30 @@ const OrderForm = ({ title, id = 0, data = {} }) => {
   }, [responseSuccess, error, handleError, response]);
 
   return (
-    <>
+    <Box mb={5} sx={{ position: 'relative' }}>
+      <FormButtons
+        handleBack={handleBack}
+        handleSubmit={handleSubmit}
+        onSubmit={onSubmit}
+        disabled={!isValid}
+        isLoading={isLoading}
+      />
       {alert.isVisible && (
-        <StyledAlert onClose={closeAlert} severity={alert.severity}>
-          {alert.message}
-        </StyledAlert>
+        <Fade
+          in={alert.isVisible}
+          addEndListener={() => {
+            setTimeout(() => {
+              setAlert(false);
+            }, 5000);
+          }}
+        >
+          <StyledAlert onClose={closeAlert} severity={alert.severity}>
+            {alert.message}
+          </StyledAlert>
+        </Fade>
       )}
       <Container component='div' maxWidth='sm'>
-        <h1>{title}</h1>
+        <StyledTitle>{title}</StyledTitle>
         <Divider />
         <Grid item xs={12}>
           <h2>Datos de la Orden</h2>
@@ -418,28 +427,9 @@ const OrderForm = ({ title, id = 0, data = {} }) => {
               </Typography>
             </Grid>
           </Grid>
-
-          <StyledBoxWrapper>
-            <Button
-              startIcon={<ArrowBackIosIcon />}
-              onClick={handleBack}
-              variant='outlined'
-            >
-              Volver
-            </Button>
-            <LoadingButton
-              component='label'
-              onClick={handleSubmit(onSubmit)}
-              variant='contained'
-              disabled={!isValid}
-              loading={isLoading}
-            >
-              Guardar
-            </LoadingButton>
-          </StyledBoxWrapper>
         </StyledBox>
       </Container>
-    </>
+    </Box>
   );
 };
 
