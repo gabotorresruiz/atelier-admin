@@ -509,37 +509,39 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
               />
             </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <Controller
-              name='productPrice'
-              id='productPrice'
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <FormControl fullWidth>
-                  <InputLabel>Precio</InputLabel>
-                  <OutlinedInput
-                    type='number'
-                    value={value}
-                    onChange={e => {
-                      onChange(e);
-                      setProductBasePrice(e.target.value);
-                    }}
-                    startAdornment={
-                      <InputAdornment position='start'>$</InputAdornment>
-                    }
-                    label='Precio'
-                  />
-                </FormControl>
-              )}
-            />
-            <ErrorMessage
-              errors={errors}
-              name='productPrice'
-              render={({ message }) => (
-                <StyledErrorMessage>{message}</StyledErrorMessage>
-              )}
-            />
-          </Grid>
+          {!hasProductSize ? (
+            <Grid item xs={12}>
+              <Controller
+                name='productPrice'
+                id='productPrice'
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <FormControl fullWidth>
+                    <InputLabel>Precio</InputLabel>
+                    <OutlinedInput
+                      type='number'
+                      value={value}
+                      onChange={e => {
+                        onChange(e);
+                        setProductBasePrice(e.target.value);
+                      }}
+                      startAdornment={
+                        <InputAdornment position='start'>$</InputAdornment>
+                      }
+                      label='Precio'
+                    />
+                  </FormControl>
+                )}
+              />
+              <ErrorMessage
+                errors={errors}
+                name='productPrice'
+                render={({ message }) => (
+                  <StyledErrorMessage>{message}</StyledErrorMessage>
+                )}
+              />
+            </Grid>
+          ) : null}
           <Grid item xs={12}>
             <FormControlLabel
               control={
