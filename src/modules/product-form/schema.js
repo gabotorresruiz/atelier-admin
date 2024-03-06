@@ -18,17 +18,23 @@ const schema = yup.lazy(values =>
         productName: yup
           .string()
           .required('Debe ingresar el nombre del producto'),
+        productDescription: yup
+          .string()
+          .required('Debe ingresar descripición del producto')
+          .required(),
         productCode: yup
           .string()
           .required('Debe ingresar el código del producto'),
+        productPrice: yup
+          .number()
+          .transform(value => (Number.isNaN(value) ? null : value))
+          .typeError('El precio debe ser un número')
+          .nullable(),
         subCategories: yup
           .array()
           .min(1, 'Debe seleccionar al menos una subcategoría')
           .required('Debe seleccionar al menos una subcategoría'),
-        sizes: yup
-          .array()
-          .min(1, 'Debe seleccionar al menos una capacidad')
-          .required('Debe seleccionar al menos una capacidad'),
+        sizes: yup.array().min(1, 'Debe seleccionar al menos una capacidad'),
       },
     ),
   ),

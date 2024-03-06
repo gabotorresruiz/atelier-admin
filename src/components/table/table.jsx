@@ -43,6 +43,7 @@ const Table = ({
   headColumns,
   data = [],
   firstSearchLoading = false,
+  disabledAdd = true,
   enableOnlyUpload = false,
   enableDelete = true,
   tableTitle = '',
@@ -71,14 +72,16 @@ const Table = ({
 
   const refreshData = useCallback(
     searchText => {
+      setSelected(null);
+      setPage(0);
       doFetch({
         newParams: {
           search: searchText,
-          attribute: 'name',
+          attribute: entity === 'orders' ? 'id' : 'name',
         },
       });
     },
-    [doFetch],
+    [doFetch, entity],
   );
 
   const handleChangePage = (e, newPage) => {
@@ -91,6 +94,7 @@ const Table = ({
   };
 
   const handleResetSearch = () => {
+    setPage(0);
     setSearchQuery('');
     refreshData('');
     setHasSearched(false);
@@ -109,6 +113,7 @@ const Table = ({
           refreshData={refreshData}
           rowSelected={selected}
           tableTitle={tableTitle}
+          disabledAdd={disabledAdd}
           enableOnlyUpload={enableOnlyUpload}
           enableDelete={enableDelete}
           onSearch={setSearchQuery}
@@ -120,7 +125,6 @@ const Table = ({
           {firstSearchLoading || isLoading ? <StyledLoadingBackground /> : null}
           <MuiTable aria-labelledby='table-title' size='medium'>
             <Head headColumns={headColumns} />
-
             <Body
               data={tableData}
               headColumns={headColumns}

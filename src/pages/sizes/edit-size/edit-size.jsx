@@ -1,9 +1,10 @@
-import React, { Suspense, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/system';
-import { Alert } from '@mui/material';
-import { useFetch } from '../../hooks';
-import { LinearLoader } from '../../components';
-import { BrandingForm } from '../../modules';
+import { useParams } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
+import { useFetch } from '../../../hooks';
+import { LinearLoader } from '../../../components';
+import { SizeForm } from '../../../modules';
 
 const StyledAlert = styled(Alert)(
   ({ theme }) => `
@@ -14,11 +15,12 @@ const StyledAlert = styled(Alert)(
 `,
 );
 
-const Branding = () => {
-  const [brandingId, setBrandingId] = useState(null);
+const EditSize = () => {
+  const { id } = useParams();
   const [{ error, isLoading, response }] = useFetch({
-    entity: 'brandings',
+    entity: 'sizes',
     fetchMethod: 'GET',
+    id,
   });
 
   const [alert, setAlert] = useState({
@@ -43,28 +45,20 @@ const Branding = () => {
     if (error) return handleError();
   }, [error, handleError]);
 
-  useEffect(() => {
-    if (response && response.length > 0) setBrandingId(response[0].id);
-  }, [response]);
-
   return (
-    <Suspense fallback={<LinearLoader />}>
+    <>
       {alert.isVisible && (
         <StyledAlert onClose={closeAlert} severity={alert.severity}>
           {alert.message}
         </StyledAlert>
       )}
-      {!isLoading && !error ? (
-        <BrandingForm
-          title='Editar Marca'
-          id={brandingId}
-          data={response ? response[0] : {}}
-        />
+      {!isLoading && response !== null && !error ? (
+        <SizeForm title='Editar Capacidad' id={id} data={response} />
       ) : (
         <LinearLoader />
       )}
-    </Suspense>
+    </>
   );
 };
 
-export default Branding;
+export default EditSize;

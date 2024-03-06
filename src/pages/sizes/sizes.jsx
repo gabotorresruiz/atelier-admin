@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useCallback, useEffect } from 'react';
+import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/system';
 import Alert from '@mui/material/Alert';
 import { useFetch } from '../../hooks';
@@ -14,16 +14,11 @@ const StyledAlert = styled(Alert)(
 `,
 );
 
-const colorantsColumns = [
+const sizeColumns = [
   {
-    id: 'name',
-    label: 'Nombre',
+    id: 'quantity',
+    label: 'Cantidad (litros)',
     type: 'text',
-  },
-  {
-    id: 'price',
-    label: 'Precio por litro de colorante',
-    type: 'number',
   },
   {
     id: 'createdAt',
@@ -32,9 +27,9 @@ const colorantsColumns = [
   },
 ];
 
-const Colorants = () => {
+const Sizes = () => {
   const [{ error, isLoading, response }, doFetch] = useFetch({
-    entity: 'colorants',
+    entity: 'sizes',
     fetchMethod: 'GET',
   });
 
@@ -44,9 +39,11 @@ const Colorants = () => {
     severity: '',
   });
 
-  const refreshData = useCallback(() => {
-    doFetch({ refresh: true });
-  }, [doFetch]);
+  const refreshData = () => {
+    doFetch({
+      refresh: true,
+    });
+  };
 
   const closeAlert = () => {
     setAlert(false);
@@ -63,7 +60,6 @@ const Colorants = () => {
   useEffect(() => {
     if (error) return handleError();
   }, [error, handleError]);
-
   return (
     <Suspense fallback={<LinearLoader />}>
       {alert.isVisible && (
@@ -74,12 +70,10 @@ const Colorants = () => {
       {!isLoading && response !== null && !error ? (
         <CustomizedTable
           data={response}
+          headColumns={sizeColumns}
           refreshData={refreshData}
-          tableTitle='Colorantes'
-          entity='colorants'
-          headColumns={colorantsColumns}
-          enableOnlyUpload
-          enableDelete={false}
+          tableTitle='Capacidades'
+          entity='sizes'
         />
       ) : (
         <LinearLoader />
@@ -88,4 +82,4 @@ const Colorants = () => {
   );
 };
 
-export default Colorants;
+export default Sizes;

@@ -11,6 +11,7 @@ const useFetch = ({
   initialFetch = true,
   id = 0,
   fetchParams = null,
+  shouldReload = false,
 }) => {
   const navigate = useNavigate();
   const [response, setResponse] = useState(null);
@@ -62,7 +63,7 @@ const useFetch = ({
         if (method === 'PUT' && res.status === 200) {
           setIsLoading(false);
           setResponse({ status: res.status });
-          window.location.reload();
+          if (shouldReload) window.location.reload();
           return;
         }
 
@@ -83,7 +84,7 @@ const useFetch = ({
 
       setIsLoading(false);
     },
-    [method, navigate],
+    [method, navigate, shouldReload],
   );
 
   useEffect(() => {

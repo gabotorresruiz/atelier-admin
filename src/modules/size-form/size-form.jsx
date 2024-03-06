@@ -5,9 +5,9 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import { Alert, Box, Container, Grid, TextField, Fade } from '@mui/material';
+import { FormButtons } from '../../components';
 import { useFetch } from '../../hooks';
 import schema from './schema';
-import { FormButtons, MultiSelect } from '../../components';
 
 const StyledErrorMessage = styled('span')`
   color: ${({ theme }) => theme.palette.error.dark};
@@ -33,7 +33,7 @@ const StyledTitle = styled('h1')`
   margin-top: 0;
 `;
 
-const SubCategoryForm = ({ title, id = 0, data = {} }) => {
+const SizeForm = ({ title, id = 0, data = {} }) => {
   const navigate = useNavigate();
   const [alert, setAlert] = useState({
     isVisible: false,
@@ -41,21 +41,14 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
     severity: '',
   });
 
-  const [{ error: getError, isLoading: getIsLoading, response: getResponse }] =
-    useFetch({
-      entity: 'categories',
-      fetchMethod: 'GET',
-    });
+  const entity = 'sizes';
 
   const isEmptyData = Object.keys(data).length === 0;
 
   const fetchMethod = isEmptyData ? 'POST' : 'PUT';
 
-  const defaultSubCategory = data.name ? data.name : '';
-  const defaultCategories = data.categories ? data.categories : [];
-
   const [{ error, isLoading, response }, doFetch] = useFetch({
-    entity: 'sub-categories',
+    entity,
     fetchMethod,
     id,
   });
@@ -68,31 +61,16 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
   } = useForm({
     mode: 'all',
     defaultValues: {
-      subCategoryName: defaultSubCategory,
+      quantity: data.quantity ?? '',
     },
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = ({ subCategoryName, categories }) => {
-    const selectedCategories = categories
-      .map(categoryName => {
-        const matchingOption = getResponse.find(
-          option => option.name === categoryName,
-        );
-        if (matchingOption) {
-          return {
-            id: matchingOption.id,
-            name: matchingOption.name,
-          };
-        }
-        return null;
-      })
-      .filter(Boolean);
-    const body = {
-      name: subCategoryName,
-      categories: selectedCategories,
-    };
-    doFetch({ body: JSON.stringify(body), contentType: 'application/json' });
+  const onSubmit = formData => {
+    doFetch({
+      body: JSON.stringify({ quantity: formData.quantity, unit: 'liters' }),
+      contentType: 'application/json',
+    });
   };
 
   const closeAlert = () => {
@@ -102,7 +80,6 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
   const handleBack = () => {
     navigate(-1);
   };
-
   const handleError = useCallback(() => {
     setAlert({
       isVisible: true,
@@ -111,17 +88,17 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
     });
   }, []);
 
-  const postSuccess = useCallback(
+  const responseSuccess = useCallback(
     fetchResponse => {
       let message = '';
 
       if (fetchResponse.status === 201) {
-        message = 'Subcategoría agregado satisfactoriamente!';
+        message = 'Capacidad agregada satisfactoriamente!';
         reset();
       }
 
       if (fetchResponse.status === 200) {
-        message = 'Subcateogría editado satisfactoriamente!';
+        message = 'Capacidad editada satisfactoriamente!';
       }
 
       setAlert({
@@ -135,10 +112,9 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
 
   useEffect(() => {
     if (error) return handleError();
-
     if (response && (response.status === 201 || response.status === 200))
-      return postSuccess(response);
-  }, [postSuccess, error, response, handleError]);
+      return responseSuccess(response);
+  }, [responseSuccess, error, handleError, response]);
 
   return (
     <Box mb={5} sx={{ position: 'relative' }}>
@@ -169,8 +145,8 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Controller
-                name='subCategoryName'
-                id='subCategoryName'
+                name='quantity'
+                id='quantity'
                 control={control}
                 render={({ field: { onChange, value } }) => (
                   <TextField
@@ -180,55 +156,18 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
                         min: 0,
                       },
                     }}
-                    label='Nombre Subcategoría'
-                    name='subCategoryName'
+                    label='Cantidad (litros)'
+                    name='quantity'
                     onChange={onChange}
                     required
                     type='text'
                     value={value}
-                    variant='outlined'
                   />
                 )}
               />
               <ErrorMessage
                 errors={errors}
-                name='subCategoryName'
-                render={({ message }) => (
-                  <StyledErrorMessage>{message}</StyledErrorMessage>
-                )}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <Controller
-                control={control}
-                name='categories'
-                defaultValue={defaultCategories.map(category => category.name)}
-                render={({ field }) => (
-                  <MultiSelect
-                    fullWidth
-                    name='categories'
-                    inputLabel='Categorías'
-                    label='Categorías'
-                    disabled={getIsLoading}
-                    required
-                    onChange={field.onChange}
-                    value={Array.isArray(field.value) ? field.value : []}
-                    options={
-                      getResponse && !getError
-                        ? getResponse.map(option => ({
-                            value: option.id,
-                            label: option.name,
-                          }))
-                        : []
-                    }
-                  />
-                )}
-              />
-
-              <ErrorMessage
-                errors={errors}
-                name='categories'
+                name='quantity'
                 render={({ message }) => (
                   <StyledErrorMessage>{message}</StyledErrorMessage>
                 )}
@@ -241,4 +180,4 @@ const SubCategoryForm = ({ title, id = 0, data = {} }) => {
   );
 };
 
-export default SubCategoryForm;
+export default SizeForm;

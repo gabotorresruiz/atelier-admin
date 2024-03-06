@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import { useFetch } from '../../../hooks';
 import { LinearLoader } from '../../../components';
-import { BrandingForm } from '../../../modules';
+import { OrderForm } from '../../../modules';
 
 const StyledAlert = styled(Alert)(
   ({ theme }) => `
@@ -15,11 +15,10 @@ const StyledAlert = styled(Alert)(
 `,
 );
 
-const EditBranding = () => {
+const EditOrder = () => {
   const { id } = useParams();
-
   const [{ error, isLoading, response }] = useFetch({
-    entity: 'brandings',
+    entity: 'orders',
     fetchMethod: 'GET',
     id,
   });
@@ -54,7 +53,7 @@ const EditBranding = () => {
         </StyledAlert>
       )}
       {!isLoading && response !== null && !error ? (
-        <BrandingForm title='Editar Marca' id={id} data={response} />
+        <OrderForm title='Visualizar o Editar Orden' id={id} data={response} />
       ) : (
         <LinearLoader />
       )}
@@ -62,4 +61,4 @@ const EditBranding = () => {
   );
 };
 
-export default EditBranding;
+export default EditOrder;

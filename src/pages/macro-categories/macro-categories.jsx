@@ -26,19 +26,6 @@ const MacroCategories = () => {
     severity: '',
   });
 
-  // const refreshData = useCallback(
-  //   searchText => {
-  //     console.log('searchText: ', searchText);
-  //     doFetch({
-  //       newParams: {
-  //         search: searchText,
-  //         attribute: 'name',
-  //       },
-  //     });
-  //   },
-  //   [doFetch],
-  // );
-
   const closeAlert = () => {
     setAlert(false);
   };

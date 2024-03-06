@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useCallback, useEffect } from 'react';
+import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/system';
 import Alert from '@mui/material/Alert';
 import { useFetch } from '../../hooks';
@@ -14,15 +14,20 @@ const StyledAlert = styled(Alert)(
 `,
 );
 
-const colorantsColumns = [
+const columns = [
   {
-    id: 'name',
-    label: 'Nombre',
+    id: 'id',
+    label: '# Orden',
     type: 'text',
   },
   {
-    id: 'price',
-    label: 'Precio por litro de colorante',
+    id: 'status',
+    label: 'Estatus',
+    type: 'status',
+  },
+  {
+    id: 'totalAmount',
+    label: 'Monto Total',
     type: 'number',
   },
   {
@@ -32,9 +37,9 @@ const colorantsColumns = [
   },
 ];
 
-const Colorants = () => {
+const Orders = () => {
   const [{ error, isLoading, response }, doFetch] = useFetch({
-    entity: 'colorants',
+    entity: 'orders',
     fetchMethod: 'GET',
   });
 
@@ -44,9 +49,11 @@ const Colorants = () => {
     severity: '',
   });
 
-  const refreshData = useCallback(() => {
-    doFetch({ refresh: true });
-  }, [doFetch]);
+  const refreshData = () => {
+    doFetch({
+      refresh: true,
+    });
+  };
 
   const closeAlert = () => {
     setAlert(false);
@@ -63,7 +70,6 @@ const Colorants = () => {
   useEffect(() => {
     if (error) return handleError();
   }, [error, handleError]);
-
   return (
     <Suspense fallback={<LinearLoader />}>
       {alert.isVisible && (
@@ -74,12 +80,11 @@ const Colorants = () => {
       {!isLoading && response !== null && !error ? (
         <CustomizedTable
           data={response}
+          disabledAdd={false}
+          headColumns={columns}
           refreshData={refreshData}
-          tableTitle='Colorantes'
-          entity='colorants'
-          headColumns={colorantsColumns}
-          enableOnlyUpload
-          enableDelete={false}
+          tableTitle='Órdenes'
+          entity='orders'
         />
       ) : (
         <LinearLoader />
@@ -88,4 +93,4 @@ const Colorants = () => {
   );
 };
 
-export default Colorants;
+export default Orders;
