@@ -119,6 +119,7 @@ const StyledTextareaAutosize = styled(TextareaAutosize)(
 );
 
 const ProductForm = ({ title, id = 0, data = {} }) => {
+  const navigate = useNavigate();
   const [productBasePrice, setProductBasePrice] = useState(data.price ?? null);
   const [hasProductSize, setHasProductSize] = useState(
     !!(data.products_sizes && data.products_sizes.length > 0),
@@ -126,12 +127,6 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
   const [hasTintometricColors, setHasTintometricColors] = useState(
     data.withTintometric ?? false,
   );
-
-  useEffect(() => {
-    setHasTintometricColors(data.withTintometric ?? false);
-  }, [data.withTintometric]);
-
-  const navigate = useNavigate();
 
   const [alert, setAlert] = useState({
     isVisible: false,
@@ -276,7 +271,10 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
     formData.append('subcategories', JSON.stringify(selectedSubCategories));
     formData.append('image', image);
     formData.append('sizes', sizesData);
-    formData.append('withTintometric', hasTintometricColors);
+    formData.append(
+      'withTintometric',
+      hasProductSize && hasTintometricColors ? hasTintometricColors : false,
+    );
 
     doFetch({ body: formData });
   };
@@ -320,6 +318,14 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
     [reset, resetFetch],
   );
 
+  const handleHasProductSize = () => {
+    setHasProductSize(prevState => !prevState);
+  };
+
+  useEffect(() => {
+    setHasTintometricColors(data.withTintometric ?? false);
+  }, [data.withTintometric]);
+
   useEffect(() => {
     if (error) return handleError();
 
@@ -333,7 +339,11 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
         handleBack={handleBack}
         handleSubmit={handleSubmit}
         onSubmit={onSubmit}
-        disabled={!isValid || (!hasProductSize && !productBasePrice)}
+        disabled={
+          !isValid ||
+          (!hasProductSize && !productBasePrice) ||
+          (hasProductSize && !selectedSizes)
+        }
         isLoading={isLoading}
       />
       {loadingImg ?? <LinearLoader />}
@@ -547,7 +557,7 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
               control={
                 <Switch
                   checked={hasProductSize}
-                  onChange={event => setHasProductSize(event.target.checked)}
+                  onChange={handleHasProductSize}
                 />
               }
               label='Tiene capacidades'
@@ -627,19 +637,21 @@ const ProductForm = ({ title, id = 0, data = {} }) => {
                 />
               </Grid>
             ))}
-          <Grid item xs={12}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={hasTintometricColors}
-                  onChange={event =>
-                    setHasTintometricColors(event.target.checked)
-                  }
-                />
-              }
-              label='Tiene colores del sistema tintométrico'
-            />
-          </Grid>
+          {hasProductSize ? (
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={hasTintometricColors}
+                    onChange={event =>
+                      setHasTintometricColors(event.target.checked)
+                    }
+                  />
+                }
+                label='Tiene colores del sistema tintométrico'
+              />
+            </Grid>
+          ) : null}
         </StyledBox>
       </Container>
     </Box>
