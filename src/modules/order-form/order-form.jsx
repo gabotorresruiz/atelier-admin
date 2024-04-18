@@ -347,7 +347,7 @@ const OrderForm = ({ title, id = 0, data = {} }) => {
                 >
                   <CardMedia
                     component='img'
-                    sx={{ width: 130 }}
+                    sx={{ width: 130, objectFit: 'scale-down' }}
                     image={product.product.imageUrl}
                     alt=''
                   />
